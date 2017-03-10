@@ -47,6 +47,12 @@ namespace StateMachine
             }
         }
 
+        public Machine<T> Add(State<T>[] states)
+        {
+            States.AddRange(states);
+            return this;
+        }
+
         public Machine<T> Add(State<T> s)
         {
             States.Add(s);

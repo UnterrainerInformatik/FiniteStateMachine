@@ -34,19 +34,31 @@ namespace StateMachine
     [PublicAPI]
     public class State<T>
     {
-        public string Name { get; set; }
-        public bool EndState { get; set; }
-        public bool ClearStack { get; set; }
+        public string Name { get; }
 
         private List<Transition<T>> Transitions { get; } = new List<Transition<T>>();
 
 
-        public State(string name, bool endState = false, bool clearStack = false)
+        public State(string name)
         {
             Name = name;
-            EndState = endState;
-            ClearStack = clearStack;
         }
+
+        public State<T> SetEndState(bool v)
+        {
+            EndState = v;
+            return this;
+        }
+
+        public bool EndState { get; private set; }
+
+        public State<T> SetClearStack(bool v)
+        {
+            ClearStack = v;
+            return this;
+        }
+
+        public bool ClearStack { get; private set; }
 
         public State<T> Add(Transition<T> t)
         {

@@ -32,18 +32,24 @@ namespace StateMachine
     [PublicAPI]
     public class Transition<T>
     {
-        public string Name { get; set; }
-        public T Trigger { get; set; }
-        public State<T> Target { get; set; }
-        public bool Pop { get; set; }
+        public string Name { get; }
+        public T Trigger { get; }
+        public State<T> Target { get; }
 
-        public Transition(string name, T trigger, State<T> target, bool pop = false)
+        public Transition(string name, T trigger, State<T> target)
         {
             Name = name;
             Trigger = trigger;
             Target = target;
-            Pop = pop;
         }
+
+        public Transition<T> SetPop(bool v)
+        {
+            Pop = v;
+            return this;
+        }
+
+        public bool Pop { get; private set; }
 
         public override string ToString()
         {
