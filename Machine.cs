@@ -25,6 +25,7 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 
@@ -33,6 +34,8 @@ namespace StateMachine
     [PublicAPI]
     public class Machine<T>
     {
+        public event EventHandler<TransitioningEventArgs<T>> StateChanged;
+
         public State<T> Current { get; set; }
         public Stack<State<T>> Stack { get; } = new Stack<State<T>>();
 
@@ -45,6 +48,12 @@ namespace StateMachine
             {
                 Stack.Push(current);
             }
+        }
+
+        public Machine<T> AddStateChangedHandler(EventHandler<TransitioningEventArgs<T>> e)
+        {
+            StateChanged += e;
+            return this;
         }
 
         public Machine<T> Add(State<T>[] states)
@@ -94,8 +103,9 @@ namespace StateMachine
 
             if (!Current.Equals(old))
             {
-                old.Exit(input);
-                Current.Enter(input);
+                old.RaiseLeft(new TransitioningEventArgs<T>(old, Current, input));
+                Current.RaiseEntered(new TransitioningEventArgs<T>(old, Current, input));
+                StateChanged?.Invoke(this, new TransitioningEventArgs<T>(old, Current, input));
             }
         }
     }

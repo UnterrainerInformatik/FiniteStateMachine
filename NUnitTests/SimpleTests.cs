@@ -25,6 +25,7 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System;
 using NUnit.Framework;
 
 namespace StateMachine.NUnitTests
@@ -46,23 +47,29 @@ namespace StateMachine.NUnitTests
             closed.Add(new Transition<string>("open", "o", opened));
             closed.Add(new Transition<string>("close", "c", closed));
 
-            Machine<string> cashdrawer = new Machine<string>(opened).Add(opened).Add(closed);
+            Machine<string> cashdrawer =
+                new Machine<string>(opened).Add(opened).Add(closed).AddStateChangedHandler(ConsoleOut);
 
             cashdrawer.Process("o");
             Assert.That("opened", Is.EqualTo(cashdrawer.Current.Name));
-            Assert.That(cashdrawer.Stack.ToArray(), Is.EquivalentTo(new[] { opened, opened }));
+            Assert.That(cashdrawer.Stack.ToArray(), Is.EquivalentTo(new[] {opened, opened}));
 
             cashdrawer.Process("c");
             Assert.That("closed", Is.EqualTo(cashdrawer.Current.Name));
-            Assert.That(cashdrawer.Stack.ToArray(), Is.EquivalentTo(new State<string>[] { }));
+            Assert.That(cashdrawer.Stack.ToArray(), Is.EquivalentTo(new State<string>[] {}));
 
             cashdrawer.Process("c");
             Assert.That("closed", Is.EqualTo(cashdrawer.Current.Name));
-            Assert.That(cashdrawer.Stack.ToArray(), Is.EquivalentTo(new State<string>[] { }));
+            Assert.That(cashdrawer.Stack.ToArray(), Is.EquivalentTo(new State<string>[] {}));
 
             cashdrawer.Process("o");
             Assert.That("opened", Is.EqualTo(cashdrawer.Current.Name));
-            Assert.That(cashdrawer.Stack.ToArray(), Is.EquivalentTo(new[] { opened }));
+            Assert.That(cashdrawer.Stack.ToArray(), Is.EquivalentTo(new[] {opened}));
+        }
+
+        private void ConsoleOut(object sender, TransitioningEventArgs<string> e)
+        {
+            Console.Out.WriteLine($"From [{e.From}] with [{e.Input}] to [{e.To}]");
         }
 
         [Test]
@@ -82,7 +89,8 @@ namespace StateMachine.NUnitTests
             closed.Add(new Transition<string>("open", "o", opened));
             closed.Add(new Transition<string>("close", "c", closed));
 
-            Machine<string> cashdrawer = new Machine<string>(opened).Add(opened).Add(closed);
+            Machine<string> cashdrawer =
+                new Machine<string>(opened).Add(opened).Add(closed).AddStateChangedHandler(ConsoleOut);
 
             cashdrawer.Process("o");
             Assert.That("opened", Is.EqualTo(cashdrawer.Current.Name));

@@ -34,6 +34,9 @@ namespace StateMachine
     [PublicAPI]
     public class State<T>
     {
+        public event EventHandler<TransitioningEventArgs<T>> Entered;
+        public event EventHandler<TransitioningEventArgs<T>> Left;
+
         public string Name { get; }
 
         private List<Transition<T>> Transitions { get; } = new List<Transition<T>>();
@@ -60,6 +63,28 @@ namespace StateMachine
 
         public bool ClearStack { get; private set; }
 
+        public State<T> AddEnteredHandler(EventHandler<TransitioningEventArgs<T>> e)
+        {
+            Entered += e;
+            return this;
+        }
+
+        public void RaiseEntered(TransitioningEventArgs<T> e)
+        {
+            Entered?.Invoke(this, e);
+        }
+
+        public State<T> AddLeftHandler(EventHandler<TransitioningEventArgs<T>> e)
+        {
+            Left += e;
+            return this;
+        }
+
+        public void RaiseLeft(TransitioningEventArgs<T> e)
+        {
+            Left?.Invoke(this, e);
+        }
+
         public State<T> Add(Transition<T> t)
         {
             Transitions.Add(t);
@@ -82,27 +107,12 @@ namespace StateMachine
         {
             foreach (var t in Transitions)
             {
-                if (t.Trigger.Equals(input))
+                if (t.Process(this, input))
                 {
                     return t;
                 }
             }
             return null;
-        }
-
-        public void Enter(object o)
-        {
-            Console.Out.WriteLine(AddParametersTo("entering", o));
-        }
-
-        public void Exit(object o)
-        {
-            Console.Out.WriteLine(AddParametersTo("leaving", o));
-        }
-
-        private string AddParametersTo(string s, object o)
-        {
-            return s + " [" + Name + "] with [" + o + "]";
         }
 
         public override string ToString()

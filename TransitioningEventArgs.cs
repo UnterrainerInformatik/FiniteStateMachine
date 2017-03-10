@@ -31,48 +31,17 @@ using JetBrains.Annotations;
 namespace StateMachine
 {
     [PublicAPI]
-    public class Transition<T>
+    public class TransitioningEventArgs<T> : EventArgs
     {
-        public event EventHandler<TransitioningEventArgs<T>> Transitioning;
+        public State<T> From { get; }
+        public State<T> To { get; }
+        public T Input { get; }
 
-        public string Name { get; }
-        public T Trigger { get; }
-        public State<T> Target { get; }
-        
-        public Transition(string name, T trigger, State<T> target)
+        public TransitioningEventArgs(State<T> @from, State<T> to, T input)
         {
-            Name = name;
-            Trigger = trigger;
-            Target = target;
-        }
-
-        public Transition<T> AddTransitioningHandler(EventHandler<TransitioningEventArgs<T>> e)
-        {
-            Transitioning += e;
-            return this;
-        }
-
-        public Transition<T> SetPop(bool v)
-        {
-            Pop = v;
-            return this;
-        }
-
-        public bool Pop { get; private set; }
-
-        public bool Process(State<T> from, T input)
-        {
-            bool r = input.Equals(Trigger);
-            if (r)
-            {
-                Transitioning?.Invoke(this, new TransitioningEventArgs<T>(from, Target, input));
-            }
-            return r;
-        }
-
-        public override string ToString()
-        {
-            return Name;
+            From = @from;
+            To = to;
+            Input = input;
         }
     }
 }
