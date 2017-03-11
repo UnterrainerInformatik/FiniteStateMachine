@@ -28,11 +28,12 @@
 using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using Microsoft.Xna.Framework;
 
 namespace StateMachine
 {
     [PublicAPI]
-    public class Machine<T>
+    public class Machine<T> : Updatable
     {
         public event EventHandler<TransitioningEventArgs<T>> StateChanged;
 
@@ -107,6 +108,11 @@ namespace StateMachine
                 Current.RaiseEntered(new TransitioningEventArgs<T>(old, Current, input));
                 StateChanged?.Invoke(this, new TransitioningEventArgs<T>(old, Current, input));
             }
+        }
+
+        public void Update(GameTime gameTime)
+        {
+            Current.Update(gameTime);
         }
     }
 }

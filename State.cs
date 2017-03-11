@@ -28,11 +28,12 @@
 using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using Microsoft.Xna.Framework;
 
 namespace StateMachine
 {
     [PublicAPI]
-    public class State<T>
+    public class State<T> : Updatable
     {
         public event EventHandler<TransitioningEventArgs<T>> Entered;
         public event EventHandler<TransitioningEventArgs<T>> Left;
@@ -118,6 +119,10 @@ namespace StateMachine
         public override string ToString()
         {
             return Name;
+        }
+
+        public virtual void Update(GameTime gameTime)
+        {
         }
     }
 }
