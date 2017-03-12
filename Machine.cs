@@ -35,7 +35,7 @@ namespace StateMachine
     [PublicAPI]
     public class Machine<T> : Updatable
     {
-        public event EventHandler<TransitioningEventArgs<T>> StateChanged;
+        public event EventHandler<TransitioningValueArgs<T>> StateChanged;
 
         public State<T> Current { get; set; }
         public Stack<State<T>> Stack { get; } = new Stack<State<T>>();
@@ -51,7 +51,7 @@ namespace StateMachine
             }
         }
 
-        public Machine<T> AddStateChangedHandler(EventHandler<TransitioningEventArgs<T>> e)
+        public Machine<T> AddStateChangedHandler(EventHandler<TransitioningValueArgs<T>> e)
         {
             StateChanged += e;
             return this;
@@ -104,9 +104,9 @@ namespace StateMachine
 
             if (!Current.Equals(old))
             {
-                old.RaiseLeft(new TransitioningEventArgs<T>(old, Current, input));
-                Current.RaiseEntered(new TransitioningEventArgs<T>(old, Current, input));
-                StateChanged?.Invoke(this, new TransitioningEventArgs<T>(old, Current, input));
+                old.RaiseLeft(new TransitioningValueArgs<T>(old, Current, input));
+                Current.RaiseEntered(new TransitioningValueArgs<T>(old, Current, input));
+                StateChanged?.Invoke(this, new TransitioningValueArgs<T>(old, Current, input));
             }
         }
 

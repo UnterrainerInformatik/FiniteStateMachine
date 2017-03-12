@@ -25,19 +25,18 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
 using JetBrains.Annotations;
 
 namespace StateMachine
 {
     [PublicAPI]
-    public class TransitioningEventArgs<T> : EventArgs
+    public struct TransitioningValueArgs<T>
     {
         public State<T> From { get; }
         public State<T> To { get; }
         public T Input { get; }
 
-        public TransitioningEventArgs(State<T> @from, State<T> to, T input)
+        public TransitioningValueArgs(State<T> @from, State<T> to, T input)
         {
             From = @from;
             To = to;

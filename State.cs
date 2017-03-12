@@ -35,8 +35,8 @@ namespace StateMachine
     [PublicAPI]
     public class State<T> : Updatable
     {
-        public event EventHandler<TransitioningEventArgs<T>> Entered;
-        public event EventHandler<TransitioningEventArgs<T>> Left;
+        public event EventHandler<TransitioningValueArgs<T>> Entered;
+        public event EventHandler<TransitioningValueArgs<T>> Left;
 
         public string Name { get; }
 
@@ -64,24 +64,24 @@ namespace StateMachine
 
         public bool ClearStack { get; private set; }
 
-        public State<T> AddEnteredHandler(EventHandler<TransitioningEventArgs<T>> e)
+        public State<T> AddEnteredHandler(EventHandler<TransitioningValueArgs<T>> e)
         {
             Entered += e;
             return this;
         }
 
-        public void RaiseEntered(TransitioningEventArgs<T> e)
+        public void RaiseEntered(TransitioningValueArgs<T> e)
         {
             Entered?.Invoke(this, e);
         }
 
-        public State<T> AddLeftHandler(EventHandler<TransitioningEventArgs<T>> e)
+        public State<T> AddLeftHandler(EventHandler<TransitioningValueArgs<T>> e)
         {
             Left += e;
             return this;
         }
 
-        public void RaiseLeft(TransitioningEventArgs<T> e)
+        public void RaiseLeft(TransitioningValueArgs<T> e)
         {
             Left?.Invoke(this, e);
         }

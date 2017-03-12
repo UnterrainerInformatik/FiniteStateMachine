@@ -33,7 +33,7 @@ namespace StateMachine
     [PublicAPI]
     public class Transition<T>
     {
-        public event EventHandler<TransitioningEventArgs<T>> Transitioning;
+        public event EventHandler<TransitioningValueArgs<T>> Transitioning;
 
         public string Name { get; }
         public T Trigger { get; }
@@ -46,7 +46,7 @@ namespace StateMachine
             Target = target;
         }
 
-        public Transition<T> AddTransitioningHandler(EventHandler<TransitioningEventArgs<T>> e)
+        public Transition<T> AddTransitioningHandler(EventHandler<TransitioningValueArgs<T>> e)
         {
             Transitioning += e;
             return this;
@@ -65,7 +65,7 @@ namespace StateMachine
             bool r = input.Equals(Trigger);
             if (r)
             {
-                Transitioning?.Invoke(this, new TransitioningEventArgs<T>(from, Target, input));
+                Transitioning?.Invoke(this, new TransitioningValueArgs<T>(from, Target, input));
             }
             return r;
         }

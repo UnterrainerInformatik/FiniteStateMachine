@@ -67,7 +67,7 @@ namespace StateMachine.NUnitTests
             Assert.That(cashdrawer.Stack.ToArray(), Is.EquivalentTo(new[] {opened}));
         }
 
-        private void ConsoleOut(object sender, TransitioningEventArgs<string> e)
+        private void ConsoleOut(object sender, TransitioningValueArgs<string> e)
         {
             Console.Out.WriteLine($"From [{e.From}] with [{e.Input}] to [{e.To}]");
         }

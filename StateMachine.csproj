@@ -57,7 +57,7 @@
     <Compile Include="State.cs" />
     <Compile Include="Transition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TransitioningEventArgs.cs" />
+    <Compile Include="TransitioningValueArgs.cs" />
     <Compile Include="Updatable.cs" />
   </ItemGroup>
   <ItemGroup>
