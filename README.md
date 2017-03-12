@@ -1,4 +1,5 @@
 # FiniteStateMachine
+
 This project is a finite state machine designed to be used in games.
 
 #### Description
@@ -24,3 +25,23 @@ A nice example for such a machine is the setup of a multiplayer game. It would b
 * Remove the 'waiting for other players' message-box
 * Send 'start' signal to other players
 * Start the game
+
+
+
+#### Test-drive
+
+Time to take it for a test-drive.
+
+The motivation for this project came from a nice article I found [here](http://gameprogrammingpatterns.com/state.html) which comes with some examples. We'll try to solve the proposed problems with our new project.
+
+*By the way: [This](http://gameprogrammingpatterns.com/) seems to be a great book, so try to support the author in any way possible for you.*
+
+He's making a point using a **F**inite **S**tate **M**achine (FSM) that looks like this:
+
+* ducking --(release down)--> standing
+* standing --(press down)--> ducking
+* standing --(press B)--> jumping
+* jumping --(press down)--> diving
+
+So the file ```GameProgrammingPatterns1.cs``` in the test-folder contains that machine.
+

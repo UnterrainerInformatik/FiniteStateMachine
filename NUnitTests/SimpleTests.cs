@@ -31,40 +31,36 @@ using NUnit.Framework;
 namespace StateMachine.NUnitTests
 {
     [TestFixture]
-    [Category("StateMachine.PushDownAutomata")]
+    [Category("StateMachine.Simple")]
     public class SimpleTests
     {
         [Test]
-        [Category("StateMachine.PushDownAutomata")]
+        [Category("StateMachine.Simple")]
         public void SimpleTest()
         {
             State<string> opened = new State<string>("opened");
             State<string> closed = new State<string>("closed").SetEndState(true).SetClearStack(true);
+            opened.Add(new Transition<string>("close", "c", closed)).Add(new Transition<string>("open", "o", opened));
+            closed.Add(new Transition<string>("open", "o", opened)).Add(new Transition<string>("close", "c", closed));
 
-            opened.Add(new Transition<string>("close", "c", closed));
-            opened.Add(new Transition<string>("open", "o", opened));
-
-            closed.Add(new Transition<string>("open", "o", opened));
-            closed.Add(new Transition<string>("close", "c", closed));
-
-            Machine<string> cashdrawer =
+            Machine<string> m =
                 new Machine<string>(opened).Add(opened).Add(closed).AddStateChangedHandler(ConsoleOut);
 
-            cashdrawer.Process("o");
-            Assert.That("opened", Is.EqualTo(cashdrawer.Current.Name));
-            Assert.That(cashdrawer.Stack.ToArray(), Is.EquivalentTo(new[] {opened, opened}));
+            m.Process("o");
+            Assert.That("opened", Is.EqualTo(m.Current.Name));
+            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new[] {opened, opened}));
 
-            cashdrawer.Process("c");
-            Assert.That("closed", Is.EqualTo(cashdrawer.Current.Name));
-            Assert.That(cashdrawer.Stack.ToArray(), Is.EquivalentTo(new State<string>[] {}));
+            m.Process("c");
+            Assert.That("closed", Is.EqualTo(m.Current.Name));
+            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<string>[] {}));
 
-            cashdrawer.Process("c");
-            Assert.That("closed", Is.EqualTo(cashdrawer.Current.Name));
-            Assert.That(cashdrawer.Stack.ToArray(), Is.EquivalentTo(new State<string>[] {}));
+            m.Process("c");
+            Assert.That("closed", Is.EqualTo(m.Current.Name));
+            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<string>[] {}));
 
-            cashdrawer.Process("o");
-            Assert.That("opened", Is.EqualTo(cashdrawer.Current.Name));
-            Assert.That(cashdrawer.Stack.ToArray(), Is.EquivalentTo(new[] {opened}));
+            m.Process("o");
+            Assert.That("opened", Is.EqualTo(m.Current.Name));
+            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new[] {opened}));
         }
 
         private void ConsoleOut(object sender, TransitioningValueArgs<string> e)
@@ -73,48 +69,44 @@ namespace StateMachine.NUnitTests
         }
 
         [Test]
-        [Category("StateMachine.PushDownAutomata")]
+        [Category("StateMachine.Simple")]
         public void SimpleTestWithPop()
         {
             State<string> opened = new State<string>("opened");
             State<string> closed = new State<string>("closed").SetEndState(true).SetClearStack(true);
             State<string> test = new State<string>("pop");
-
-            opened.Add(new Transition<string>("close", "c", closed));
-            opened.Add(new Transition<string>("open", "o", opened));
-            opened.Add(new Transition<string>("push", "p", test));
-
+            opened.Add(new Transition<string>("close", "c", closed))
+                .Add(new Transition<string>("open", "o", opened))
+                .Add(new Transition<string>("push", "p", test));
             test.Add(new Transition<string>("pop", "p", opened).SetPop(true));
+            closed.Add(new Transition<string>("open", "o", opened)).Add(new Transition<string>("close", "c", closed));
 
-            closed.Add(new Transition<string>("open", "o", opened));
-            closed.Add(new Transition<string>("close", "c", closed));
-
-            Machine<string> cashdrawer =
+            Machine<string> m =
                 new Machine<string>(opened).Add(opened).Add(closed).AddStateChangedHandler(ConsoleOut);
 
-            cashdrawer.Process("o");
-            Assert.That("opened", Is.EqualTo(cashdrawer.Current.Name));
-            Assert.That(cashdrawer.Stack.ToArray(), Is.EquivalentTo(new[] {opened, opened}));
+            m.Process("o");
+            Assert.That("opened", Is.EqualTo(m.Current.Name));
+            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new[] {opened, opened}));
 
-            cashdrawer.Process("p");
-            Assert.That("pop", Is.EqualTo(cashdrawer.Current.Name));
-            Assert.That(cashdrawer.Stack.ToArray(), Is.EquivalentTo(new[] {opened, opened, test}));
+            m.Process("p");
+            Assert.That("pop", Is.EqualTo(m.Current.Name));
+            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new[] {opened, opened, test}));
 
-            cashdrawer.Process("p");
-            Assert.That("opened", Is.EqualTo(cashdrawer.Current.Name));
-            Assert.That(cashdrawer.Stack.ToArray(), Is.EquivalentTo(new[] {opened, opened}));
+            m.Process("p");
+            Assert.That("opened", Is.EqualTo(m.Current.Name));
+            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new[] {opened, opened}));
 
-            cashdrawer.Process("c");
-            Assert.That("closed", Is.EqualTo(cashdrawer.Current.Name));
-            Assert.That(cashdrawer.Stack.ToArray(), Is.EquivalentTo(new State<string>[] {}));
+            m.Process("c");
+            Assert.That("closed", Is.EqualTo(m.Current.Name));
+            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<string>[] {}));
 
-            cashdrawer.Process("c");
-            Assert.That("closed", Is.EqualTo(cashdrawer.Current.Name));
-            Assert.That(cashdrawer.Stack.ToArray(), Is.EquivalentTo(new State<string>[] {}));
+            m.Process("c");
+            Assert.That("closed", Is.EqualTo(m.Current.Name));
+            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<string>[] {}));
 
-            cashdrawer.Process("o");
-            Assert.That("opened", Is.EqualTo(cashdrawer.Current.Name));
-            Assert.That(cashdrawer.Stack.ToArray(), Is.EquivalentTo(new[] {opened}));
+            m.Process("o");
+            Assert.That("opened", Is.EqualTo(m.Current.Name));
+            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new[] {opened}));
         }
     }
 }
