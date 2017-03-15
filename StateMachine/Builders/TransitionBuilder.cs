@@ -25,68 +25,42 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using System.Collections.Generic;
-using JetBrains.Annotations;
-using Microsoft.Xna.Framework;
+using StateMachine.basic;
 
 namespace StateMachine
 {
-    [PublicAPI]
-    public class Machine<T> : Updatable
+    public class TransitionBuilder<T> : BuilderBase<Transition<T>, TransitionBuilder<T>>
     {
-        public event EventHandler<TransitioningValueArgs<T>> StateChanged;
-
-        public State<T> Current { get; set; }
-        public Stack<State<T>> Stack { get; } = new Stack<State<T>>();
-
-        public Machine(State<T> current)
+        public TransitionBuilder()
         {
-            Current = current;
-            if (!current.ClearStack)
-            {
-                Stack.Push(current);
-            }
         }
 
-        public Machine<T> AddStateChangedHandler(EventHandler<TransitioningValueArgs<T>> e)
+        public TransitionBuilder(Transition<T> transition) : base(transition)
         {
-            StateChanged += e;
+        }
+
+        public TransitionBuilder<T> Name(string v)
+        {
+            Model.Name = v;
             return this;
         }
 
-        public void Process(T input)
+        public TransitionBuilder<T> Trigger(T v)
         {
-            State<T> old = Current;
-            Transition<T> t = Current.Process(input);
-
-            if (t.Pop)
-            {
-                Stack.Pop();
-                Current = Stack.Peek();
-            }
-            else
-            {
-                Current = t.Target;
-                Stack.Push(Current);
-            }
-
-            if (Current.ClearStack)
-            {
-                Stack.Clear();
-            }
-
-            if (!Current.Equals(old))
-            {
-                old.RaiseLeft(new TransitioningValueArgs<T>(old, Current, input));
-                Current.RaiseEntered(new TransitioningValueArgs<T>(old, Current, input));
-                StateChanged?.Invoke(this, new TransitioningValueArgs<T>(old, Current, input));
-            }
+            Model.Trigger = v;
+            return this;
         }
 
-        public void Update(GameTime gameTime)
+        public TransitionBuilder<T> Target(State<T> v)
         {
-            Current.Update(gameTime);
+            Model.Target = v;
+            return this;
+        }
+
+        public TransitionBuilder<T> Pop(bool v)
+        {
+            Model.Pop = v;
+            return this;
         }
     }
 }

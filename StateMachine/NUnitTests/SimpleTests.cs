@@ -39,12 +39,12 @@ namespace StateMachine.NUnitTests
         public void SimpleTest()
         {
             State<string> opened = new State<string>("opened");
-            State<string> closed = new State<string>("closed").SetEndState(true).SetClearStack(true);
+            State<string> closed = new State<string>("closed").Set().EndState(true).ClearStack(true).Get();
             opened.Add(new Transition<string>("close", "c", closed)).Add(new Transition<string>("open", "o", opened));
             closed.Add(new Transition<string>("open", "o", opened)).Add(new Transition<string>("close", "c", closed));
 
             Machine<string> m =
-                new Machine<string>(opened).Add(opened).Add(closed).AddStateChangedHandler(ConsoleOut);
+                new Machine<string>(opened).AddStateChangedHandler(ConsoleOut);
 
             m.Process("o");
             Assert.That("opened", Is.EqualTo(m.Current.Name));
@@ -73,16 +73,16 @@ namespace StateMachine.NUnitTests
         public void SimpleTestWithPop()
         {
             State<string> opened = new State<string>("opened");
-            State<string> closed = new State<string>("closed").SetEndState(true).SetClearStack(true);
+            State<string> closed = new State<string>("closed").Set().EndState(true).ClearStack(true).Get();
             State<string> test = new State<string>("pop");
             opened.Add(new Transition<string>("close", "c", closed))
                 .Add(new Transition<string>("open", "o", opened))
                 .Add(new Transition<string>("push", "p", test));
-            test.Add(new Transition<string>("pop", "p", opened).SetPop(true));
+            test.Add(new Transition<string>("pop", "p", opened).Set().Pop(true).Get());
             closed.Add(new Transition<string>("open", "o", opened)).Add(new Transition<string>("close", "c", closed));
 
             Machine<string> m =
-                new Machine<string>(opened).Add(opened).Add(closed).AddStateChangedHandler(ConsoleOut);
+                new Machine<string>(opened).AddStateChangedHandler(ConsoleOut);
 
             m.Process("o");
             Assert.That("opened", Is.EqualTo(m.Current.Name));

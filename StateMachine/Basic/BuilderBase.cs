@@ -25,68 +25,34 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using System.Collections.Generic;
 using JetBrains.Annotations;
-using Microsoft.Xna.Framework;
 
-namespace StateMachine
+namespace StateMachine.basic
 {
     [PublicAPI]
-    public class Machine<T> : Updatable
+    public abstract class BuilderBase<T, TBuilder>
+        where T : new()
+        where TBuilder : BuilderBase<T, TBuilder>, new()
     {
-        public event EventHandler<TransitioningValueArgs<T>> StateChanged;
+        protected T Model { get; }
 
-        public State<T> Current { get; set; }
-        public Stack<State<T>> Stack { get; } = new Stack<State<T>>();
-
-        public Machine(State<T> current)
+        protected BuilderBase()
         {
-            Current = current;
-            if (!current.ClearStack)
-            {
-                Stack.Push(current);
-            }
+            Model = new T();
         }
 
-        public Machine<T> AddStateChangedHandler(EventHandler<TransitioningValueArgs<T>> e)
+        protected BuilderBase(T model)
         {
-            StateChanged += e;
-            return this;
+            Model = model;
         }
 
-        public void Process(T input)
+        /// <summary>
+        ///     Executes the building-process returning an instance of the object.
+        /// </summary>
+        /// <returns>An instance of T.</returns>
+        public T Get()
         {
-            State<T> old = Current;
-            Transition<T> t = Current.Process(input);
-
-            if (t.Pop)
-            {
-                Stack.Pop();
-                Current = Stack.Peek();
-            }
-            else
-            {
-                Current = t.Target;
-                Stack.Push(Current);
-            }
-
-            if (Current.ClearStack)
-            {
-                Stack.Clear();
-            }
-
-            if (!Current.Equals(old))
-            {
-                old.RaiseLeft(new TransitioningValueArgs<T>(old, Current, input));
-                Current.RaiseEntered(new TransitioningValueArgs<T>(old, Current, input));
-                StateChanged?.Invoke(this, new TransitioningValueArgs<T>(old, Current, input));
-            }
-        }
-
-        public void Update(GameTime gameTime)
-        {
-            Current.Update(gameTime);
+            return Model;
         }
     }
 }

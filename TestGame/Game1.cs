@@ -84,7 +84,6 @@ namespace TestGame
                 if (lastWasRight)
                 {
                     hero.Play("jump_right");
-                    hero.
                 }
                 else
                 {

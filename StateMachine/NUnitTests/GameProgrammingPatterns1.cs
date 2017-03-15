@@ -39,17 +39,21 @@ namespace StateMachine.NUnitTests
         public void GamingProgrammingPatternsTest1()
         {
             State<string> ducking = new State<string>("ducking");
-            State<string> standing = new State<string>("standing").SetClearStack(true);
+            State<string> standing = new State<string>("standing").Set().ClearStack(true).Get();
             State<string> jumping = new State<string>("jumping");
             State<string> diving = new State<string>("diving");
-            ducking.Add(new Transition<string>("stand_up", "down", standing));
-            standing.Add(new Transition<string>("duck", "down", ducking))
-                .Add(new Transition<string>("jump", "B", jumping));
-            jumping.Add(new Transition<string>("dive", "down", diving));
+
+            ducking.Add(Transition<string>.Builder().Name("stand_up").Trigger("down").Target(standing).Get());
+            standing.Add(Transition<string>.Builder().Name("duck").Trigger("down").Target(ducking).Get())
+                .Add(Transition<string>.Builder().Name("jump").Trigger("B").Target(jumping).Get());
+            jumping.Add(Transition<string>.Builder().Name("dive").Trigger("down").Target(diving).Get());
+
+            Transition<string> test =
+                Transition<string>.Builder().Name("stand_up").Trigger("down").Target(standing).Get();
+            test.Set().Name("test");
 
             Machine<string> m =
-                new Machine<string>(standing).Add(new[] {standing, ducking, jumping, diving})
-                    .AddStateChangedHandler(ConsoleOut);
+                new Machine<string>(standing).AddStateChangedHandler(ConsoleOut);
         }
 
         [Test]
@@ -57,35 +61,44 @@ namespace StateMachine.NUnitTests
         public void GamingProgrammingPatternsTest2()
         {
             State<string> ducking = new State<string>("ducking");
-            State<string> standing = new State<string>("standing").SetClearStack(true);
+            State<string> standing = new State<string>("standing").Set().ClearStack(true).Get();
             State<string> jumping = new State<string>("jumping");
             State<string> diving = new State<string>("diving");
-            ducking.Add(new Transition<string>("stand_up", "down", standing));
-            standing.Add(new Transition<string>("duck", "down", ducking));
-            standing.Add(new Transition<string>("jump", "B", jumping));
-            jumping.Add(new Transition<string>("dive", "down", diving));
+            ducking.Add(Transition<string>.Builder().Name("stand_up").Trigger("down").Target(standing).Get());
+            standing.Add(Transition<string>.Builder().Name("duck").Trigger("down").Target(ducking).Get())
+                .Add(Transition<string>.Builder().Name("jump").Trigger("B").Target(jumping).Get());
+            jumping.Add(Transition<string>.Builder().Name("dive").Trigger("down").Target(diving).Get());
 
             Machine<string> m =
-                new Machine<string>(standing).Add(new[] {standing, ducking, jumping, diving})
-                    .AddStateChangedHandler(ConsoleOut);
+                new Machine<string>(standing).AddStateChangedHandler(ConsoleOut);
 
             // Now for the weapons-machine with basic forward- and backward-rotation.
             State<string> emptyHanded = new State<string>("empty_handed");
             State<string> gun = new State<string>("gun");
             State<string> shotgun = new State<string>("shotgun");
             State<string> laserRifle = new State<string>("laser_rifle");
-            emptyHanded.Add(new Transition<string>("rotate_weapon", "tab", gun))
-                .Add(new Transition<string>("rotate_weapon_back", "shift-tab", laserRifle));
-            gun.Add(new Transition<string>("rotate_weapon", "tab", shotgun))
-                .Add(new Transition<string>("rotate_weapon_back", "shift-tab", emptyHanded));
-            shotgun.Add(new Transition<string>("rotate_weapon", "tab", laserRifle))
-                .Add(new Transition<string>("rotate_weapon_back", "shift-tab", gun));
-            laserRifle.Add(new Transition<string>("rotate_weapon", "tab", emptyHanded))
-                .Add(new Transition<string>("rotate_weapon_back", "shift-tab", shotgun));
+            emptyHanded.Add(Transition<string>.Builder().Name("rotate_weapon").Trigger("tab").Target(gun).Get())
+                .Add(
+                    Transition<string>.Builder()
+                        .Name("rotate_weapon_back")
+                        .Trigger("shift-tab")
+                        .Target(laserRifle)
+                        .Get());
+            gun.Add(Transition<string>.Builder().Name("rotate_weapon").Trigger("tab").Target(shotgun).Get())
+                .Add(
+                    Transition<string>.Builder()
+                        .Name("rotate_weapon_back")
+                        .Trigger("shift-tab")
+                        .Target(emptyHanded)
+                        .Get());
+            shotgun.Add(Transition<string>.Builder().Name("rotate_weapon").Trigger("tab").Target(laserRifle).Get())
+                .Add(Transition<string>.Builder().Name("rotate_weapon_back").Trigger("shift-tab").Target(gun).Get());
+            laserRifle.Add(Transition<string>.Builder().Name("rotate_weapon").Trigger("tab").Target(emptyHanded).Get())
+                .Add(
+                    Transition<string>.Builder().Name("rotate_weapon_back").Trigger("shift-tab").Target(shotgun).Get());
 
             Machine<string> w =
-                new Machine<string>(emptyHanded).Add(new[] {emptyHanded, gun, shotgun, laserRifle})
-                    .AddStateChangedHandler(ConsoleOut);
+                new Machine<string>(emptyHanded).AddStateChangedHandler(ConsoleOut);
         }
 
         private void ConsoleOut(object sender, TransitioningValueArgs<string> e)

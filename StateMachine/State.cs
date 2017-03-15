@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
+using StateMachine.builders;
 
 namespace StateMachine
 {
@@ -38,31 +39,42 @@ namespace StateMachine
         public event EventHandler<TransitioningValueArgs<T>> Entered;
         public event EventHandler<TransitioningValueArgs<T>> Left;
 
-        public string Name { get; }
+        private StateBuilder<T> FluentInterface { get; }
+
+        public string Name { get; set; }
+        public bool EndState { get; set; }
+        public bool ClearStack { get; set; }
 
         private List<Transition<T>> Transitions { get; } = new List<Transition<T>>();
 
+        /// <summary>
+        ///     Creates a fluent builder object that allows you to set all the values of the object more conveniently.
+        /// </summary>
+        /// <returns>A fluent builder object.</returns>
+        public static StateBuilder<T> Builder()
+        {
+            return new StateBuilder<T>();
+        }
 
-        public State(string name)
+        /// <summary>
+        ///     Returns a fluent setter object that allows you to set all the values of the object more conveniently without
+        ///     re-creating the instance.
+        /// </summary>
+        /// <returns>A fluent setter object.</returns>
+        public StateBuilder<T> Set()
+        {
+            return FluentInterface;
+        }
+
+        public State()
+        {
+            FluentInterface = new StateBuilder<T>(this);
+        }
+
+        public State(string name):this()
         {
             Name = name;
         }
-
-        public State<T> SetEndState(bool v)
-        {
-            EndState = v;
-            return this;
-        }
-
-        public bool EndState { get; private set; }
-
-        public State<T> SetClearStack(bool v)
-        {
-            ClearStack = v;
-            return this;
-        }
-
-        public bool ClearStack { get; private set; }
 
         public State<T> AddEnteredHandler(EventHandler<TransitioningValueArgs<T>> e)
         {
