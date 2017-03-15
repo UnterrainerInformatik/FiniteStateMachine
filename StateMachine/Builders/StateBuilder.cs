@@ -56,5 +56,9 @@ namespace StateMachine.builders
             Model.ClearStack = v;
             return this;
         }
+
+        protected override void Check()
+        {
+        }
     }
 }

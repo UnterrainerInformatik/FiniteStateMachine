@@ -62,5 +62,9 @@ namespace StateMachine
             Model.Pop = v;
             return this;
         }
+
+        protected override void Check()
+        {
+        }
     }
 }

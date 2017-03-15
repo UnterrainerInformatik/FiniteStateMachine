@@ -25,6 +25,7 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System;
 using JetBrains.Annotations;
 
 namespace StateMachine.basic
@@ -36,11 +37,20 @@ namespace StateMachine.basic
     {
         protected T Model { get; }
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="BuilderBase{T, TBuilder}" /> class.
+        ///     This constructor is used in order to create an object using a builder.
+        /// </summary>
         protected BuilderBase()
         {
             Model = new T();
         }
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="BuilderBase{T, TBuilder}" /> class.
+        ///     This constructor is used in order to create fluent setters for an already instanciated object.
+        /// </summary>
+        /// <param name="model">The model.</param>
         protected BuilderBase(T model)
         {
             Model = model;
@@ -52,7 +62,15 @@ namespace StateMachine.basic
         /// <returns>An instance of T.</returns>
         public T Get()
         {
+            Check();
             return Model;
         }
+
+        /// <summary>
+        ///     Checks if this instance is safe to create given the currently set values when <see cref="Get" /> is called.
+        ///     Override this, check for the necessary values and throw a new <see cref="ArgumentException" />,
+        ///     <see cref="ArgumentNullException" /> or <see cref="ArgumentOutOfRangeException" />.
+        /// </summary>
+        protected abstract void Check();
     }
 }

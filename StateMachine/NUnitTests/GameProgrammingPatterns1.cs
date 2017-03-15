@@ -39,7 +39,7 @@ namespace StateMachine.NUnitTests
         public void GamingProgrammingPatternsTest1()
         {
             State<string> ducking = new State<string>("ducking");
-            State<string> standing = new State<string>("standing").Set().ClearStack(true).Get();
+            State<string> standing = State<string>.Builder().Name("standing").ClearStack(true).Get();
             State<string> jumping = new State<string>("jumping");
             State<string> diving = new State<string>("diving");
 
@@ -47,11 +47,7 @@ namespace StateMachine.NUnitTests
             standing.Add(Transition<string>.Builder().Name("duck").Trigger("down").Target(ducking).Get())
                 .Add(Transition<string>.Builder().Name("jump").Trigger("B").Target(jumping).Get());
             jumping.Add(Transition<string>.Builder().Name("dive").Trigger("down").Target(diving).Get());
-
-            Transition<string> test =
-                Transition<string>.Builder().Name("stand_up").Trigger("down").Target(standing).Get();
-            test.Set().Name("test");
-
+            
             Machine<string> m =
                 new Machine<string>(standing).AddStateChangedHandler(ConsoleOut);
         }
@@ -61,7 +57,7 @@ namespace StateMachine.NUnitTests
         public void GamingProgrammingPatternsTest2()
         {
             State<string> ducking = new State<string>("ducking");
-            State<string> standing = new State<string>("standing").Set().ClearStack(true).Get();
+            State<string> standing = State<string>.Builder().Name("standing").ClearStack(true).Get();
             State<string> jumping = new State<string>("jumping");
             State<string> diving = new State<string>("diving");
             ducking.Add(Transition<string>.Builder().Name("stand_up").Trigger("down").Target(standing).Get());
