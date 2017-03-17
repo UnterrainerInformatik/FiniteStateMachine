@@ -25,40 +25,36 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using StateMachine.basic;
-
-namespace StateMachine.builders
+namespace StateMachine.Fluent
 {
-    public class StateBuilder<T> : BuilderBase<State<T>, StateBuilder<T>>
+    public class TransitionFluent<T> : FluentBase<Transition<T>, TransitionFluent<T>>
     {
-        public StateBuilder()
+        public TransitionFluent(Transition<T> transition) : base(transition)
         {
         }
 
-        public StateBuilder(State<T> state) : base(state)
-        {
-        }
-
-        public StateBuilder<T> Name(string v)
+        public TransitionFluent<T> Name(string v)
         {
             Model.Name = v;
             return this;
         }
 
-        public StateBuilder<T> EndState(bool v)
+        public TransitionFluent<T> Trigger(T v)
         {
-            Model.EndState = v;
+            Model.Trigger = v;
             return this;
         }
 
-        public StateBuilder<T> ClearStack(bool v)
+        public TransitionFluent<T> Target(State<T> v)
         {
-            Model.ClearStack = v;
+            Model.Target = v;
             return this;
         }
 
-        protected override void Check()
+        public TransitionFluent<T> Pop(bool v)
         {
+            Model.Pop = v;
+            return this;
         }
     }
 }

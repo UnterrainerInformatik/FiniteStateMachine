@@ -25,46 +25,35 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using StateMachine.basic;
+using NUnit.Framework;
 
-namespace StateMachine
+namespace StateMachine.NUnitTests
 {
-    public class TransitionBuilder<T> : BuilderBase<Transition<T>, TransitionBuilder<T>>
+    [TestFixture]
+    [Category("FluentTests")]
+    public class FluentTests
     {
-        public TransitionBuilder()
+        [Test]
+        [Category("FluentTests")]
+        public void BuilderTest()
         {
-        }
+            Transition<string> t1 = new Transition<string> {Name = "name", Trigger = "trigger"};
 
-        public TransitionBuilder(Transition<T> transition) : base(transition)
-        {
-        }
+            Assert.That("name", Is.EqualTo(t1.Name));
+            Assert.That("trigger", Is.EqualTo(t1.Trigger));
 
-        public TransitionBuilder<T> Name(string v)
-        {
-            Model.Name = v;
-            return this;
-        }
+            t1.Set().Name("n1");
+            Assert.That("n1", Is.EqualTo(t1.Name));
 
-        public TransitionBuilder<T> Trigger(T v)
-        {
-            Model.Trigger = v;
-            return this;
-        }
+            t1.Set().Name("n2").Get();
+            Assert.That("n2", Is.EqualTo(t1.Name));
 
-        public TransitionBuilder<T> Target(State<T> v)
-        {
-            Model.Target = v;
-            return this;
-        }
+            Transition<string> t2 = t1;
+            Assert.That("n2", Is.EqualTo(t2.Name));
 
-        public TransitionBuilder<T> Pop(bool v)
-        {
-            Model.Pop = v;
-            return this;
-        }
-
-        protected override void Check()
-        {
+            t2 = t1.Set().Name("n3").Get();
+            Assert.That("n3", Is.EqualTo(t1.Name));
+            Assert.That("n3", Is.EqualTo(t2.Name));
         }
     }
 }

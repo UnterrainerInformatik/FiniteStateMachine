@@ -27,6 +27,7 @@
 
 using System;
 using JetBrains.Annotations;
+using StateMachine.Fluent;
 
 namespace StateMachine
 {
@@ -35,7 +36,7 @@ namespace StateMachine
     {
         public event EventHandler<TransitioningValueArgs<T>> Transitioning;
 
-        private TransitionBuilder<T> FluentInterface { get; }
+        private TransitionFluent<T> FluentInterface { get; }
 
         public string Name { get; set; }
         public T Trigger { get; set; }
@@ -43,27 +44,18 @@ namespace StateMachine
         public bool Pop { get; set; }
 
         /// <summary>
-        ///     Creates a fluent builder object that allows you to set all the values of the object more conveniently.
-        /// </summary>
-        /// <returns>A fluent builder object.</returns>
-        public static TransitionBuilder<T> Builder()
-        {
-            return new TransitionBuilder<T>();
-        }
-
-        /// <summary>
         ///     Returns a fluent setter object that allows you to set all the values of the object more conveniently without
         ///     re-creating the instance.
         /// </summary>
         /// <returns>A fluent setter object.</returns>
-        public TransitionBuilder<T> Set()
+        public TransitionFluent<T> Set()
         {
             return FluentInterface;
         }
 
         public Transition()
         {
-            FluentInterface = new TransitionBuilder<T>(this);
+            FluentInterface = new TransitionFluent<T>(this);
         }
 
         public Transition(string name, T trigger, State<T> target):this()

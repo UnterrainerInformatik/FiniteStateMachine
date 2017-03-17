@@ -25,35 +25,30 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using NUnit.Framework;
-
-namespace StateMachine.NUnitTests
+namespace StateMachine.Fluent
 {
-    [TestFixture]
-    [Category("BuilderTests")]
-    public class BuilderTests
+    public class StateFluent<T> : FluentBase<State<T>, StateFluent<T>>
     {
-        [Test]
-        [Category("BuilderTests")]
-        public void BuilderTest()
+        public StateFluent(State<T> state) : base(state)
         {
-            Transition<string> t1 = Transition<string>.Builder().Name("name").Trigger("trigger").Get();
+        }
 
-            Assert.That("name", Is.EqualTo(t1.Name));
-            Assert.That("trigger", Is.EqualTo(t1.Trigger));
+        public StateFluent<T> Name(string v)
+        {
+            Model.Name = v;
+            return this;
+        }
 
-            t1.Set().Name("n1");
-            Assert.That("n1", Is.EqualTo(t1.Name));
+        public StateFluent<T> EndState(bool v)
+        {
+            Model.EndState = v;
+            return this;
+        }
 
-            t1.Set().Name("n2").Get();
-            Assert.That("n2", Is.EqualTo(t1.Name));
-
-            Transition<string> t2 = t1;
-            Assert.That("n2", Is.EqualTo(t2.Name));
-
-            t2 = t1.Set().Name("n3").Get();
-            Assert.That("n3", Is.EqualTo(t1.Name));
-            Assert.That("n3", Is.EqualTo(t2.Name));
+        public StateFluent<T> ClearStack(bool v)
+        {
+            Model.ClearStack = v;
+            return this;
         }
     }
 }
