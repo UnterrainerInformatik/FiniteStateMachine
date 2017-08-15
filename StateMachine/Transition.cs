@@ -27,6 +27,7 @@
 
 using System;
 using JetBrains.Annotations;
+using StateMachine.Events;
 using StateMachine.Fluent;
 
 namespace StateMachine

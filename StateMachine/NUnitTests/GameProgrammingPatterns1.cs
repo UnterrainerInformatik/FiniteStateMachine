@@ -25,7 +25,6 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
 using NUnit.Framework;
 
 namespace StateMachine.NUnitTests
@@ -48,7 +47,7 @@ namespace StateMachine.NUnitTests
             jumping.Add(new Transition<string> {Name = "dive", Trigger = "down", Target = diving});
 
             Machine<string> m =
-                new Machine<string>(standing).AddStateChangedHandler(ConsoleOut);
+                new Machine<string>(standing).AddStateChangedHandler(TestTools.ConsoleOut);
         }
 
         [Test]
@@ -65,7 +64,7 @@ namespace StateMachine.NUnitTests
             jumping.Add(new Transition<string> {Name = "dive", Trigger = "down", Target = diving});
 
             Machine<string> m =
-                new Machine<string>(standing).AddStateChangedHandler(ConsoleOut);
+                new Machine<string>(standing).AddStateChangedHandler(TestTools.ConsoleOut);
 
             // Now for the weapons-machine with basic forward- and backward-rotation.
             State<string> emptyHanded = new State<string>("empty_handed");
@@ -82,12 +81,7 @@ namespace StateMachine.NUnitTests
                 .Add(new Transition<string> {Name = "rotate_weapon_back", Trigger = "shift-tab", Target = shotgun});
 
             Machine<string> w =
-                new Machine<string>(emptyHanded).AddStateChangedHandler(ConsoleOut);
-        }
-
-        private void ConsoleOut(object sender, TransitioningValueArgs<string> e)
-        {
-            Console.Out.WriteLine($"From [{e.From}] with [{e.Input}] to [{e.To}]");
+                new Machine<string>(emptyHanded).AddStateChangedHandler(TestTools.ConsoleOut);
         }
     }
 }

@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
+using StateMachine.Events;
 using StateMachine.Fluent;
 
 namespace StateMachine

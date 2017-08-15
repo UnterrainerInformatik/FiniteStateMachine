@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
+using StateMachine.Events;
 
 namespace StateMachine
 {
@@ -36,6 +37,7 @@ namespace StateMachine
     public class Machine<T> : Updatable
     {
         public event EventHandler<TransitioningValueArgs<T>> StateChanged;
+        public event EventHandler<InputReceivedValueArgs<T>> InputReceived;
 
         public State<T> Current { get; set; }
         public Stack<State<T>> Stack { get; } = new Stack<State<T>>();
@@ -55,8 +57,15 @@ namespace StateMachine
             return this;
         }
 
+        public Machine<T> AddInputReceivedHandler(EventHandler<InputReceivedValueArgs<T>> e)
+        {
+            InputReceived += e;
+            return this;
+        }
+
         public void Process(T input)
         {
+            InputReceived?.Invoke(this, new InputReceivedValueArgs<T>(Current, input));
             State<T> old = Current;
             Transition<T> t = Current.Process(input);
 

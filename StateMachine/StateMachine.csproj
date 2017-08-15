@@ -62,11 +62,13 @@
     <Compile Include="NUnitTests\GameProgrammingPatterns1.cs" />
     <Compile Include="NUnitTests\FluentTests.cs" />
     <Compile Include="NUnitTests\SimpleTests.cs" />
+    <Compile Include="NUnitTests\TestTools.cs" />
     <Compile Include="State.cs" />
     <Compile Include="Transition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Fluent\TransitionFluent.cs" />
-    <Compile Include="TransitioningValueArgs.cs" />
+    <Compile Include="Events\InputReceivedValueArgs.cs" />
+    <Compile Include="Events\TransitioningValueArgs.cs" />
     <Compile Include="Updatable.cs" />
   </ItemGroup>
   <ItemGroup>

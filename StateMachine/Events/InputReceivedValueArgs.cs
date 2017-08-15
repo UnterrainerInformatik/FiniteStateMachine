@@ -27,19 +27,17 @@
 
 using JetBrains.Annotations;
 
-namespace StateMachine
+namespace StateMachine.Events
 {
     [PublicAPI]
-    public struct TransitioningValueArgs<T>
+    public struct InputReceivedValueArgs<T>
     {
         public State<T> From { get; }
-        public State<T> To { get; }
         public T Input { get; }
 
-        public TransitioningValueArgs(State<T> @from, State<T> to, T input)
+        public InputReceivedValueArgs(State<T> @from, T input)
         {
             From = @from;
-            To = to;
             Input = input;
         }
     }

@@ -25,7 +25,6 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
 using NUnit.Framework;
 
 namespace StateMachine.NUnitTests
@@ -44,7 +43,7 @@ namespace StateMachine.NUnitTests
             closed.Add(new Transition<string>("open", "o", opened)).Add(new Transition<string>("close", "c", closed));
 
             Machine<string> m =
-                new Machine<string>(opened).AddStateChangedHandler(ConsoleOut);
+                new Machine<string>(opened).AddStateChangedHandler(TestTools.ConsoleOut);
 
             m.Process("o");
             Assert.That("opened", Is.EqualTo(m.Current.Name));
@@ -63,11 +62,6 @@ namespace StateMachine.NUnitTests
             Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new[] {opened}));
         }
 
-        private void ConsoleOut(object sender, TransitioningValueArgs<string> e)
-        {
-            Console.Out.WriteLine($"From [{e.From}] with [{e.Input}] to [{e.To}]");
-        }
-
         [Test]
         [Category("StateMachine.Simple")]
         public void SimpleTestWithPop()
@@ -82,7 +76,7 @@ namespace StateMachine.NUnitTests
             closed.Add(new Transition<string>("open", "o", opened)).Add(new Transition<string>("close", "c", closed));
 
             Machine<string> m =
-                new Machine<string>(opened).AddStateChangedHandler(ConsoleOut);
+                new Machine<string>(opened).AddStateChangedHandler(TestTools.ConsoleOut);
 
             m.Process("o");
             Assert.That("opened", Is.EqualTo(m.Current.Name));
