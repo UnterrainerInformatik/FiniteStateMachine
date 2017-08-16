@@ -45,3 +45,144 @@ He's making a point using a **F**inite **S**tate **M**achine (FSM) that looks li
 
 So the file ```GameProgrammingPatterns1.cs``` in the test-folder contains that machine.
 
+## What we aim for
+
+This is a short paragraph that is about an example what configuring a state machine should actually look like. This is pseudo code and work-in-progress.
+
+```c#
+private enum State { DUCKING, STANDING, JUMPING, DESCENDING, DIVING };
+private enum Trigger { DOWN_RELEASED, DOWN_PRESSED, UP_PRESSED, SPACE_PRESSED };
+
+private Fsm<State, Trigger> machine;
+
+private Keys[] lastKeysPressed;
+private Hero hero;
+
+public void main() {
+  machine = Fsm.Build<State, Trigger>()
+    .State(STANDING).IsInitialState()
+      .TransisionsTo(DUCKING).On(DOWN_PRESSED)
+      .TransisionsTo(JUMPING).On(UP_PRESSED)
+      .OnEnter(ConsoleOut)
+      .OnExit(Console.Out.WriteLine($"From [{e.From}] with [{e.Input}] to [{e.To}]"))
+      .Update(state, gameTime => {
+        hero.Animation = Animation.IDLE;
+      })
+    .State(DUCKING)
+      .TransisionsTo(STANDING).On(DOWN_RELEASED)
+      .OnEnter(ConsoleOut)
+      .OnExit(ConsoleOut)
+      .Update(state, gameTime => {
+        hero.Animation = Animation.DUCKING;
+      })
+    .State(JUMPING)
+      .TransisionsTo(DIVING).On(DOWN_PRESSED)
+      .OnEnter(ConsoleOut)
+      .OnExit(ConsoleOut)
+      .Update(state, gameTime => {
+        hero.Animation = Animation.JUMPING;
+        hero.height += gameTime.ElapsedGameTime.TotalSeconds * 100F;
+        if(hero.height >= 200F)
+          machine.TransitionTo(DESCENDING);
+      })
+    .State(DESCENDING)
+      .TransisionsTo(DIVING).On(DOWN_PRESSED)
+      .OnEnter(ConsoleOut)
+      .OnExit(ConsoleOut)
+      .Update(state, gameTime => {
+        hero.Animation = Animation.DESCENDING;
+        hero.height -= gameTime.ElapsedGameTime.TotalSeconds * 100F;
+        if(hero.height <= 0F) {
+          hero.height = 0F;
+          machine.TransitionTo(STANDING);
+        }
+      })
+    .State(DIVING)
+      .TransisionsTo(DESCENDING).On(DOWN_RELEASED)
+      .OnEnter(ConsoleOut)
+      .OnExit(ConsoleOut)
+      .Update(state, gameTime => {
+        hero.Animation = Animation.DIVING;
+        hero.height -= gameTime.ElapsedGameTime.TotalSeconds * 150F;
+        if(hero.height <= 0F) {
+          hero.height = 0F;
+          machine.TransitionTo(STANDING);
+        }
+      })
+    .GlobalTransitionTo(STANDING).On(SPACE_PRESSED)
+    .Build();
+}
+
+protected override void Update(GameTime gameTime) {
+  if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+    Exit();
+  
+  var s = Keyboard.GetState();
+  if (s.IsKeyDown(Keys.Up))
+    machine.Trigger(UP_PRESSED);
+  if (s.IsKeyDown(Keys.Down))
+    machine.Trigger(DOWN_PRESSED);
+  if (!s.IsKeyDown(Keys.Down) && lastKeysPressed.Contains(Keys.Down))
+    machine.Trigger(DOWN_RELEASED);
+  
+  lastKeysPressed = s.GetPressedKeys();
+  machine.Update(gameTime);
+}
+
+private void ConsoleOut(TransitioningValueArgs<string> e) {
+  Console.Out.WriteLine($"From [{e.From}] with [{e.Input}] to [{e.To}]");
+}
+```
+
+Another example with a spell-button that has a refresh-time:
+
+```c#
+private enum State { IDLE, OVER, PRESSED, REFRESHING };
+private enum Trigger { MOUSE_CLICKED, MOUSE_RELEASED, MOUSE_OVER, MOUSE_LEAVE };
+
+private Dictionary<Button, Fsm<State, Trigger>> buttonMachines = new Dictionary<Button, Fsm<State, Trigger>>();
+
+private void CreateMachineFor(Button button)
+  buttonMachines.Add(button, Fsm.Build<State, Trigger>()
+    .State(IDLE).IsInitialState()
+      .TransisionsTo(OVER).On(MOUSE_OVER)
+      .OnEnter(e => {
+        button.State = ButtonState.IDLE;
+      })
+    .State(OVER)
+      .TransisionsTo(IDLE).On(MOUSE_LEAVE)
+      .TransisionsTo(PRESSED).On(MOUSE_CLICKED)
+      .OnEnter(e => {
+        button.State = ButtonState.OVER;
+      })
+    .State(PRESSED)
+      .TransisionsTo(IDLE).On(MOUSE_LEAVE)
+      .TransisionsTo(REFRESHING).On(MOUSE_RELEASED)
+      .OnEnter(e => {
+        button.State = ButtonState.DOWN;
+      })
+    .State(REFRESHING)
+      .OnEnter(e => {
+        hero.doSpell(button.DoAssociatedSpell());
+        button.RefreshTimer.Start();
+        button.State = ButtonState.REFRESHING;
+      })
+      .Update(state, gameTime => {
+        if(button.RefreshTimer.Value <= 0F) {
+          button.RefreshTimer.StopAndReset();
+          machine.TransitionTo(IDLE);
+        }
+      })
+    .Build();
+}
+
+public void main() {
+  Button b1 = new Button("name1", "someText", ...);
+  Button b2 = new Button("name2", "someOtherText", ...);
+  
+  CreateMachineFor(b1);
+  CreateMachineFor(b2);
+  ...
+}
+```
+

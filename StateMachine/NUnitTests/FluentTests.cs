@@ -39,21 +39,21 @@ namespace StateMachine.NUnitTests
         {
             Transition<string> t1 = new Transition<string> {Name = "name", Trigger = "trigger"};
 
-            Assert.That("name", Is.EqualTo(t1.Name));
-            Assert.That("trigger", Is.EqualTo(t1.Trigger));
+            Assert.That(t1.Name, Is.EqualTo("name"));
+            Assert.That(t1.Trigger, Is.EqualTo("trigger"));
 
             t1.Set().Name("n1");
-            Assert.That("n1", Is.EqualTo(t1.Name));
+            Assert.That(t1.Name, Is.EqualTo("n1"));
 
             t1.Set().Name("n2").Get();
-            Assert.That("n2", Is.EqualTo(t1.Name));
+            Assert.That(t1.Name, Is.EqualTo("n2"));
 
             Transition<string> t2 = t1;
-            Assert.That("n2", Is.EqualTo(t2.Name));
+            Assert.That(t2.Name, Is.EqualTo("n2"));
 
             t2 = t1.Set().Name("n3").Get();
-            Assert.That("n3", Is.EqualTo(t1.Name));
-            Assert.That("n3", Is.EqualTo(t2.Name));
+            Assert.That(t1.Name, Is.EqualTo("n3"));
+            Assert.That(t2.Name, Is.EqualTo("n3"));
         }
     }
 }
