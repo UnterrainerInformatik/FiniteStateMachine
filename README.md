@@ -50,63 +50,138 @@ So the file ```GameProgrammingPatterns1.cs``` in the test-folder contains that m
 This is a short paragraph that is about an example what configuring a state machine should actually look like. This is pseudo code and work-in-progress.
 
 ```c#
-private enum State { DUCKING, STANDING, JUMPING, DESCENDING, DIVING };
-private enum Trigger { DOWN_RELEASED, DOWN_PRESSED, UP_PRESSED, SPACE_PRESSED };
+private enum VState { DUCKING, STANDING, JUMPING, DESCENDING, DIVING };
+private enum VTrigger { DOWN_RELEASED, DOWN_PRESSED, UP_PRESSED, SPACE_PRESSED };
 
-private Fsm<State, Trigger> machine;
+private enum HState { STANDING, RUNNING_LEFT, RUNNING_RIGHT, WALKING_LEFT, WALKING_RIGHT,
+                      WALKING_DELAY_LEFT, WALKING_DELAY_RIGHT};
+private enum HTrigger { LEFT_PRESSED, LEFT_RELEASED, RIGHT_PRESSED, RIGHT_RELEASED };
+
+private Fsm<State, Trigger> verticalMachine;
+private Fsm<State, Trigger> horizontalMachine;
 
 private Keys[] lastKeysPressed;
 private Hero hero;
 
 public void main() {
-  machine = Fsm.Build<State, Trigger>()
+  horizontalMachine = Fsm.Builder<HState, HTrigger>()
+    .State(STANDING).IsInitialState()
+      .TransisionsTo(WALKING_LEFT).On(LEFT_PRESSED)
+      .TransisionsTo(WALKING_RIGHT).On(RIGHT_PRESSED)
+      .OnEnter(() => {
+        ConsoleOut();
+        hero.HAnimation = HAnimation.STANDING;
+        hero.delayTimer.StopAndReset();
+      })
+    .State(WALKING_LEFT)
+      .TransisionsTo(WALKING_DELAY_LEFT).On(LEFT_RELEASED)
+      .OnEnter(() => {
+        ConsoleOut();
+        hero.HAnimation = HAnimation.WALK_LEFT;
+        hero.delayTimer.StopAndReset();
+      })
+    .State(WALKING_RIGHT)
+      .TransisionsTo(WALKING_DELAY_RIGHT).On(RIGHT_RELEASED)
+      .OnEnter(() => {
+        ConsoleOut();
+        hero.HAnimation = HAnimation.WALK_RIGHT;
+        hero.delayTimer.StopAndReset();
+      })
+    .State(WALKING_DELAY_LEFT)
+      .TransisionsTo(WALKING_RIGHT).On(RIGHT_PRESSED)
+      .TransisionsTo(RUNNING_LEFT).On(LEFT_PRESSED)
+      .OnEnter(() => {
+        hero.delayTimer.Start();
+      })
+      .Update(state, gameTime => {
+        hero.delayTimer.Update(gameTime);
+        if(hero.delayTimer) {
+          horizontalMachine.TransitionTo(STANDING);
+        }
+      })
+    .State(WALKING_DELAY_RIGHT)
+      .TransisionsTo(WALKING_LEFT).On(LEFT_PRESSED)
+      .TransisionsTo(RUNNING_RIGHT).On(RIGHT_PRESSED)
+      .OnEnter(() => {
+        hero.delayTimer.Start();
+      })
+      .Update(state, gameTime => {
+        hero.delayTimer.Update(gameTime);
+        if(hero.delayTimer) {
+          horizontalMachine.TransitionTo(STANDING);
+        }
+      })
+    .State(RUNNING_LEFT)
+      .TransisionsTo(STANDING).On(LEFT_RELEASED)
+      .OnEnter(() => {
+        ConsoleOut();
+        hero.HAnimation = HAnimation.RUNNING_LEFT;
+        hero.delayTimer.StopAndReset();
+      })
+    .State(RUNNING_RIGHT)
+      .TransisionsTo(STANDING).On(RIGHT_RELEASED)
+      .OnEnter(() => {
+        ConsoleOut();
+        hero.HAnimation = HAnimation.RUNNING_RIGHT;
+        hero.delayTimer.StopAndReset();
+      })
+    .GlobalTransitionTo(STANDING).On(SPACE_PRESSED)
+    .Build();
+  
+  verticalMachine = Fsm.Builder<VState, VTrigger>()
     .State(STANDING).IsInitialState()
       .TransisionsTo(DUCKING).On(DOWN_PRESSED)
       .TransisionsTo(JUMPING).On(UP_PRESSED)
-      .OnEnter(ConsoleOut)
-      .OnExit(Console.Out.WriteLine($"From [{e.From}] with [{e.Input}] to [{e.To}]"))
-      .Update(state, gameTime => {
-        hero.Animation = Animation.IDLE;
+      .OnEnter(() => {
+        ConsoleOut();
+        hero.VAnimation = VAnimation.IDLE;
       })
+      .OnExit(Console.Out.WriteLine($"From [{e.From}] with [{e.Input}] to [{e.To}]"))
     .State(DUCKING)
       .TransisionsTo(STANDING).On(DOWN_RELEASED)
-      .OnEnter(ConsoleOut)
-      .OnExit(ConsoleOut)
-      .Update(state, gameTime => {
-        hero.Animation = Animation.DUCKING;
+      .OnEnter(() => {
+        ConsoleOut();
+        hero.VAnimation = VAnimation.DUCKING;
       })
+      .OnExit(ConsoleOut)
     .State(JUMPING)
       .TransisionsTo(DIVING).On(DOWN_PRESSED)
-      .OnEnter(ConsoleOut)
+      .OnEnter(() => {
+        ConsoleOut();
+        hero.VAnimation = VAnimation.JUMPING;
+      })
       .OnExit(ConsoleOut)
       .Update(state, gameTime => {
-        hero.Animation = Animation.JUMPING;
         hero.height += gameTime.ElapsedGameTime.TotalSeconds * 100F;
         if(hero.height >= 200F)
-          machine.TransitionTo(DESCENDING);
+          verticalMachine.TransitionTo(DESCENDING);
       })
     .State(DESCENDING)
       .TransisionsTo(DIVING).On(DOWN_PRESSED)
-      .OnEnter(ConsoleOut)
+      .OnEnter(() => {
+        ConsoleOut();
+        hero.VAnimation = VAnimation.DESCENDING;
+      })
       .OnExit(ConsoleOut)
       .Update(state, gameTime => {
-        hero.Animation = Animation.DESCENDING;
         hero.height -= gameTime.ElapsedGameTime.TotalSeconds * 100F;
         if(hero.height <= 0F) {
           hero.height = 0F;
-          machine.TransitionTo(STANDING);
+          verticalMachine.TransitionTo(STANDING);
         }
       })
     .State(DIVING)
       .TransisionsTo(DESCENDING).On(DOWN_RELEASED)
-      .OnEnter(ConsoleOut)
+      .OnEnter(() => {
+        ConsoleOut();
+        hero.VAnimation = VAnimation.DIVING;
+      })
       .OnExit(ConsoleOut)
       .Update(state, gameTime => {
-        hero.Animation = Animation.DIVING;
         hero.height -= gameTime.ElapsedGameTime.TotalSeconds * 150F;
         if(hero.height <= 0F) {
           hero.height = 0F;
-          machine.TransitionTo(STANDING);
+          verticalMachine.TransitionTo(STANDING);
         }
       })
     .GlobalTransitionTo(STANDING).On(SPACE_PRESSED)
@@ -119,14 +194,24 @@ protected override void Update(GameTime gameTime) {
   
   var s = Keyboard.GetState();
   if (s.IsKeyDown(Keys.Up))
-    machine.Trigger(UP_PRESSED);
+    verticalMachine.Trigger(UP_PRESSED);
   if (s.IsKeyDown(Keys.Down))
-    machine.Trigger(DOWN_PRESSED);
+    verticalMachine.Trigger(DOWN_PRESSED);
   if (!s.IsKeyDown(Keys.Down) && lastKeysPressed.Contains(Keys.Down))
-    machine.Trigger(DOWN_RELEASED);
+    verticalMachine.Trigger(DOWN_RELEASED);
+  
+  if (s.IsKeyDown(Keys.Left))
+    horizontalMachine.Trigger(LEFT_PRESSED);
+  if (s.IsKeyDown(Keys.Right))
+    horizontalMachine.Trigger(RIGHT_PRESSED);
+  if (!s.IsKeyDown(Keys.Right) && lastKeysPressed.Contains(Keys.Right))
+    horizontalMachine.Trigger(RIGHT_RELEASED);
+  if (!s.IsKeyDown(Keys.Left) && lastKeysPressed.Contains(Keys.Left))
+    horizontalMachine.Trigger(LEFT_RELEASED);
   
   lastKeysPressed = s.GetPressedKeys();
-  machine.Update(gameTime);
+  verticalMachine.Update(gameTime);
+  horizontalMachine.Update(gameTime);
 }
 
 private void ConsoleOut(TransitioningValueArgs<string> e) {
@@ -143,7 +228,7 @@ private enum Trigger { MOUSE_CLICKED, MOUSE_RELEASED, MOUSE_OVER, MOUSE_LEAVE };
 private Dictionary<Button, Fsm<State, Trigger>> buttonMachines = new Dictionary<Button, Fsm<State, Trigger>>();
 
 private void CreateMachineFor(Button button)
-  buttonMachines.Add(button, Fsm.Build<State, Trigger>()
+  buttonMachines.Add(button, Fsm.Builder<State, Trigger>()
     .State(IDLE).IsInitialState()
       .TransisionsTo(OVER).On(MOUSE_OVER)
       .OnEnter(e => {
@@ -185,4 +270,14 @@ public void main() {
   ...
 }
 ```
+
+Manual:
+
+| Builder | State |      |      |
+| ------- | ----- | ---- | ---- |
+|         |       |      |      |
+|         |       |      |      |
+|         |       |      |      |
+|         |       |      |      |
+|         |       |      |      |
 
