@@ -64,33 +64,33 @@ private Keys[] lastKeysPressed;
 private Hero hero;
 
 public void main() {
-  horizontalMachine = Fsm.Builder<HState, HTrigger>()
-    .State(STANDING).IsInitialState()
-      .TransisionsTo(WALKING_LEFT).On(LEFT_PRESSED)
-      .TransisionsTo(WALKING_RIGHT).On(RIGHT_PRESSED)
-      .OnEnter(() => {
+  horizontalMachine = Fsm.Builder<HState, HTrigger>(STANDING)
+    .State(STANDING)
+      .TransisionTo(WALKING_LEFT).On(LEFT_PRESSED)
+      .TransisionTo(WALKING_RIGHT).On(RIGHT_PRESSED)
+      .OnEnter(e => {
         ConsoleOut();
         hero.HAnimation = HAnimation.STANDING;
         hero.delayTimer.StopAndReset();
       })
     .State(WALKING_LEFT)
-      .TransisionsTo(WALKING_DELAY_LEFT).On(LEFT_RELEASED)
-      .OnEnter(() => {
+      .TransisionTo(WALKING_DELAY_LEFT).On(LEFT_RELEASED)
+      .OnEnter(e => {
         ConsoleOut();
         hero.HAnimation = HAnimation.WALK_LEFT;
         hero.delayTimer.StopAndReset();
       })
     .State(WALKING_RIGHT)
-      .TransisionsTo(WALKING_DELAY_RIGHT).On(RIGHT_RELEASED)
-      .OnEnter(() => {
+      .TransisionTo(WALKING_DELAY_RIGHT).On(RIGHT_RELEASED)
+      .OnEnter(e => {
         ConsoleOut();
         hero.HAnimation = HAnimation.WALK_RIGHT;
         hero.delayTimer.StopAndReset();
       })
     .State(WALKING_DELAY_LEFT)
-      .TransisionsTo(WALKING_RIGHT).On(RIGHT_PRESSED)
-      .TransisionsTo(RUNNING_LEFT).On(LEFT_PRESSED)
-      .OnEnter(() => {
+      .TransisionTo(WALKING_RIGHT).On(RIGHT_PRESSED)
+      .TransisionTo(RUNNING_LEFT).On(LEFT_PRESSED)
+      .OnEnter(e => {
         hero.delayTimer.Start();
       })
       .Update(state, gameTime => {
@@ -100,9 +100,9 @@ public void main() {
         }
       })
     .State(WALKING_DELAY_RIGHT)
-      .TransisionsTo(WALKING_LEFT).On(LEFT_PRESSED)
-      .TransisionsTo(RUNNING_RIGHT).On(RIGHT_PRESSED)
-      .OnEnter(() => {
+      .TransisionTo(WALKING_LEFT).On(LEFT_PRESSED)
+      .TransisionTo(RUNNING_RIGHT).On(RIGHT_PRESSED)
+      .OnEnter(e => {
         hero.delayTimer.Start();
       })
       .Update(state, gameTime => {
@@ -112,15 +112,15 @@ public void main() {
         }
       })
     .State(RUNNING_LEFT)
-      .TransisionsTo(STANDING).On(LEFT_RELEASED)
-      .OnEnter(() => {
+      .TransisionTo(STANDING).On(LEFT_RELEASED)
+      .OnEnter(e => {
         ConsoleOut();
         hero.HAnimation = HAnimation.RUNNING_LEFT;
         hero.delayTimer.StopAndReset();
       })
     .State(RUNNING_RIGHT)
-      .TransisionsTo(STANDING).On(RIGHT_RELEASED)
-      .OnEnter(() => {
+      .TransisionTo(STANDING).On(RIGHT_RELEASED)
+      .OnEnter(e => {
         ConsoleOut();
         hero.HAnimation = HAnimation.RUNNING_RIGHT;
         hero.delayTimer.StopAndReset();
@@ -128,25 +128,25 @@ public void main() {
     .GlobalTransitionTo(STANDING).On(SPACE_PRESSED)
     .Build();
   
-  verticalMachine = Fsm.Builder<VState, VTrigger>()
-    .State(STANDING).IsInitialState()
-      .TransisionsTo(DUCKING).On(DOWN_PRESSED)
-      .TransisionsTo(JUMPING).On(UP_PRESSED)
-      .OnEnter(() => {
+  verticalMachine = Fsm.Builder<VState, VTrigger>(STANDING)
+    .State(STANDING)
+      .TransisionTo(DUCKING).On(DOWN_PRESSED)
+      .TransisionTo(JUMPING).On(UP_PRESSED)
+      .OnEnter(e => {
         ConsoleOut();
         hero.VAnimation = VAnimation.IDLE;
       })
       .OnExit(Console.Out.WriteLine($"From [{e.From}] with [{e.Input}] to [{e.To}]"))
     .State(DUCKING)
-      .TransisionsTo(STANDING).On(DOWN_RELEASED)
-      .OnEnter(() => {
+      .TransisionTo(STANDING).On(DOWN_RELEASED)
+      .OnEnter(e => {
         ConsoleOut();
         hero.VAnimation = VAnimation.DUCKING;
       })
       .OnExit(ConsoleOut)
     .State(JUMPING)
-      .TransisionsTo(DIVING).On(DOWN_PRESSED)
-      .OnEnter(() => {
+      .TransisionTo(DIVING).On(DOWN_PRESSED)
+      .OnEnter(e => {
         ConsoleOut();
         hero.VAnimation = VAnimation.JUMPING;
       })
@@ -157,8 +157,8 @@ public void main() {
           verticalMachine.TransitionTo(DESCENDING);
       })
     .State(DESCENDING)
-      .TransisionsTo(DIVING).On(DOWN_PRESSED)
-      .OnEnter(() => {
+      .TransisionTo(DIVING).On(DOWN_PRESSED)
+      .OnEnter(e => {
         ConsoleOut();
         hero.VAnimation = VAnimation.DESCENDING;
       })
@@ -171,8 +171,8 @@ public void main() {
         }
       })
     .State(DIVING)
-      .TransisionsTo(DESCENDING).On(DOWN_RELEASED)
-      .OnEnter(() => {
+      .TransisionTo(DESCENDING).On(DOWN_RELEASED)
+      .OnEnter(e => {
         ConsoleOut();
         hero.VAnimation = VAnimation.DIVING;
       })
@@ -189,8 +189,7 @@ public void main() {
 }
 
 protected override void Update(GameTime gameTime) {
-  if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed 
-      || Keyboard.GetState().IsKeyDown(Keys.Escape))
+  if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
     Exit();
   
   var s = Keyboard.GetState();
@@ -229,21 +228,21 @@ private enum Trigger { MOUSE_CLICKED, MOUSE_RELEASED, MOUSE_OVER, MOUSE_LEAVE };
 private Dictionary<Button, Fsm<State, Trigger>> buttonMachines = new Dictionary<Button, Fsm<State, Trigger>>();
 
 private void CreateMachineFor(Button button)
-  buttonMachines.Add(button, Fsm.Builder<State, Trigger>()
-    .State(IDLE).IsInitialState()
-      .TransisionsTo(OVER).On(MOUSE_OVER)
+  buttonMachines.Add(button, Fsm.Builder<State, Trigger>(IDLE)
+    .State(IDLE)
+      .TransisionTo(OVER).On(MOUSE_OVER)
       .OnEnter(e => {
         button.State = ButtonState.IDLE;
       })
     .State(OVER)
-      .TransisionsTo(IDLE).On(MOUSE_LEAVE)
-      .TransisionsTo(PRESSED).On(MOUSE_CLICKED)
+      .TransisionTo(IDLE).On(MOUSE_LEAVE)
+      .TransisionTo(PRESSED).On(MOUSE_CLICKED)
       .OnEnter(e => {
         button.State = ButtonState.OVER;
       })
     .State(PRESSED)
-      .TransisionsTo(IDLE).On(MOUSE_LEAVE)
-      .TransisionsTo(REFRESHING).On(MOUSE_RELEASED)
+      .TransisionTo(IDLE).On(MOUSE_LEAVE).If(button.Kind == Kind.FLIPBACK)
+      .TransisionTo(REFRESHING).On(MOUSE_RELEASED)
       .OnEnter(e => {
         button.State = ButtonState.DOWN;
       })
@@ -272,13 +271,40 @@ public void main() {
 }
 ```
 
-Manual:
 
-| Builder | State |      |      |
-| ------- | ----- | ---- | ---- |
-|         |       |      |      |
-|         |       |      |      |
-|         |       |      |      |
-|         |       |      |      |
-|         |       |      |      |
 
+# Builder Interfaces
+
+<Builder> -> State, GlobalTransitionTo, Build
+
+Builder -> <Builder>
+
+<StateOrBack> -> TransisionTo, OnEnter, OnExit, Update, <Builder>
+
+State -> <StateOrBack>
+
+OnEnter -> <StateOrBack>
+
+OnExit -> <StateOrBack>
+
+Update -> <StateOrBack>
+
+<Trans> -> On_State, If_State
+
+TransitionTo -> <Trans>
+
+<OnIf> -> <StateOrBack>, <Trans>
+
+On_State -> <OnIf>
+
+If_State -> <OnIf>
+
+<GlobalTrans> -> On_Global, If_Global
+
+GlobalTransitionTo -> <GlobalTrans>
+
+<OnIfGlobal> -> <Builder>, <GlobalTrans>
+
+On_Global -> <OnIfGlobal>
+
+If_Global -> <OnIfGlobal>
