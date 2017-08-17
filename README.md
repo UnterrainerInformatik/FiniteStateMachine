@@ -275,36 +275,36 @@ public void main() {
 
 # Builder Interfaces
 
-<Builder> -> State, GlobalTransitionTo, Build
+**Builder** -> State, GlobalTransitionTo, Build
 
-Builder -> <Builder>
+Builder -> **Builder**
 
-<StateOrBack> -> TransisionTo, OnEnter, OnExit, Update, <Builder>
+**StateOrBack** -> TransisionTo, OnEnter, OnExit, Update, **Builder**
 
-State -> <StateOrBack>
+State -> **StateOrBack**
 
-OnEnter -> <StateOrBack>
+OnEnter -> **StateOrBack**
 
-OnExit -> <StateOrBack>
+OnExit -> **StateOrBack**
 
-Update -> <StateOrBack>
+Update -> **StateOrBack**
 
-<Trans> -> On_State, If_State
+**Trans** -> On_State, If_State
 
-TransitionTo -> <Trans>
+TransitionTo -> **Trans**
 
-<OnIf> -> <StateOrBack>, <Trans>
+**OnIf** -> **StateOrBack**, **Trans**
 
-On_State -> <OnIf>
+On_State -> **OnIf**
 
-If_State -> <OnIf>
+If_State -> **OnIf**
 
-<GlobalTrans> -> On_Global, If_Global
+**GlobalTrans** -> On_Global, If_Global
 
-GlobalTransitionTo -> <GlobalTrans>
+GlobalTransitionTo -> **GlobalTrans**
 
-<OnIfGlobal> -> <Builder>, <GlobalTrans>
+**OnIfGlobal** -> **Builder**, **GlobalTrans**
 
-On_Global -> <OnIfGlobal>
+On_Global -> **OnIfGlobal**
 
-If_Global -> <OnIfGlobal>
+If_Global -> **OnIfGlobal**
