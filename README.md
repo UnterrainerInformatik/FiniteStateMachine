@@ -308,3 +308,10 @@ GlobalTransitionTo -> **GlobalTrans**
 On_Global -> **OnIfGlobal**
 
 If_Global -> **OnIfGlobal**
+
+
+
+# Inspired by:
+
+* [Fluent-State-Machine](https://github.com/Real-Serious-Games/Fluent-State-Machine) - by RoryDungan (MIT License)
+* [Nate](https://github.com/mmonteleone/nate) - by mmonteleone (MIT License)
