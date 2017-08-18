@@ -28,7 +28,6 @@
 using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using Microsoft.Xna.Framework;
 using StateMachine.Events;
 using StateMachine.Fluent;
 
@@ -121,7 +120,7 @@ namespace StateMachine
             return Name;
         }
 
-        public virtual void Update(GameTime gameTime)
+        public virtual void Update(float gameTime)
         {
         }
     }

@@ -25,12 +25,10 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using Microsoft.Xna.Framework;
-
 namespace StateMachine
 {
     public interface Updatable
     {
-        void Update(GameTime gameTime);
+        void Update(float gameTime);
     }
 }
