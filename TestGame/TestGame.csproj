@@ -46,8 +46,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="MonoGame.Extended, Version=0.6.355.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MonoGame.Extended.0.6.355-ci-develop\lib\MonoGame.Extended.dll</HintPath>
+    <Reference Include="MonoGame.Extended, Version=0.6.568.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MonoGame.Extended.0.6.568\lib\portable-net45+win8+wpa81\MonoGame.Extended.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MonoGame.Framework">
