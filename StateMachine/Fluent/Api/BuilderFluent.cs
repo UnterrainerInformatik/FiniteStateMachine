@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace StateMachine.Fluent.Api
+﻿namespace StateMachine.Fluent.Api
 {
     interface BuilderFluent<STATE, TRIGGER>
     {
@@ -12,6 +6,6 @@ namespace StateMachine.Fluent.Api
 
         StateFluent<STATE, TRIGGER> State(STATE state);
 
-        Machine<STATE> Build();
+        Fsm<STATE, TRIGGER> Build();
     }
 }
