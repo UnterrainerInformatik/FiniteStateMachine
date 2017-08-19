@@ -1,18 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿// *************************************************************************** 
+// This is free and unencumbered software released into the public domain.
+// 
+// Anyone is free to copy, modify, publish, use, compile, sell, or
+// distribute this software, either in source code form or as a compiled
+// binary, for any purpose, commercial or non-commercial, and by any
+// means.
+// 
+// In jurisdictions that recognize copyright laws, the author or authors
+// of this software dedicate any and all copyright interest in the
+// software to the public domain. We make this dedication for the benefit
+// of the public at large and to the detriment of our heirs and
+// successors. We intend this dedication to be an overt act of
+// relinquishment in perpetuity of all present and future rights to this
+// software under copyright law.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+// OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+// ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+// 
+// For more information, please refer to <http://unlicense.org>
+// ***************************************************************************
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Animations;
 using MonoGame.Extended.Animations.SpriteSheets;
-using MonoGame.Extended.Sprites;
 using MonoGame.Extended.TextureAtlases;
+using SpriteExtensions = MonoGame.Extended.Sprites.SpriteExtensions;
 
 namespace TestGame
 {
     /// <summary>
-    /// This is the main type for your game.
+    ///     This is the main type for your game.
     /// </summary>
     public class Game1 : Game
     {
@@ -35,8 +59,8 @@ namespace TestGame
         }
 
         /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
+        ///     LoadContent will be called once per game and is the place to load
+        ///     all of your content.
         /// </summary>
         protected override void LoadContent()
         {
@@ -47,26 +71,27 @@ namespace TestGame
             atlas = TextureAtlas.Create("hero-atlas", texture, 50, 50, 24, 1, 1);
 
             var factory = new SpriteSheetAnimationFactory(atlas);
-            factory.Add("idle_left", new SpriteSheetAnimationData(new[] { 1 }));
-            factory.Add("idle_right", new SpriteSheetAnimationData(new[] { 0 }));
+            factory.Add("idle_left", new SpriteSheetAnimationData(new[] {1}));
+            factory.Add("idle_right", new SpriteSheetAnimationData(new[] {0}));
             factory.Add("walk_left", new SpriteSheetAnimationData(new[] {16, 17, 18, 19, 20, 21, 22, 23}));
-            factory.Add("walk_right", new SpriteSheetAnimationData(new[] { 8, 9, 10, 11, 12, 13, 14, 15 }));
-            factory.Add("jump_left", new SpriteSheetAnimationData(new[] { 5, 7 }, isLooping: false));
-            factory.Add("jump_right", new SpriteSheetAnimationData(new[] { 4, 6 }, isLooping: false));
-            factory.Add("duck_left", new SpriteSheetAnimationData(new[] { 3 }));
-            factory.Add("duck_right", new SpriteSheetAnimationData(new[] { 2 }));
+            factory.Add("walk_right", new SpriteSheetAnimationData(new[] {8, 9, 10, 11, 12, 13, 14, 15}));
+            factory.Add("jump_left", new SpriteSheetAnimationData(new[] {5, 7}, isLooping: false));
+            factory.Add("jump_right", new SpriteSheetAnimationData(new[] {4, 6}, isLooping: false));
+            factory.Add("duck_left", new SpriteSheetAnimationData(new[] {3}));
+            factory.Add("duck_right", new SpriteSheetAnimationData(new[] {2}));
 
             hero = new AnimatedSprite(factory);
         }
-        
+
         /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
+        ///     Allows the game to run logic such as updating the world,
+        ///     checking for collisions, gathering input, and playing audio.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
+                Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
             hero.Position = new Vector2(GraphicsDevice.Viewport.Width / 2f, GraphicsDevice.Viewport.Height / 2f);
@@ -116,20 +141,20 @@ namespace TestGame
                 }
             }
             hero.Update(gameTime);
-            
+
             base.Update(gameTime);
         }
 
         /// <summary>
-        /// This is called when the game should draw itself.
+        ///     This is called when the game should draw itself.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            
+
             spriteBatch.Begin();
-            spriteBatch.Draw(hero);
+            SpriteExtensions.Draw(hero, spriteBatch);
             spriteBatch.End();
 
             base.Draw(gameTime);
