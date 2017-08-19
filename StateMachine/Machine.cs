@@ -28,7 +28,6 @@
 using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using Microsoft.Xna.Framework;
 using StateMachine.Events;
 
 namespace StateMachine
@@ -93,7 +92,7 @@ namespace StateMachine
             }
         }
 
-        public void Update(GameTime gameTime)
+        public void Update(float gameTime)
         {
             Current.Update(gameTime);
         }
