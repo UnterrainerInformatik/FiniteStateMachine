@@ -27,31 +27,32 @@
 
 namespace StateMachine.Fluent
 {
-    public class TransitionFluent<T> : FluentBase<Transition<T>, TransitionFluent<T>>
+    public class TransitionFluent<TState, TTrigger, TGameTime> :
+        FluentBase<Transition<TState, TTrigger, TGameTime>, TransitionFluent<TState, TTrigger, TGameTime>>
     {
-        public TransitionFluent(Transition<T> transition) : base(transition)
+        public TransitionFluent(Transition<TState, TTrigger, TGameTime> transition) : base(transition)
         {
         }
 
-        public TransitionFluent<T> Name(string v)
+        public TransitionFluent<TState, TTrigger, TGameTime> Name(string v)
         {
             Model.Name = v;
             return this;
         }
 
-        public TransitionFluent<T> Trigger(T v)
+        public TransitionFluent<TState, TTrigger, TGameTime> Trigger(TTrigger v)
         {
             Model.Trigger = v;
             return this;
         }
 
-        public TransitionFluent<T> Target(State<T> v)
+        public TransitionFluent<TState, TTrigger, TGameTime> Target(State<TState, TTrigger, TGameTime> v)
         {
             Model.Target = v;
             return this;
         }
 
-        public TransitionFluent<T> Pop(bool v)
+        public TransitionFluent<TState, TTrigger, TGameTime> Pop(bool v)
         {
             Model.Pop = v;
             return this;

@@ -25,23 +25,19 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
 using JetBrains.Annotations;
-using StateMachine.Events;
 using StateMachine.Fluent;
 
 namespace StateMachine
 {
     [PublicAPI]
-    public class Transition<T>
+    public class Transition<TState, TTrigger, TGameTime>
     {
-        public event EventHandler<TransitioningValueArgs<T>> Transitioning;
+        private TransitionFluent<TState, TTrigger, TGameTime> FluentInterface { get; }
 
-        private TransitionFluent<T> FluentInterface { get; }
-
-        public string Name { get; set; }
-        public T Trigger { get; set; }
-        public State<T> Target { get; set; }
+        public TTrigger Trigger { get; set; }
+        public State<TState, TTrigger, TGameTime> Source { get; set; }
+        public State<TState, TTrigger, TGameTime> Target { get; set; }
         public bool Pop { get; set; }
 
         /// <summary>
@@ -49,42 +45,30 @@ namespace StateMachine
         ///     re-creating the instance.
         /// </summary>
         /// <returns>A fluent setter object.</returns>
-        public TransitionFluent<T> Set()
+        public TransitionFluent<TState, TTrigger, TGameTime> Set()
         {
             return FluentInterface;
         }
 
         public Transition()
         {
-            FluentInterface = new TransitionFluent<T>(this);
+            FluentInterface = new TransitionFluent<TState, TTrigger, TGameTime>(this);
         }
 
-        public Transition(string name, T trigger, State<T> target):this()
+        public Transition(TTrigger trigger, State<TState, TTrigger, TGameTime> target) : this()
         {
-            Name = name;
             Trigger = trigger;
             Target = target;
         }
 
-        public Transition<T> AddTransitioningHandler(EventHandler<TransitioningValueArgs<T>> e)
+        public bool Process(State<TState, TTrigger, TGameTime> from, TTrigger input)
         {
-            Transitioning += e;
-            return this;
-        }
-
-        public bool Process(State<T> from, T input)
-        {
-            bool r = input.Equals(Trigger);
-            if (r)
-            {
-                Transitioning?.Invoke(this, new TransitioningValueArgs<T>(from, Target, input));
-            }
-            return r;
+            return input.Equals(Trigger);
         }
 
         public override string ToString()
         {
-            return Name;
+            return $"{Source}-({Trigger})->{Target}";
         }
     }
 }

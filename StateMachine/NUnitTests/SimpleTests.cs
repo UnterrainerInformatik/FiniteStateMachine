@@ -33,32 +33,52 @@ namespace StateMachine.NUnitTests
     [Category("StateMachine.Simple")]
     public class SimpleTests
     {
+        private enum State
+        {
+            OPENED,
+            CLOSED
+        };
+
+        private enum Trigger
+        {
+            CLOSE,
+            OPEN,
+            PUSH,
+            POP
+        };
+
         [Test]
         [Category("StateMachine.Simple")]
         public void SimpleTest()
         {
-            State<string> opened = new State<string>("opened");
-            State<string> closed = new State<string>("closed") {EndState = true, ClearStack = true};
-            opened.Add(new Transition<string>("close", "c", closed)).Add(new Transition<string>("open", "o", opened));
-            closed.Add(new Transition<string>("open", "o", opened)).Add(new Transition<string>("close", "c", closed));
+            State<State, Trigger, float> opened = new State<State, Trigger, float>(State.OPENED);
+            State<State, Trigger, float> closed = new State<State, Trigger, float>(State.CLOSED)
+            {
+                EndState = true,
+                ClearStack = true
+            };
+            opened.Add(new Transition<State, Trigger, float>(Trigger.CLOSE, closed))
+                .Add(new Transition<State, Trigger, float>(Trigger.OPEN, opened));
+            closed.Add(new Transition<State, Trigger, float>(Trigger.OPEN, opened))
+                .Add(new Transition<State, Trigger, float>(Trigger.CLOSE, closed));
 
-            Machine<string> m =
-                new Machine<string>(opened).AddStateChangedHandler(TestTools.ConsoleOut);
+            Fsm<State, Trigger, float> m =
+                new Fsm<State, Trigger, float>(opened).AddStateChangeHandler(TestTools.ConsoleOut);
 
-            m.Process("o");
-            Assert.That("opened", Is.EqualTo(m.Current.Name));
+            m.Process(Trigger.OPEN, 1F);
+            Assert.That(State.OPENED, Is.EqualTo(m.Current));
             Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new[] {opened, opened}));
 
-            m.Process("c");
-            Assert.That("closed", Is.EqualTo(m.Current.Name));
-            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<string>[] {}));
+            m.Process(Trigger.CLOSE, 1F);
+            Assert.That(State.CLOSED, Is.EqualTo(m.Current));
+            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<State, Trigger, float>[] {}));
 
-            m.Process("c");
-            Assert.That("closed", Is.EqualTo(m.Current.Name));
-            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<string>[] {}));
+            m.Process(Trigger.CLOSE, 1F);
+            Assert.That(State.CLOSED, Is.EqualTo(m.Current));
+            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<State, Trigger, float>[] {}));
 
-            m.Process("o");
-            Assert.That("opened", Is.EqualTo(m.Current.Name));
+            m.Process(Trigger.OPEN, 1F);
+            Assert.That(State.OPENED, Is.EqualTo(m.Current));
             Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new[] {opened}));
         }
 
@@ -75,8 +95,8 @@ namespace StateMachine.NUnitTests
             test.Add(new Transition<string> {Name = "pop", Trigger = "p", Target = opened, Pop = true});
             closed.Add(new Transition<string>("open", "o", opened)).Add(new Transition<string>("close", "c", closed));
 
-            Machine<string> m =
-                new Machine<string>(opened).AddStateChangedHandler(TestTools.ConsoleOut);
+            Fsm<string> m =
+                new Fsm<string>(opened).AddStateChangedHandler(TestTools.ConsoleOut);
 
             m.Process("o");
             Assert.That("opened", Is.EqualTo(m.Current.Name));

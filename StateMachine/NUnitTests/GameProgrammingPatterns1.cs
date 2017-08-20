@@ -46,8 +46,8 @@ namespace StateMachine.NUnitTests
                 .Add(new Transition<string> {Name = "jump", Trigger = "B", Target = jumping});
             jumping.Add(new Transition<string> {Name = "dive", Trigger = "down", Target = diving});
 
-            Machine<string> m =
-                new Machine<string>(standing).AddStateChangedHandler(TestTools.ConsoleOut);
+            Fsm<string> m =
+                new Fsm<string>(standing).AddStateChangedHandler(TestTools.ConsoleOut);
         }
 
         [Test]
@@ -63,8 +63,8 @@ namespace StateMachine.NUnitTests
                 .Add(new Transition<string> {Name = "jump", Trigger = "B", Target = jumping});
             jumping.Add(new Transition<string> {Name = "dive", Trigger = "down", Target = diving});
 
-            Machine<string> m =
-                new Machine<string>(standing).AddStateChangedHandler(TestTools.ConsoleOut);
+            Fsm<string> m =
+                new Fsm<string>(standing).AddStateChangedHandler(TestTools.ConsoleOut);
 
             // Now for the weapons-machine with basic forward- and backward-rotation.
             State<string> emptyHanded = new State<string>("empty_handed");
@@ -80,8 +80,8 @@ namespace StateMachine.NUnitTests
             laserRifle.Add(new Transition<string> {Name = "rotate_weapon", Trigger = "tab", Target = emptyHanded})
                 .Add(new Transition<string> {Name = "rotate_weapon_back", Trigger = "shift-tab", Target = shotgun});
 
-            Machine<string> w =
-                new Machine<string>(emptyHanded).AddStateChangedHandler(TestTools.ConsoleOut);
+            Fsm<string> w =
+                new Fsm<string>(emptyHanded).AddStateChangedHandler(TestTools.ConsoleOut);
         }
     }
 }

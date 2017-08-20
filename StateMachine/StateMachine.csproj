@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\StateChangeArgs.cs" />
     <Compile Include="Fluent\Api\BuilderFluent.cs" />
     <Compile Include="Fluent\Api\Fsm.cs" />
     <Compile Include="Fluent\Api\TransitionFluent.cs" />
@@ -57,7 +58,7 @@
     <Compile Include="Fluent\FluentBase.cs" />
     <Compile Include="Fluent\StateFluent.cs" />
     <Compile Include="Fluent\Api\StateFluent.cs" />
-    <Compile Include="Machine.cs" />
+    <Compile Include="Fsm.cs" />
     <Compile Include="NUnitTests\GameProgrammingPatterns1.cs" />
     <Compile Include="NUnitTests\FluentTests.cs" />
     <Compile Include="NUnitTests\SimpleTests.cs" />
@@ -67,8 +68,7 @@
     <Compile Include="Transition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Fluent\TransitionFluent.cs" />
-    <Compile Include="Events\InputReceivedValueArgs.cs" />
-    <Compile Include="Events\TransitioningValueArgs.cs" />
+    <Compile Include="Events\UpdateArgs.cs" />
     <Compile Include="Updatable.cs" />
   </ItemGroup>
   <ItemGroup>

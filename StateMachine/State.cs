@@ -34,76 +34,80 @@ using StateMachine.Fluent;
 namespace StateMachine
 {
     [PublicAPI]
-    public class State<T> : Updatable
+    public class State<TState, TTrigger, TGameTime> : Updatable<TGameTime>
     {
-        public event EventHandler<TransitioningValueArgs<T>> Entered;
-        public event EventHandler<TransitioningValueArgs<T>> Left;
+        public event EventHandler<StateChangeArgs<TState, TTrigger, TGameTime>> Entered;
+        public event EventHandler<StateChangeArgs<TState, TTrigger, TGameTime>> Exited;
 
-        private StateFluent<T> FluentInterface { get; }
+        private StateFluent<TState, TTrigger, TGameTime> FluentInterface { get; }
 
-        public string Name { get; set; }
+        public TState Name { get; set; }
         public bool EndState { get; set; }
         public bool ClearStack { get; set; }
 
-        private List<Transition<T>> Transitions { get; } = new List<Transition<T>>();
+        private List<Transition<TState, TTrigger, TGameTime>> Transitions { get; } =
+            new List<Transition<TState, TTrigger, TGameTime>>();
 
         /// <summary>
         ///     Returns a fluent setter object that allows you to set all the values of the object more conveniently without
         ///     re-creating the instance.
         /// </summary>
         /// <returns>A fluent setter object.</returns>
-        public StateFluent<T> Set()
+        public StateFluent<TState, TTrigger, TGameTime> Set()
         {
             return FluentInterface;
         }
-        
-        public State(string name)
+
+        public State(TState name)
         {
-            FluentInterface = new StateFluent<T>(this);
+            FluentInterface = new StateFluent<TState, TTrigger, TGameTime>(this);
             Name = name;
         }
 
-        public State<T> AddEnteredHandler(EventHandler<TransitioningValueArgs<T>> e)
+        public State<TState, TTrigger, TGameTime> AddEnteredHandler(
+            EventHandler<StateChangeArgs<TState, TTrigger, TGameTime>> e)
         {
             Entered += e;
             return this;
         }
 
-        public void RaiseEntered(TransitioningValueArgs<T> e)
+        public void RaiseEntered(StateChangeArgs<TState, TTrigger, TGameTime> e)
         {
             Entered?.Invoke(this, e);
         }
 
-        public State<T> AddLeftHandler(EventHandler<TransitioningValueArgs<T>> e)
+        public State<TState, TTrigger, TGameTime> AddExitedHandler(
+            EventHandler<StateChangeArgs<TState, TTrigger, TGameTime>> e)
         {
-            Left += e;
+            Exited += e;
             return this;
         }
 
-        public void RaiseLeft(TransitioningValueArgs<T> e)
+        public void RaiseLeft(StateChangeArgs<TState, TTrigger, TGameTime> e)
         {
-            Left?.Invoke(this, e);
+            Exited?.Invoke(this, e);
         }
 
-        public State<T> Add(Transition<T> t)
+        public State<TState, TTrigger, TGameTime> Add(Transition<TState, TTrigger, TGameTime> t)
         {
+            t.Source = this;
             Transitions.Add(t);
             return this;
         }
 
-        public State<T> Remove(Transition<T> t)
+        public State<TState, TTrigger, TGameTime> Remove(Transition<TState, TTrigger, TGameTime> t)
         {
             Transitions.Remove(t);
             return this;
         }
 
-        public State<T> Clear()
+        public State<TState, TTrigger, TGameTime> Clear()
         {
             Transitions.Clear();
             return this;
         }
 
-        public Transition<T> Process(T input)
+        public Transition<TState, TTrigger, TGameTime> Process(TTrigger input, TGameTime data)
         {
             foreach (var t in Transitions)
             {
@@ -117,10 +121,10 @@ namespace StateMachine
 
         public override string ToString()
         {
-            return Name;
+            return Name.ToString();
         }
 
-        public virtual void Update(float gameTime)
+        public virtual void Update(TGameTime gameTime)
         {
         }
     }

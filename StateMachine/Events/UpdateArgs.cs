@@ -30,17 +30,15 @@ using JetBrains.Annotations;
 namespace StateMachine.Events
 {
     [PublicAPI]
-    public struct TransitioningValueArgs<T>
+    public struct UpdateArgs<TState, TTrigger, TGameTime>
     {
-        public State<T> From { get; }
-        public State<T> To { get; }
-        public T Input { get; }
+        public State<TState, TTrigger, TGameTime> State { get; }
+        public TGameTime Data { get; }
 
-        public TransitioningValueArgs(State<T> @from, State<T> to, T input)
+        public UpdateArgs(State<TState, TTrigger, TGameTime> state, TGameTime data)
         {
-            From = @from;
-            To = to;
-            Input = input;
+            State = state;
+            Data = data;
         }
     }
 }

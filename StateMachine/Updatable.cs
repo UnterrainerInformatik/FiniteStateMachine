@@ -27,8 +27,8 @@
 
 namespace StateMachine
 {
-    public interface Updatable
+    public interface Updatable<T>
     {
-        void Update(float gameTime);
+        void Update(T data);
     }
 }

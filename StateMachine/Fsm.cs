@@ -33,15 +33,16 @@ using StateMachine.Events;
 namespace StateMachine
 {
     [PublicAPI]
-    public class Machine<T> : Updatable
+    public class Fsm<TState, TTrigger, TGameTime> : Updatable<TGameTime>
     {
-        public event EventHandler<TransitioningValueArgs<T>> StateChanged;
-        public event EventHandler<InputReceivedValueArgs<T>> InputReceived;
+        public event EventHandler<StateChangeArgs<TState, TTrigger, TGameTime>> StateChanged;
 
-        public State<T> Current { get; set; }
-        public Stack<State<T>> Stack { get; } = new Stack<State<T>>();
+        public State<TState, TTrigger, TGameTime> Current { get; set; }
 
-        public Machine(State<T> current)
+        public Stack<State<TState, TTrigger, TGameTime>> Stack { get; } =
+            new Stack<State<TState, TTrigger, TGameTime>>();
+
+        public Fsm(State<TState, TTrigger, TGameTime> current)
         {
             Current = current;
             if (!current.ClearStack)
@@ -50,23 +51,17 @@ namespace StateMachine
             }
         }
 
-        public Machine<T> AddStateChangedHandler(EventHandler<TransitioningValueArgs<T>> e)
+        public Fsm<TState, TTrigger, TGameTime> AddStateChangeHandler(
+            EventHandler<StateChangeArgs<TState, TTrigger, TGameTime>> e)
         {
             StateChanged += e;
             return this;
         }
 
-        public Machine<T> AddInputReceivedHandler(EventHandler<InputReceivedValueArgs<T>> e)
+        public void Process(TTrigger input, TGameTime data)
         {
-            InputReceived += e;
-            return this;
-        }
-
-        public void Process(T input)
-        {
-            InputReceived?.Invoke(this, new InputReceivedValueArgs<T>(Current, input));
-            State<T> old = Current;
-            Transition<T> t = Current.Process(input);
+            State<TState, TTrigger, TGameTime> old = Current;
+            Transition<TState, TTrigger, TGameTime> t = Current.Process(input, data);
 
             if (t.Pop)
             {
@@ -86,13 +81,15 @@ namespace StateMachine
 
             if (!Current.Equals(old))
             {
-                old.RaiseLeft(new TransitioningValueArgs<T>(old, Current, input));
-                Current.RaiseEntered(new TransitioningValueArgs<T>(old, Current, input));
-                StateChanged?.Invoke(this, new TransitioningValueArgs<T>(old, Current, input));
+                StateChangeArgs<TState, TTrigger, TGameTime> args =
+                    new StateChangeArgs<TState, TTrigger, TGameTime>(this, old, Current, input, data);
+                old.RaiseLeft(args);
+                Current.RaiseEntered(args);
+                StateChanged?.Invoke(this, args);
             }
         }
 
-        public void Update(float gameTime)
+        public void Update(TGameTime gameTime)
         {
             Current.Update(gameTime);
         }

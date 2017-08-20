@@ -27,25 +27,26 @@
 
 namespace StateMachine.Fluent
 {
-    public class StateFluent<T> : FluentBase<State<T>, StateFluent<T>>
+    public class StateFluent<TState, TTrigger, TGameTime> :
+        FluentBase<State<TState, TTrigger, TGameTime>, StateFluent<TState, TTrigger, TGameTime>>
     {
-        public StateFluent(State<T> state) : base(state)
+        public StateFluent(State<TState, TTrigger, TGameTime> state) : base(state)
         {
         }
 
-        public StateFluent<T> Name(string v)
+        public StateFluent<TState, TTrigger, TGameTime> Name(string v)
         {
             Model.Name = v;
             return this;
         }
 
-        public StateFluent<T> EndState(bool v)
+        public StateFluent<TState, TTrigger, TGameTime> EndState(bool v)
         {
             Model.EndState = v;
             return this;
         }
 
-        public StateFluent<T> ClearStack(bool v)
+        public StateFluent<TState, TTrigger, TGameTime> ClearStack(bool v)
         {
             Model.ClearStack = v;
             return this;
