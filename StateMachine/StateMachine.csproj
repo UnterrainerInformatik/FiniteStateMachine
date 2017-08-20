@@ -50,7 +50,6 @@
   <ItemGroup>
     <Compile Include="Events\StateChangeArgs.cs" />
     <Compile Include="Fluent\Api\BuilderFluent.cs" />
-    <Compile Include="Fluent\Api\Fsm.cs" />
     <Compile Include="Fluent\Api\TransitionFluent.cs" />
     <Compile Include="Fluent\Api\TransitionStateFluent.cs" />
     <Compile Include="Fluent\Api\GlobalTransitionBuilderFluent.cs" />
@@ -69,6 +68,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Fluent\TransitionFluent.cs" />
     <Compile Include="Events\UpdateArgs.cs" />
+    <Compile Include="TransitionData.cs" />
     <Compile Include="Updatable.cs" />
   </ItemGroup>
   <ItemGroup>
