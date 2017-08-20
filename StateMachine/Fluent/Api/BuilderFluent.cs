@@ -27,12 +27,12 @@
 
 namespace StateMachine.Fluent.Api
 {
-    interface BuilderFluent<TState, TTrigger, TGameTime>
+    interface BuilderFluent<TState, TTrigger, TData>
     {
-        GlobalTransitionFluent<TState, TTrigger, TGameTime> GlobalTransitionTo(TState state);
+        GlobalTransitionFluent<TState, TTrigger, TData> GlobalTransitionTo(TState state);
 
-        StateFluent<TState, TTrigger, TGameTime> State(TState state);
+        StateFluent<TState, TTrigger, TData> State(TState state);
 
-        Fsm<TState, TTrigger, TGameTime> Build();
+        Fsm<TState, TTrigger, TData> Build();
     }
 }

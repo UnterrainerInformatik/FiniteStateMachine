@@ -25,17 +25,33 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using JetBrains.Annotations;
-
-namespace StateMachine.Fluent.Api
+namespace StateMachine
 {
-    [PublicAPI]
-    public class Fsm<TState, TTrigger, TGameTime>
+    class TransitionData<TState, TTrigger, TData>
     {
-        public TState State { get; private set; }
+        public State<TState, TTrigger, TData> State { get; private set; }
+        public TTrigger Input { get; private set; }
+        public bool IsGlobal { get; private set; }
+        public bool IsPop { get; private set; }
 
-        public void TransitionTo(TState state)
+        public static TransitionData<TState, TTrigger, TData> CreateTransitionTo(State<TState, TTrigger, TData> state,
+            TTrigger input, bool isPop = false)
         {
+            var r = new TransitionData<TState, TTrigger, TData>();
+            r.IsGlobal = false;
+            r.State = state;
+            r.Input = input;
+            r.IsPop = isPop;
+            return r;
+        }
+
+        public static TransitionData<TState, TTrigger, TData> CreateGlobalTo(State<TState, TTrigger, TData> state, bool isPop = false)
+        {
+            var r = new TransitionData<TState, TTrigger, TData>();
+            r.IsGlobal = true;
+            r.IsPop = isPop;
+            r.State = state;
+            return r;
         }
     }
 }

@@ -64,20 +64,22 @@ namespace StateMachine.NUnitTests
 
             Fsm<State, Trigger, float> m =
                 new Fsm<State, Trigger, float>(opened).AddStateChangeHandler(TestTools.ConsoleOut);
+            m.Add(opened);
+            m.Add(closed);
 
-            m.Process(Trigger.OPEN, 1F);
+            m.Trigger(Trigger.OPEN);
             Assert.That(State.OPENED, Is.EqualTo(m.Current));
             Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new[] {opened, opened}));
 
-            m.Process(Trigger.CLOSE, 1F);
+            m.Trigger(Trigger.CLOSE);
             Assert.That(State.CLOSED, Is.EqualTo(m.Current));
             Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<State, Trigger, float>[] {}));
 
-            m.Process(Trigger.CLOSE, 1F);
+            m.Trigger(Trigger.CLOSE);
             Assert.That(State.CLOSED, Is.EqualTo(m.Current));
             Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<State, Trigger, float>[] {}));
 
-            m.Process(Trigger.OPEN, 1F);
+            m.Trigger(Trigger.OPEN);
             Assert.That(State.OPENED, Is.EqualTo(m.Current));
             Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new[] {opened}));
         }
@@ -98,27 +100,27 @@ namespace StateMachine.NUnitTests
             Fsm<string> m =
                 new Fsm<string>(opened).AddStateChangedHandler(TestTools.ConsoleOut);
 
-            m.Process("o");
+            m.Trigger("o");
             Assert.That("opened", Is.EqualTo(m.Current.Name));
             Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new[] {opened, opened}));
 
-            m.Process("p");
+            m.Trigger("p");
             Assert.That("pop", Is.EqualTo(m.Current.Name));
             Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new[] {opened, opened, test}));
 
-            m.Process("p");
+            m.Trigger("p");
             Assert.That("opened", Is.EqualTo(m.Current.Name));
             Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new[] {opened, opened}));
 
-            m.Process("c");
+            m.Trigger("c");
             Assert.That("closed", Is.EqualTo(m.Current.Name));
             Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<string>[] {}));
 
-            m.Process("c");
+            m.Trigger("c");
             Assert.That("closed", Is.EqualTo(m.Current.Name));
             Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<string>[] {}));
 
-            m.Process("o");
+            m.Trigger("o");
             Assert.That("opened", Is.EqualTo(m.Current.Name));
             Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new[] {opened}));
         }

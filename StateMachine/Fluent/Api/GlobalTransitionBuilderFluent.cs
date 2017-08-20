@@ -30,8 +30,8 @@ using JetBrains.Annotations;
 namespace StateMachine.Fluent.Api
 {
     [PublicAPI]
-    interface GlobalTransitionBuilderFluent<TState, TTrigger, TGameTime> : GlobalTransitionFluent<TState, TTrigger, TGameTime>,
-        BuilderFluent<TState, TTrigger, TGameTime>
+    interface GlobalTransitionBuilderFluent<TState, TTrigger, TData> : GlobalTransitionFluent<TState, TTrigger, TData>,
+        BuilderFluent<TState, TTrigger, TData>
     {
     }
 }

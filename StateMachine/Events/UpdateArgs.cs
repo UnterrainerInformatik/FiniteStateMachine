@@ -30,12 +30,12 @@ using JetBrains.Annotations;
 namespace StateMachine.Events
 {
     [PublicAPI]
-    public struct UpdateArgs<TState, TTrigger, TGameTime>
+    public struct UpdateArgs<TState, TTrigger, TData>
     {
-        public State<TState, TTrigger, TGameTime> State { get; }
-        public TGameTime Data { get; }
+        public State<TState, TTrigger, TData> State { get; }
+        public TData Data { get; }
 
-        public UpdateArgs(State<TState, TTrigger, TGameTime> state, TGameTime data)
+        public UpdateArgs(State<TState, TTrigger, TData> state, TData data)
         {
             State = state;
             Data = data;

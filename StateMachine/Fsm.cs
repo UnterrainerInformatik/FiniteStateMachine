@@ -33,16 +33,19 @@ using StateMachine.Events;
 namespace StateMachine
 {
     [PublicAPI]
-    public class Fsm<TState, TTrigger, TGameTime> : Updatable<TGameTime>
+    public class Fsm<TState, TTrigger, TData> : Updatable<UpdateArgs<TState, TTrigger, TData>>
     {
-        public event EventHandler<StateChangeArgs<TState, TTrigger, TGameTime>> StateChanged;
+        public event EventHandler<StateChangeArgs<TState, TTrigger, TData>> StateChanged;
 
-        public State<TState, TTrigger, TGameTime> Current { get; set; }
+        public State<TState, TTrigger, TData> Current { get; set; }
 
-        public Stack<State<TState, TTrigger, TGameTime>> Stack { get; } =
-            new Stack<State<TState, TTrigger, TGameTime>>();
+        public Stack<State<TState, TTrigger, TData>> Stack { get; } =
+            new Stack<State<TState, TTrigger, TData>>();
 
-        public Fsm(State<TState, TTrigger, TGameTime> current)
+        private Dictionary<TState, State<TState, TTrigger, TData>> States { get; } =
+            new Dictionary<TState, State<TState, TTrigger, TData>>();
+
+        public Fsm(State<TState, TTrigger, TData> current)
         {
             Current = current;
             if (!current.ClearStack)
@@ -51,26 +54,42 @@ namespace StateMachine
             }
         }
 
-        public Fsm<TState, TTrigger, TGameTime> AddStateChangeHandler(
-            EventHandler<StateChangeArgs<TState, TTrigger, TGameTime>> e)
+        public Fsm<TState, TTrigger, TData> AddStateChangeHandler(
+            EventHandler<StateChangeArgs<TState, TTrigger, TData>> e)
         {
             StateChanged += e;
             return this;
         }
 
-        public void Process(TTrigger input, TGameTime data)
+        public void Add(State<TState, TTrigger, TData> state)
         {
-            State<TState, TTrigger, TGameTime> old = Current;
-            Transition<TState, TTrigger, TGameTime> t = Current.Process(input, data);
+            if (state == null) return;
 
-            if (t.Pop)
+            States.Add(state.Name, state);
+        }
+
+        public void TransitionTo(TState state, bool isPop = false)
+        {
+            State<TState, TTrigger, TData> s;
+            if (States.TryGetValue(state, out s))
+            {
+                DoTransition(s, default(TTrigger), isPop);
+            }
+        }
+
+        private void DoTransition(State<TState, TTrigger, TData> state, TTrigger input, bool isPop)
+        {
+            if (state == null || input == null) return;
+
+            State<TState, TTrigger, TData> old = Current;
+            if (isPop)
             {
                 Stack.Pop();
                 Current = Stack.Peek();
             }
             else
             {
-                Current = t.Target;
+                Current = state;
                 Stack.Push(Current);
             }
 
@@ -81,17 +100,25 @@ namespace StateMachine
 
             if (!Current.Equals(old))
             {
-                StateChangeArgs<TState, TTrigger, TGameTime> args =
-                    new StateChangeArgs<TState, TTrigger, TGameTime>(this, old, Current, input, data);
-                old.RaiseLeft(args);
+                StateChangeArgs<TState, TTrigger, TData> args =
+                    new StateChangeArgs<TState, TTrigger, TData>(this, old, Current, input);
+                old.RaiseExited(args);
                 Current.RaiseEntered(args);
                 StateChanged?.Invoke(this, args);
             }
         }
 
-        public void Update(TGameTime gameTime)
+        public void Trigger(TTrigger input)
         {
-            Current.Update(gameTime);
+            if (input == null) return;
+
+            Transition<TState, TTrigger, TData> t = Current.Process(input);
+            DoTransition(t.Target, input, t.Pop);
+        }
+
+        public void Update(UpdateArgs<TState, TTrigger, TData> data)
+        {
+            Current.Update(data);
         }
     }
 }

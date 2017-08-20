@@ -31,14 +31,14 @@ using JetBrains.Annotations;
 namespace StateMachine.Fluent.Api
 {
     [PublicAPI]
-    interface StateFluent<TState, TTrigger, TGameTime> : BuilderFluent<TState, TTrigger, TGameTime>
+    interface StateFluent<TState, TTrigger, TData> : BuilderFluent<TState, TTrigger, TData>
     {
-        TransitionFluent<TState, TTrigger, TGameTime> TransitionTo(TState state);
+        TransitionFluent<TState, TTrigger, TData> TransitionTo(TState state);
 
-        StateFluent<TState, TTrigger, TGameTime> OnEnter(Action<TState, TTrigger> enter);
+        StateFluent<TState, TTrigger, TData> OnEnter(Action<TState, TTrigger> enter);
 
-        StateFluent<TState, TTrigger, TGameTime> OnExit(Action<TState, TTrigger> exit);
+        StateFluent<TState, TTrigger, TData> OnExit(Action<TState, TTrigger> exit);
 
-        StateFluent<TState, TTrigger, TGameTime> Update(Action<Fsm<TState, TTrigger, TGameTime>, TGameTime> update);
+        StateFluent<TState, TTrigger, TData> Update(Action<Fsm<TState, TTrigger, TData>, TData> update);
     }
 }

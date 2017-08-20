@@ -31,10 +31,10 @@ using JetBrains.Annotations;
 namespace StateMachine.Fluent.Api
 {
     [PublicAPI]
-    interface GlobalTransitionFluent<TState, TTrigger, TGameTime>
+    interface GlobalTransitionFluent<TState, TTrigger, TData>
     {
-        GlobalTransitionBuilderFluent<TState, TTrigger, TGameTime> On(TTrigger trigger);
+        GlobalTransitionBuilderFluent<TState, TTrigger, TData> On(TTrigger trigger);
 
-        GlobalTransitionBuilderFluent<TState, TTrigger, TGameTime> If(Func<bool> condition);
+        GlobalTransitionBuilderFluent<TState, TTrigger, TData> If(Func<bool> condition);
     }
 }
