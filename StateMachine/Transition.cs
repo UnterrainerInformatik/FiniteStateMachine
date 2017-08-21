@@ -61,6 +61,13 @@ namespace StateMachine
             Target = target;
         }
 
+        public Transition(TTrigger trigger, State<TState, TTrigger, TGameTime> target, bool isPop)
+        {
+            Trigger = trigger;
+            Target = target;
+            Pop = isPop;
+        }
+
         public bool Process(State<TState, TTrigger, TGameTime> from, TTrigger input)
         {
             return input.Equals(Trigger);

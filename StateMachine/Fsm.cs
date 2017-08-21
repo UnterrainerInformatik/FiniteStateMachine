@@ -65,7 +65,7 @@ namespace StateMachine
         {
             if (state == null) return;
 
-            States.Add(state.Name, state);
+            States.Add(state.Identifier, state);
         }
 
         public void TransitionTo(TState state, bool isPop = false)

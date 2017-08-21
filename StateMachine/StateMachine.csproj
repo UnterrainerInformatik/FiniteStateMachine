@@ -58,7 +58,6 @@
     <Compile Include="Fluent\StateFluent.cs" />
     <Compile Include="Fluent\Api\StateFluent.cs" />
     <Compile Include="Fsm.cs" />
-    <Compile Include="NUnitTests\GameProgrammingPatterns1.cs" />
     <Compile Include="NUnitTests\FluentTests.cs" />
     <Compile Include="NUnitTests\SimpleTests.cs" />
     <Compile Include="NUnitTests\FluentSyntaxTest1.cs" />

@@ -36,7 +36,7 @@ namespace StateMachine.Fluent
 
         public StateFluent<TState, TTrigger, TData> Name(TState v)
         {
-            Model.Name = v;
+            Model.Identifier = v;
             return this;
         }
 

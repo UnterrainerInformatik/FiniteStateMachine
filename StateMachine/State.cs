@@ -41,7 +41,7 @@ namespace StateMachine
 
         private StateFluent<TState, TTrigger, TData> FluentInterface { get; }
 
-        public TState Name { get; set; }
+        public TState Identifier { get; set; }
         public bool EndState { get; set; }
         public bool ClearStack { get; set; }
 
@@ -58,10 +58,10 @@ namespace StateMachine
             return FluentInterface;
         }
 
-        public State(TState name)
+        public State(TState identifier)
         {
             FluentInterface = new StateFluent<TState, TTrigger, TData>(this);
-            Name = name;
+            Identifier = identifier;
         }
 
         public State<TState, TTrigger, TData> AddEnteredHandler(
@@ -121,10 +121,10 @@ namespace StateMachine
 
         public override string ToString()
         {
-            return Name.ToString();
+            return Identifier.ToString();
         }
 
-        public virtual void Update(UpdateArgs<TState, TTrigger, TData> gameTime)
+        public void Update(UpdateArgs<TState, TTrigger, TData> gameTime)
         {
         }
     }

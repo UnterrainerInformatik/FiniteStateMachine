@@ -33,27 +33,38 @@ namespace StateMachine.NUnitTests
     [Category("FluentTests")]
     public class FluentTests
     {
+        private enum State
+        {
+            CLOSED
+        }
+
+        private enum Trigger
+        {
+            OPEN
+        }
+
         [Test]
         [Category("FluentTests")]
         public void BuilderTest()
         {
-            Transition<string> t1 = new Transition<string> {Name = "name", Trigger = "trigger"};
+            State<State, Trigger, float> closed = new State<State, Trigger, float>(State.CLOSED);
+            Transition<State, Trigger, float> t1 = new Transition<State, Trigger, float> (Trigger.OPEN, closed);
 
-            Assert.That(t1.Name, Is.EqualTo("name"));
-            Assert.That(t1.Trigger, Is.EqualTo("trigger"));
+            Assert.That(t1.Pop, Is.False);
+            Assert.That(t1.Trigger, Is.EqualTo(Trigger.OPEN));
 
-            t1.Set().Name("n1");
-            Assert.That(t1.Name, Is.EqualTo("n1"));
+            t1.Set().Pop(true);
+            Assert.That(t1.Pop, Is.True);
 
-            t1.Set().Name("n2").Get();
-            Assert.That(t1.Name, Is.EqualTo("n2"));
+            t1.Set().Pop(false).Get();
+            Assert.That(t1.Pop, Is.False);
 
-            Transition<string> t2 = t1;
-            Assert.That(t2.Name, Is.EqualTo("n2"));
+            Transition<State, Trigger, float> t2 = t1;
+            Assert.That(t2.Pop, Is.False);
 
-            t2 = t1.Set().Name("n3").Get();
-            Assert.That(t1.Name, Is.EqualTo("n3"));
-            Assert.That(t2.Name, Is.EqualTo("n3"));
+            t2 = t1.Set().Pop(true).Get();
+            Assert.That(t1.Pop, Is.True);
+            Assert.That(t2.Pop, Is.True);
         }
     }
 }
