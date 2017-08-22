@@ -33,10 +33,11 @@ namespace StateMachine.Fluent
         public TransitionFluent(Transition<TState, TTrigger, TGameTime> transition) : base(transition)
         {
         }
-        
+
         public TransitionFluent<TState, TTrigger, TGameTime> Trigger(TTrigger v)
         {
-            Model.Trigger = v;
+            if (!Model.Triggers.Contains(v))
+                Model.Triggers.Add(v);
             return this;
         }
 

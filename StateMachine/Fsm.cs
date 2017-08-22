@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using StateMachine.Events;
+using StateMachine.Fluent.Api;
 
 namespace StateMachine
 {
@@ -44,9 +45,11 @@ namespace StateMachine
 
         private Dictionary<TState, State<TState, TTrigger, TData>> States { get; } =
             new Dictionary<TState, State<TState, TTrigger, TData>>();
-
+        
         public Fsm(State<TState, TTrigger, TData> current)
         {
+            if (current == null) throw FsmBuilderException.StateCannotBeNull();
+
             Current = current;
             if (!current.ClearStack)
             {
@@ -54,20 +57,29 @@ namespace StateMachine
             }
         }
 
+        public static Fsm<TState, TTrigger, TData> Builder()
+        {
+            return new BuilderFluent<TState, TTrigger, TData>();
+        }
+
         public Fsm<TState, TTrigger, TData> AddStateChangeHandler(
             EventHandler<StateChangeArgs<TState, TTrigger, TData>> e)
         {
+            if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
+
             StateChanged += e;
             return this;
         }
 
-        public void Add(State<TState, TTrigger, TData> state)
+        public Fsm<TState, TTrigger, TData> Add(State<TState, TTrigger, TData> state)
         {
-            if (state == null) return;
+            if (state == null) throw FsmBuilderException.StateCannotBeNull();
+            if (States.ContainsKey(state.Identifier)) throw FsmBuilderException.StateCanOnlyBeAddedOnce(state);
 
             States.Add(state.Identifier, state);
+            return this;
         }
-
+        
         public void TransitionTo(TState state, bool isPop = false)
         {
             State<TState, TTrigger, TData> s;
@@ -118,7 +130,7 @@ namespace StateMachine
 
         public void Update(UpdateArgs<TState, TTrigger, TData> data)
         {
-            Current.Update(data);
+            Current.RaiseUpdated(data);
         }
     }
 }

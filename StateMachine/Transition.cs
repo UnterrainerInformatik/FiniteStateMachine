@@ -25,6 +25,8 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using JetBrains.Annotations;
 using StateMachine.Fluent;
 
@@ -35,7 +37,7 @@ namespace StateMachine
     {
         private TransitionFluent<TState, TTrigger, TGameTime> FluentInterface { get; }
 
-        public TTrigger Trigger { get; set; }
+        public List<TTrigger> Triggers { get; set; } = new List<TTrigger>();
         public State<TState, TTrigger, TGameTime> Source { get; set; }
         public State<TState, TTrigger, TGameTime> Target { get; set; }
         public bool Pop { get; set; }
@@ -55,27 +57,55 @@ namespace StateMachine
             FluentInterface = new TransitionFluent<TState, TTrigger, TGameTime>(this);
         }
 
+        public Transition(Collection<TTrigger> triggers, State<TState, TTrigger, TGameTime> target) : this()
+        {
+            if (target == null) throw FsmBuilderException.TargetStateCannotBeNull();
+
+            Triggers.AddRange(triggers);
+            Target = target;
+        }
+
+        public Transition(Collection<TTrigger> triggers, State<TState, TTrigger, TGameTime> target, bool isPop)
+        {
+            if (target == null) throw FsmBuilderException.TargetStateCannotBeNull();
+
+            Triggers.AddRange(triggers);
+            Target = target;
+            Pop = isPop;
+        }
+
         public Transition(TTrigger trigger, State<TState, TTrigger, TGameTime> target) : this()
         {
-            Trigger = trigger;
+            if (target == null) throw FsmBuilderException.TargetStateCannotBeNull();
+
+            Triggers.Add(trigger);
             Target = target;
         }
 
         public Transition(TTrigger trigger, State<TState, TTrigger, TGameTime> target, bool isPop)
         {
-            Trigger = trigger;
+            if (target == null) throw FsmBuilderException.TargetStateCannotBeNull();
+
+            Triggers.Add(trigger);
             Target = target;
             Pop = isPop;
         }
 
+        public void Add(TTrigger trigger)
+        {
+            if (Triggers.Contains(trigger)) throw FsmBuilderException.TriggerAlreadyDeclared(trigger);
+
+            Triggers.Add(trigger);
+        }
+
         public bool Process(State<TState, TTrigger, TGameTime> from, TTrigger input)
         {
-            return input.Equals(Trigger);
+            return Triggers.Contains(input);
         }
 
         public override string ToString()
         {
-            return $"{Source}-({Trigger})->{Target}";
+            return $"{Source}-({Triggers})->{Target}";
         }
     }
 }

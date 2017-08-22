@@ -34,10 +34,11 @@ using StateMachine.Fluent;
 namespace StateMachine
 {
     [PublicAPI]
-    public class State<TState, TTrigger, TData> : Updatable<UpdateArgs<TState, TTrigger, TData>>
+    public class State<TState, TTrigger, TData>
     {
         public event EventHandler<StateChangeArgs<TState, TTrigger, TData>> Entered;
         public event EventHandler<StateChangeArgs<TState, TTrigger, TData>> Exited;
+        public event EventHandler<UpdateArgs<TState, TTrigger, TData>> Updated;
 
         private StateFluent<TState, TTrigger, TData> FluentInterface { get; }
 
@@ -45,8 +46,8 @@ namespace StateMachine
         public bool EndState { get; set; }
         public bool ClearStack { get; set; }
 
-        private List<Transition<TState, TTrigger, TData>> Transitions { get; } =
-            new List<Transition<TState, TTrigger, TData>>();
+        public Dictionary<TState, Transition<TState, TTrigger, TData>> Transitions { get; } =
+            new Dictionary<TState, Transition<TState, TTrigger, TData>>();
 
         /// <summary>
         ///     Returns a fluent setter object that allows you to set all the values of the object more conveniently without
@@ -67,6 +68,8 @@ namespace StateMachine
         public State<TState, TTrigger, TData> AddEnteredHandler(
             EventHandler<StateChangeArgs<TState, TTrigger, TData>> e)
         {
+            if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
+
             Entered += e;
             return this;
         }
@@ -79,6 +82,8 @@ namespace StateMachine
         public State<TState, TTrigger, TData> AddExitedHandler(
             EventHandler<StateChangeArgs<TState, TTrigger, TData>> e)
         {
+            if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
+
             Exited += e;
             return this;
         }
@@ -88,16 +93,34 @@ namespace StateMachine
             Exited?.Invoke(this, e);
         }
 
+        public State<TState, TTrigger, TData> AddUpdatedHandler(
+            EventHandler<UpdateArgs<TState, TTrigger, TData>> e)
+        {
+            if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
+
+            Updated+= e;
+            return this;
+        }
+
+        public void RaiseUpdated(UpdateArgs<TState, TTrigger, TData> data)
+        {
+            Updated?.Invoke(this, data);
+        }
+
         public State<TState, TTrigger, TData> Add(Transition<TState, TTrigger, TData> t)
         {
+            if (t == null) throw FsmBuilderException.TransitionCannotBeNull();
+            if (Transitions.ContainsKey(t.Target.Identifier))
+                throw FsmBuilderException.TransitionToSameStateAlreadyDeclared(t.Target);
+
             t.Source = this;
-            Transitions.Add(t);
+            Transitions.Add(t.Target.Identifier, t);
             return this;
         }
 
         public State<TState, TTrigger, TData> Remove(Transition<TState, TTrigger, TData> t)
         {
-            Transitions.Remove(t);
+            Transitions.Remove(t.Target.Identifier);
             return this;
         }
 
@@ -109,7 +132,7 @@ namespace StateMachine
 
         public Transition<TState, TTrigger, TData> Process(TTrigger input)
         {
-            foreach (var t in Transitions)
+            foreach (var t in Transitions.Values)
             {
                 if (t.Process(this, input))
                 {
@@ -122,10 +145,6 @@ namespace StateMachine
         public override string ToString()
         {
             return Identifier.ToString();
-        }
-
-        public void Update(UpdateArgs<TState, TTrigger, TData> gameTime)
-        {
         }
     }
 }

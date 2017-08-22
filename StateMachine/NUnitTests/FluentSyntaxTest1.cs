@@ -54,7 +54,7 @@ namespace StateMachine.NUnitTests
         }
     }
 
-    abstract class Button
+    class Button
     {
         public enum ButtonKind
         {
@@ -67,13 +67,16 @@ namespace StateMachine.NUnitTests
             OVER,
             DOWN,
             REFRESHING
-        };
+        }
 
         public ButtonState State { get; set; }
         public ButtonKind Kind { get; set; }
         public Timer RefreshTimer { get; }
 
-        public abstract Spell DoAssociatedSpell();
+        public Spell DoAssociatedSpell() {
+            //Do something useful.
+            return new Spell();
+        }
     }
 
     class FluentSyntaxTest1
@@ -96,6 +99,13 @@ namespace StateMachine.NUnitTests
 
         private readonly Dictionary<Button, Fsm<State, Trigger, float>> buttonMachines =
             new Dictionary<Button, Fsm<State, Trigger, float>>();
+
+        private void main()
+        {
+            Hero hero = new Hero();
+            CreateMachineFor(Fsm<State, Trigger, float> , new Button(), hero);
+            CreateMachineFor(Fsm<State, Trigger, float>, new Button(), hero);
+        }
 
         private void CreateMachineFor(BuilderFluent<State, Trigger, float> builder, Button button, Hero hero)
         {

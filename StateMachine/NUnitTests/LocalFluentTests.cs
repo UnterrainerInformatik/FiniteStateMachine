@@ -31,7 +31,7 @@ namespace StateMachine.NUnitTests
 {
     [TestFixture]
     [Category("FluentTests")]
-    public class FluentTests
+    public class LocalFluentTests
     {
         private enum State
         {
@@ -51,7 +51,7 @@ namespace StateMachine.NUnitTests
             Transition<State, Trigger, float> t1 = new Transition<State, Trigger, float> (Trigger.OPEN, closed);
 
             Assert.That(t1.Pop, Is.False);
-            Assert.That(t1.Trigger, Is.EqualTo(Trigger.OPEN));
+            Assert.That(t1.Triggers, Contains.Item(Trigger.OPEN));
 
             t1.Set().Pop(true);
             Assert.That(t1.Pop, Is.True);
