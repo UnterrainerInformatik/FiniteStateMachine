@@ -38,20 +38,12 @@ namespace StateMachine
         private FsmBuilderException(string message, Exception innerException) : base(message, innerException)
         {
         }
-
-        public static FsmBuilderException TransitionToSameStateAlreadyDeclared<TState, TTrigger, TData>(
-            State<TState, TTrigger, TData> state)
-        {
-            return new FsmBuilderException($"A transition to the state [{state.Identifier}] has already been defined. There is only one " +
-                                           $"or zero transitions to a single state allowed. Try adding a second trigger to the first transition" +
-                                           $" instead.");
-        }
-
+        
         public static FsmBuilderException StateCanOnlyBeAddedOnce<TState, TTrigger, TData>(
             State<TState, TTrigger, TData> state)
         {
             return new FsmBuilderException($"A state [{state.Identifier}] has already been added. You can only one add" +
-                                           $" a state with a unique identifier once.");
+                                           " a state with a unique identifier once.");
         }
 
         public static FsmBuilderException TargetStateCannotBeNull()
@@ -67,6 +59,11 @@ namespace StateMachine
         public static FsmBuilderException StateCannotBeNull()
         {
             return new FsmBuilderException("The state cannot be null.");
+        }
+
+        public static FsmBuilderException ModelCannotBeNull()
+        {
+            return new FsmBuilderException("The model cannot be null.");
         }
 
         public static FsmBuilderException TriggerAlreadyDeclared<TTrigger>(TTrigger trigger)

@@ -31,7 +31,7 @@ using JetBrains.Annotations;
 namespace StateMachine.Fluent.Api
 {
     [PublicAPI]
-    interface TransitionFluent<TState, TTrigger, TData>
+    public interface TransitionFluent<TState, TTrigger, TData>
     {
         TransitionStateFluent<TState, TTrigger, TData> On(TTrigger trigger);
         TransitionStateFluent<TState, TTrigger, TData> If(Func<bool> condition);

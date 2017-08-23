@@ -31,7 +31,7 @@ using JetBrains.Annotations;
 namespace StateMachine.Fluent.Api
 {
     [PublicAPI]
-    interface StateFluent<TState, TTrigger, TData> : BuilderFluent<TState, TTrigger, TData>
+    public interface StateFluent<TState, TTrigger, TData> : BuilderFluent<TState, TTrigger, TData>
     {
         TransitionFluent<TState, TTrigger, TData> TransitionTo(TState state);
 

@@ -27,7 +27,7 @@
 
 namespace StateMachine.Fluent.Api
 {
-    interface BuilderFluent<TState, TTrigger, TData>
+    public interface BuilderFluent<TState, TTrigger, TData>
     {
         GlobalTransitionFluent<TState, TTrigger, TData> GlobalTransitionTo(TState state);
 

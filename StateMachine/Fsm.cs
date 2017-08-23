@@ -36,54 +36,76 @@ namespace StateMachine
     [PublicAPI]
     public class Fsm<TState, TTrigger, TData> : Updatable<UpdateArgs<TState, TTrigger, TData>>
     {
-        public event EventHandler<StateChangeArgs<TState, TTrigger, TData>> StateChanged;
+        private FsmModel<TState, TTrigger, TData> Model { get; set; } = new FsmModel<TState, TTrigger, TData>();
 
-        public State<TState, TTrigger, TData> Current { get; set; }
-
-        public Stack<State<TState, TTrigger, TData>> Stack { get; } =
-            new Stack<State<TState, TTrigger, TData>>();
-
-        private Dictionary<TState, State<TState, TTrigger, TData>> States { get; } =
-            new Dictionary<TState, State<TState, TTrigger, TData>>();
+        public State<TState, TTrigger, TData> Current => Model.Current;
+        public Stack<State<TState, TTrigger, TData>> Stack => Model.Stack;
         
+        /// <exception cref="FsmBuilderException">When the model is null</exception>
+        public Fsm(FsmModel<TState, TTrigger, TData> model)
+        {
+            if (model == null) throw FsmBuilderException.ModelCannotBeNull();
+
+            Model = model;
+            if (!model.Current.ClearStack)
+            {
+                Model.Stack.Push(model.Current);
+            }
+        }
+
+        /// <exception cref="FsmBuilderException">When the initial state is null</exception>
         public Fsm(State<TState, TTrigger, TData> current)
         {
             if (current == null) throw FsmBuilderException.StateCannotBeNull();
 
-            Current = current;
+            Model.Current = current;
             if (!current.ClearStack)
             {
-                Stack.Push(current);
+                Model.Stack.Push(current);
             }
         }
 
-        public static Fsm<TState, TTrigger, TData> Builder()
+        public static BuilderFluent<TState, TTrigger, TData> Builder(TState startState)
         {
-            return new BuilderFluent<TState, TTrigger, TData>();
+            return new FluentImplementation<TState, TTrigger, TData>(startState);
         }
 
+        /// <exception cref="FsmBuilderException">When the handler is null</exception>
         public Fsm<TState, TTrigger, TData> AddStateChangeHandler(
             EventHandler<StateChangeArgs<TState, TTrigger, TData>> e)
         {
             if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
 
-            StateChanged += e;
+            Model.StateChanged += e;
             return this;
         }
 
+        /// <exception cref="FsmBuilderException">When the state is null or the state has already been added before</exception>
         public Fsm<TState, TTrigger, TData> Add(State<TState, TTrigger, TData> state)
         {
             if (state == null) throw FsmBuilderException.StateCannotBeNull();
-            if (States.ContainsKey(state.Identifier)) throw FsmBuilderException.StateCanOnlyBeAddedOnce(state);
+            if (Model.States.ContainsKey(state.Identifier)) throw FsmBuilderException.StateCanOnlyBeAddedOnce(state);
 
-            States.Add(state.Identifier, state);
+            Model.States.Add(state.Identifier, state);
             return this;
         }
-        
+
+        /// <exception cref="FsmBuilderException">
+        ///     When the transition is null or another transition already leads to the same
+        ///     target state
+        /// </exception>
+        public Fsm<TState, TTrigger, TData> Add(Transition<TState, TTrigger, TData> t)
+        {
+            if (t == null) throw FsmBuilderException.TransitionCannotBeNull();
+
+            Model.GlobalTransitions.Add(t.Target.Identifier, t);
+            return this;
+        }
+
         public void TransitionTo(TState state, bool isPop = false)
         {
             State<TState, TTrigger, TData> s;
-            if (States.TryGetValue(state, out s))
+            if (Model.States.TryGetValue(state, out s))
             {
                 DoTransition(s, default(TTrigger), isPop);
             }
@@ -93,30 +115,30 @@ namespace StateMachine
         {
             if (state == null || input == null) return;
 
-            State<TState, TTrigger, TData> old = Current;
+            State<TState, TTrigger, TData> old = Model.Current;
             if (isPop)
             {
-                Stack.Pop();
-                Current = Stack.Peek();
+                Model.Stack.Pop();
+                Model.Current = Model.Stack.Peek();
             }
             else
             {
-                Current = state;
-                Stack.Push(Current);
+                Model.Current = state;
+                Model.Stack.Push(Model.Current);
             }
 
-            if (Current.ClearStack)
+            if (Model.Current.ClearStack)
             {
-                Stack.Clear();
+                Model.Stack.Clear();
             }
 
-            if (!Current.Equals(old))
+            if (!Model.Current.Equals(old))
             {
                 StateChangeArgs<TState, TTrigger, TData> args =
-                    new StateChangeArgs<TState, TTrigger, TData>(this, old, Current, input);
+                    new StateChangeArgs<TState, TTrigger, TData>(this, old, Model.Current, input);
                 old.RaiseExited(args);
-                Current.RaiseEntered(args);
-                StateChanged?.Invoke(this, args);
+                Model.Current.RaiseEntered(args);
+                Model.RaiseStateChanged(args);
             }
         }
 
@@ -124,13 +146,25 @@ namespace StateMachine
         {
             if (input == null) return;
 
-            Transition<TState, TTrigger, TData> t = Current.Process(input);
-            DoTransition(t.Target, input, t.Pop);
+            foreach (var g in Model.GlobalTransitions.Values)
+            {
+                if (g.Process(Model.Current, input))
+                {
+                    DoTransition(g.Target, input, g.Pop);
+                    return;
+                }
+            }
+
+            Transition<TState, TTrigger, TData> t = Model.Current.Process(input);
+            if (t != null)
+            {
+                DoTransition(t.Target, input, t.Pop);
+            }
         }
 
         public void Update(UpdateArgs<TState, TTrigger, TData> data)
         {
-            Current.RaiseUpdated(data);
+            Model.Current.RaiseUpdated(data);
         }
     }
 }

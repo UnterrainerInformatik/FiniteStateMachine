@@ -25,32 +25,39 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-namespace StateMachine.Fluent
+using System;
+using System.Collections.Generic;
+using JetBrains.Annotations;
+using StateMachine.Events;
+
+namespace StateMachine
 {
-    public class TransitionFluent<TState, TTrigger, TGameTime> :
-        FluentBase<Transition<TState, TTrigger, TGameTime>, TransitionFluent<TState, TTrigger, TGameTime>>
+    [PublicAPI]
+    public class FsmModel<TState, TTrigger, TData>
     {
-        public TransitionFluent(Transition<TState, TTrigger, TGameTime> transition) : base(transition)
+        public event EventHandler<StateChangeArgs<TState, TTrigger, TData>> StateChanged;
+
+        public State<TState, TTrigger, TData> Current { get; set; }
+
+        public Stack<State<TState, TTrigger, TData>> Stack { get; } = new Stack<State<TState, TTrigger, TData>>();
+
+        public Dictionary<TState, State<TState, TTrigger, TData>> States { get; } =
+            new Dictionary<TState, State<TState, TTrigger, TData>>();
+
+        public Dictionary<TState, Transition<TState, TTrigger, TData>> GlobalTransitions { get; } =
+            new Dictionary<TState, Transition<TState, TTrigger, TData>>();
+
+        public void AddStateChangedHandler(
+            EventHandler<StateChangeArgs<TState, TTrigger, TData>> e)
         {
+            if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
+
+            StateChanged += e;
         }
 
-        public TransitionFluent<TState, TTrigger, TGameTime> Trigger(TTrigger v)
+        public void RaiseStateChanged(StateChangeArgs<TState, TTrigger, TData> e)
         {
-            if (!Model.Triggers.Contains(v))
-                Model.Triggers.Add(v);
-            return this;
-        }
-
-        public TransitionFluent<TState, TTrigger, TGameTime> Target(State<TState, TTrigger, TGameTime> v)
-        {
-            Model.Target = v;
-            return this;
-        }
-
-        public TransitionFluent<TState, TTrigger, TGameTime> Pop(bool v)
-        {
-            Model.Pop = v;
-            return this;
+            StateChanged?.Invoke(this, e);
         }
     }
 }

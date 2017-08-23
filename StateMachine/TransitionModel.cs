@@ -25,31 +25,20 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-namespace StateMachine.Fluent
+using System;
+using System.Collections.Generic;
+using JetBrains.Annotations;
+
+namespace StateMachine
 {
-    public class StateFluent<TState, TTrigger, TData> :
-        FluentBase<State<TState, TTrigger, TData>, StateFluent<TState, TTrigger, TData>>
+    [PublicAPI]
+    public class TransitionModel<TState, TTrigger, TData>
     {
-        public StateFluent(State<TState, TTrigger, TData> state) : base(state)
-        {
-        }
+        public List<TTrigger> Triggers { get; set; } = new List<TTrigger>();
+        public State<TState, TTrigger, TData> Source { get; set; }
+        public State<TState, TTrigger, TData> Target { get; set; }
+        public bool Pop { get; set; }
 
-        public StateFluent<TState, TTrigger, TData> Name(TState v)
-        {
-            Model.Identifier = v;
-            return this;
-        }
-
-        public StateFluent<TState, TTrigger, TData> EndState(bool v)
-        {
-            Model.EndState = v;
-            return this;
-        }
-
-        public StateFluent<TState, TTrigger, TData> ClearStack(bool v)
-        {
-            Model.ClearStack = v;
-            return this;
-        }
+        public List<Func<TState, TState, TTrigger, bool>> Conditions { get; } = new List<Func<TState, TState, TTrigger, bool>>();
     }
 }

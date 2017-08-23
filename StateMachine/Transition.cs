@@ -25,87 +25,91 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using JetBrains.Annotations;
-using StateMachine.Fluent;
 
 namespace StateMachine
 {
     [PublicAPI]
-    public class Transition<TState, TTrigger, TGameTime>
+    public class Transition<TState, TTrigger, TData>
     {
-        private TransitionFluent<TState, TTrigger, TGameTime> FluentInterface { get; }
+        private TransitionModel<TState, TTrigger, TData> Model { get; set; } =
+            new TransitionModel<TState, TTrigger, TData>();
 
-        public List<TTrigger> Triggers { get; set; } = new List<TTrigger>();
-        public State<TState, TTrigger, TGameTime> Source { get; set; }
-        public State<TState, TTrigger, TGameTime> Target { get; set; }
-        public bool Pop { get; set; }
+        public State<TState, TTrigger, TData> Target => Model.Target;
 
-        /// <summary>
-        ///     Returns a fluent setter object that allows you to set all the values of the object more conveniently without
-        ///     re-creating the instance.
-        /// </summary>
-        /// <returns>A fluent setter object.</returns>
-        public TransitionFluent<TState, TTrigger, TGameTime> Set()
+        public bool Pop => Model.Pop;
+
+        public State<TState, TTrigger, TData> Source
         {
-            return FluentInterface;
+            get { return Model.Source; }
+            set { Model.Source = value; }
+        }
+
+        public Transition(TransitionModel<TState, TTrigger, TData> model)
+        {
+            Model = model;
         }
 
         public Transition()
         {
-            FluentInterface = new TransitionFluent<TState, TTrigger, TGameTime>(this);
         }
 
-        public Transition(Collection<TTrigger> triggers, State<TState, TTrigger, TGameTime> target) : this()
+        /// <exception cref="FsmBuilderException">When target is null</exception>
+        public Transition(Collection<TTrigger> triggers, State<TState, TTrigger, TData> target) : this()
         {
             if (target == null) throw FsmBuilderException.TargetStateCannotBeNull();
 
-            Triggers.AddRange(triggers);
-            Target = target;
+            Model.Triggers.AddRange(triggers);
+            Model.Target = target;
         }
 
-        public Transition(Collection<TTrigger> triggers, State<TState, TTrigger, TGameTime> target, bool isPop)
+        /// <exception cref="FsmBuilderException">When target is null</exception>
+        public Transition(Collection<TTrigger> triggers, State<TState, TTrigger, TData> target, bool isPop)
         {
             if (target == null) throw FsmBuilderException.TargetStateCannotBeNull();
 
-            Triggers.AddRange(triggers);
-            Target = target;
-            Pop = isPop;
+            Model.Triggers.AddRange(triggers);
+            Model.Target = target;
+            Model.Pop = isPop;
         }
 
-        public Transition(TTrigger trigger, State<TState, TTrigger, TGameTime> target) : this()
+        /// <exception cref="FsmBuilderException">When target is null</exception>
+        public Transition(TTrigger trigger, State<TState, TTrigger, TData> target) : this()
         {
             if (target == null) throw FsmBuilderException.TargetStateCannotBeNull();
 
-            Triggers.Add(trigger);
-            Target = target;
+            Model.Triggers.Add(trigger);
+            Model.Target = target;
         }
 
-        public Transition(TTrigger trigger, State<TState, TTrigger, TGameTime> target, bool isPop)
+        /// <exception cref="FsmBuilderException">When target is null</exception>
+        public Transition(TTrigger trigger, State<TState, TTrigger, TData> target, bool isPop)
         {
             if (target == null) throw FsmBuilderException.TargetStateCannotBeNull();
 
-            Triggers.Add(trigger);
-            Target = target;
-            Pop = isPop;
+            Model.Triggers.Add(trigger);
+            Model.Target = target;
+            Model.Pop = isPop;
         }
 
+        /// <exception cref="FsmBuilderException">When trigger has been declared before</exception>
         public void Add(TTrigger trigger)
         {
-            if (Triggers.Contains(trigger)) throw FsmBuilderException.TriggerAlreadyDeclared(trigger);
+            if (Model.Triggers.Contains(trigger)) throw FsmBuilderException.TriggerAlreadyDeclared(trigger);
 
-            Triggers.Add(trigger);
+            Model.Triggers.Add(trigger);
         }
 
-        public bool Process(State<TState, TTrigger, TGameTime> from, TTrigger input)
+        public bool Process(State<TState, TTrigger, TData> from, TTrigger input)
         {
-            return Triggers.Contains(input);
+            return Model.Triggers.Contains(input) &&
+                   Model.Conditions.TrueForAll(x => x(from.Identifier, Model.Target.Identifier, input));
         }
 
         public override string ToString()
         {
-            return $"{Source}-({Triggers})->{Target}";
+            return $"{Model.Source}-({Model.Triggers})->{Model.Target}";
         }
     }
 }

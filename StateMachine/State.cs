@@ -25,114 +25,57 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using System.Collections.Generic;
 using JetBrains.Annotations;
 using StateMachine.Events;
-using StateMachine.Fluent;
 
 namespace StateMachine
 {
     [PublicAPI]
     public class State<TState, TTrigger, TData>
     {
-        public event EventHandler<StateChangeArgs<TState, TTrigger, TData>> Entered;
-        public event EventHandler<StateChangeArgs<TState, TTrigger, TData>> Exited;
-        public event EventHandler<UpdateArgs<TState, TTrigger, TData>> Updated;
+        private StateModel<TState, TTrigger, TData> Model { get; set; } = new StateModel<TState, TTrigger, TData>();
 
-        private StateFluent<TState, TTrigger, TData> FluentInterface { get; }
+        public TState Identifier => Model.Identifier;
 
-        public TState Identifier { get; set; }
-        public bool EndState { get; set; }
-        public bool ClearStack { get; set; }
-
-        public Dictionary<TState, Transition<TState, TTrigger, TData>> Transitions { get; } =
-            new Dictionary<TState, Transition<TState, TTrigger, TData>>();
-
-        /// <summary>
-        ///     Returns a fluent setter object that allows you to set all the values of the object more conveniently without
-        ///     re-creating the instance.
-        /// </summary>
-        /// <returns>A fluent setter object.</returns>
-        public StateFluent<TState, TTrigger, TData> Set()
+        public bool ClearStack
         {
-            return FluentInterface;
+            get { return Model.ClearStack; }
+            set { Model.ClearStack = value; }
+        }
+
+        public bool EndState
+        {
+            get { return Model.EndState; }
+            set { Model.EndState = value; }
+        }
+
+        public void RaiseUpdated(UpdateArgs<TState, TTrigger, TData> args) => Model.RaiseUpdated(args);
+        public void RaiseEntered(StateChangeArgs<TState, TTrigger, TData> args) => Model.RaiseEntered(args);
+        public void RaiseExited(StateChangeArgs<TState, TTrigger, TData> args) => Model.RaiseExited(args);
+
+        public State(StateModel<TState, TTrigger, TData> model)
+        {
+            Model = model;
         }
 
         public State(TState identifier)
         {
-            FluentInterface = new StateFluent<TState, TTrigger, TData>(this);
-            Identifier = identifier;
+            Model.Identifier = identifier;
         }
 
-        public State<TState, TTrigger, TData> AddEnteredHandler(
-            EventHandler<StateChangeArgs<TState, TTrigger, TData>> e)
-        {
-            if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
-
-            Entered += e;
-            return this;
-        }
-
-        public void RaiseEntered(StateChangeArgs<TState, TTrigger, TData> e)
-        {
-            Entered?.Invoke(this, e);
-        }
-
-        public State<TState, TTrigger, TData> AddExitedHandler(
-            EventHandler<StateChangeArgs<TState, TTrigger, TData>> e)
-        {
-            if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
-
-            Exited += e;
-            return this;
-        }
-
-        public void RaiseExited(StateChangeArgs<TState, TTrigger, TData> e)
-        {
-            Exited?.Invoke(this, e);
-        }
-
-        public State<TState, TTrigger, TData> AddUpdatedHandler(
-            EventHandler<UpdateArgs<TState, TTrigger, TData>> e)
-        {
-            if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
-
-            Updated+= e;
-            return this;
-        }
-
-        public void RaiseUpdated(UpdateArgs<TState, TTrigger, TData> data)
-        {
-            Updated?.Invoke(this, data);
-        }
-
+        /// <exception cref="FsmBuilderException"> When the transition is null</exception>
         public State<TState, TTrigger, TData> Add(Transition<TState, TTrigger, TData> t)
         {
             if (t == null) throw FsmBuilderException.TransitionCannotBeNull();
-            if (Transitions.ContainsKey(t.Target.Identifier))
-                throw FsmBuilderException.TransitionToSameStateAlreadyDeclared(t.Target);
 
             t.Source = this;
-            Transitions.Add(t.Target.Identifier, t);
-            return this;
-        }
-
-        public State<TState, TTrigger, TData> Remove(Transition<TState, TTrigger, TData> t)
-        {
-            Transitions.Remove(t.Target.Identifier);
-            return this;
-        }
-
-        public State<TState, TTrigger, TData> Clear()
-        {
-            Transitions.Clear();
+            Model.Transitions.Add(t.Target.Identifier, t);
             return this;
         }
 
         public Transition<TState, TTrigger, TData> Process(TTrigger input)
         {
-            foreach (var t in Transitions.Values)
+            foreach (var t in Model.Transitions.Values)
             {
                 if (t.Process(this, input))
                 {
@@ -144,7 +87,7 @@ namespace StateMachine
 
         public override string ToString()
         {
-            return Identifier.ToString();
+            return Model.Identifier.ToString();
         }
     }
 }

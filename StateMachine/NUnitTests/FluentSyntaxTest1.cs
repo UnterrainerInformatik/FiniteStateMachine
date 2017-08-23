@@ -103,8 +103,8 @@ namespace StateMachine.NUnitTests
         private void main()
         {
             Hero hero = new Hero();
-            CreateMachineFor(Fsm<State, Trigger, float> , new Button(), hero);
-            CreateMachineFor(Fsm<State, Trigger, float>, new Button(), hero);
+            CreateMachineFor(Fsm<State, Trigger, float>.Builder(State.IDLE) , new Button(), hero);
+            CreateMachineFor(Fsm<State, Trigger, float>.Builder(State.IDLE), new Button(), hero);
         }
 
         private void CreateMachineFor(BuilderFluent<State, Trigger, float> builder, Button button, Hero hero)

@@ -25,33 +25,30 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-namespace StateMachine
+namespace StateMachine.Fluent.Api
 {
-    class TransitionData<TState, TTrigger, TData>
+    public class FluentImplementation<TState, TTrigger, TData> : BuilderFluent<TState, TTrigger, TData>
     {
-        public State<TState, TTrigger, TData> State { get; private set; }
-        public TTrigger Input { get; private set; }
-        public bool IsGlobal { get; private set; }
-        public bool IsPop { get; private set; }
+        private FsmModel<TState, TTrigger, TData> FsmModel { get; set; } = new FsmModel<TState, TTrigger, TData>();
 
-        public static TransitionData<TState, TTrigger, TData> CreateTransitionTo(State<TState, TTrigger, TData> state,
-            TTrigger input, bool isPop = false)
+        public FluentImplementation(TState startState)
         {
-            var r = new TransitionData<TState, TTrigger, TData>();
-            r.IsGlobal = false;
-            r.State = state;
-            r.Input = input;
-            r.IsPop = isPop;
-            return r;
+            
         }
 
-        public static TransitionData<TState, TTrigger, TData> CreateGlobalTo(State<TState, TTrigger, TData> state, bool isPop = false)
+        public GlobalTransitionFluent<TState, TTrigger, TData> GlobalTransitionTo(TState state)
         {
-            var r = new TransitionData<TState, TTrigger, TData>();
-            r.IsGlobal = true;
-            r.IsPop = isPop;
-            r.State = state;
-            return r;
+            return this;
+        }
+
+        public StateFluent<TState, TTrigger, TData> State(TState state)
+        {
+            return this;
+        }
+
+        public Fsm<TState, TTrigger, TData> Build()
+        {
+            return new Fsm<TState, TTrigger, TData>(FsmModel);
         }
     }
 }
