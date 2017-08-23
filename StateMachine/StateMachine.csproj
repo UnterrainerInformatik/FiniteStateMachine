@@ -50,25 +50,24 @@
   <ItemGroup>
     <Compile Include="Events\StateChangeArgs.cs" />
     <Compile Include="Fluent\Api\BuilderFluent.cs" />
+    <Compile Include="Fluent\Api\FluentImplementation.cs" />
     <Compile Include="Fluent\Api\TransitionFluent.cs" />
     <Compile Include="Fluent\Api\TransitionStateFluent.cs" />
     <Compile Include="Fluent\Api\GlobalTransitionBuilderFluent.cs" />
     <Compile Include="Fluent\Api\GlobalTransitionFluent.cs" />
-    <Compile Include="Fluent\FluentBase.cs" />
-    <Compile Include="Fluent\StateFluent.cs" />
     <Compile Include="Fluent\Api\StateFluent.cs" />
     <Compile Include="Fsm.cs" />
     <Compile Include="FsmBuilderException.cs" />
-    <Compile Include="NUnitTests\LocalFluentTests.cs" />
+    <Compile Include="FsmModel.cs" />
     <Compile Include="NUnitTests\SimpleTests.cs" />
     <Compile Include="NUnitTests\FluentSyntaxTest1.cs" />
     <Compile Include="NUnitTests\TestTools.cs" />
     <Compile Include="State.cs" />
+    <Compile Include="StateModel.cs" />
     <Compile Include="Transition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Fluent\TransitionFluent.cs" />
     <Compile Include="Events\UpdateArgs.cs" />
-    <Compile Include="TransitionData.cs" />
+    <Compile Include="TransitionModel.cs" />
     <Compile Include="Updatable.cs" />
   </ItemGroup>
   <ItemGroup>
