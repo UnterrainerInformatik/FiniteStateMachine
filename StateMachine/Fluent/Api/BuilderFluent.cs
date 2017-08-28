@@ -25,8 +25,11 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using JetBrains.Annotations;
+
 namespace StateMachine.Fluent.Api
 {
+    [PublicAPI]
     public interface BuilderFluent<TState, TTrigger, TData>
     {
         GlobalTransitionFluent<TState, TTrigger, TData> GlobalTransitionTo(TState state);

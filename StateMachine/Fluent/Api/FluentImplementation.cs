@@ -25,24 +25,30 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using StateMachine.Events;
 using System;
 using System.Collections.Generic;
+using StateMachine.Events;
 
 namespace StateMachine.Fluent.Api
 {
-    public class FluentImplementation<TState, TTrigger, TData> : GlobalTransitionBuilderFluent<TState, TTrigger, TData>, TransitionStateFluent<TState, TTrigger, TData>
+    public class FluentImplementation<TState, TTrigger, TData> : GlobalTransitionBuilderFluent<TState, TTrigger, TData>,
+        TransitionStateFluent<TState, TTrigger, TData>
     {
         private FsmModel<TState, TTrigger, TData> FsmModel { get; set; } = new FsmModel<TState, TTrigger, TData>();
         private TState startState;
 
-        private Tuple<TState> currentState = null;
-        private Tuple<TState, TState> currentTransition = null;
-        private Tuple<TState> currentGlobalTransition = null;
+        private Tuple<TState> currentState;
+        private Tuple<TState, TState> currentTransition;
+        private Tuple<TState> currentGlobalTransition;
 
-        private Dictionary<Tuple<TState>, StateModel<TState, TTrigger, TData>> stateModels = new Dictionary<Tuple<TState>, StateModel<TState, TTrigger, TData>>();
-        private Dictionary<Tuple<TState, TState>, TransitionModel<TState, TTrigger, TData>> transitionModels = new Dictionary<Tuple<TState, TState>, TransitionModel<TState, TTrigger, TData>>();
-        private Dictionary<Tuple<TState>, TransitionModel<TState, TTrigger, TData>> globalTransitionModels = new Dictionary<Tuple<TState>, TransitionModel<TState, TTrigger, TData>>();
+        private Dictionary<Tuple<TState>, StateModel<TState, TTrigger, TData>> stateModels =
+            new Dictionary<Tuple<TState>, StateModel<TState, TTrigger, TData>>();
+
+        private Dictionary<Tuple<TState, TState>, TransitionModel<TState, TTrigger, TData>> transitionModels =
+            new Dictionary<Tuple<TState, TState>, TransitionModel<TState, TTrigger, TData>>();
+
+        private Dictionary<Tuple<TState>, TransitionModel<TState, TTrigger, TData>> globalTransitionModels =
+            new Dictionary<Tuple<TState>, TransitionModel<TState, TTrigger, TData>>();
 
         public FluentImplementation(TState startState)
         {
@@ -64,7 +70,7 @@ namespace StateMachine.Fluent.Api
         public StateFluent<TState, TTrigger, TData> State(TState state)
         {
             currentState = Tuple.Create(state);
-            if (FsmModel.States[state] == null)
+            if (!FsmModel.States.ContainsKey(state))
             {
                 stateModels[currentState] = new StateModel<TState, TTrigger, TData>(state);
                 FsmModel.States[state] = new State<TState, TTrigger, TData>(stateModels[currentState]);
@@ -93,10 +99,12 @@ namespace StateMachine.Fluent.Api
         public GlobalTransitionFluent<TState, TTrigger, TData> GlobalTransitionTo(TState state)
         {
             currentGlobalTransition = Tuple.Create(state);
-            if (globalTransitionModels[currentGlobalTransition] == null)
+            if (!globalTransitionModels.ContainsKey(currentGlobalTransition))
             {
-                globalTransitionModels[currentGlobalTransition] = new TransitionModel<TState, TTrigger, TData>(startState, state);
-                FsmModel.GlobalTransitions[state] = new Transition<TState, TTrigger, TData>(globalTransitionModels[currentGlobalTransition]);
+                globalTransitionModels[currentGlobalTransition] =
+                    new TransitionModel<TState, TTrigger, TData>(startState, state);
+                FsmModel.GlobalTransitions[state] =
+                    new Transition<TState, TTrigger, TData>(globalTransitionModels[currentGlobalTransition]);
             }
             return this;
         }
@@ -107,19 +115,22 @@ namespace StateMachine.Fluent.Api
             return this;
         }
 
-        public GlobalTransitionBuilderFluent<TState, TTrigger, TData> IfGlobal(Func<TState, TState, TTrigger, bool> condition)
+        public GlobalTransitionBuilderFluent<TState, TTrigger, TData> IfGlobal(
+            Func<TState, TState, TTrigger, bool> condition)
         {
             globalTransitionModels[currentGlobalTransition].Conditions.Add(condition);
             return this;
         }
-        
+
         public TransitionFluent<TState, TTrigger, TData> TransitionTo(TState state)
         {
             currentTransition = Tuple.Create(currentState.Item1, state);
-            if (transitionModels[currentTransition] == null)
+            if (!transitionModels.ContainsKey(currentTransition))
             {
-                transitionModels[currentTransition] = new TransitionModel<TState, TTrigger, TData>(currentState.Item1, state);
-                stateModels[currentState].Transitions[state] = new Transition<TState, TTrigger, TData>(transitionModels[currentTransition]);
+                transitionModels[currentTransition] = new TransitionModel<TState, TTrigger, TData>(currentState.Item1,
+                    state);
+                stateModels[currentState].Transitions[state] =
+                    new Transition<TState, TTrigger, TData>(transitionModels[currentTransition]);
             }
             return this;
         }
@@ -133,6 +144,12 @@ namespace StateMachine.Fluent.Api
         public TransitionStateFluent<TState, TTrigger, TData> If(Func<TState, TState, TTrigger, bool> condition)
         {
             transitionModels[currentTransition].Conditions.Add(condition);
+            return this;
+        }
+
+        public StateFluent<TState, TTrigger, TData> ClearsStack()
+        {
+            FsmModel.States[currentState.Item1].ClearStack = true;
             return this;
         }
     }

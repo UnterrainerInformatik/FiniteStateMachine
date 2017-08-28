@@ -25,6 +25,7 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System.Linq;
 using NUnit.Framework;
 
 namespace StateMachine.NUnitTests
@@ -54,22 +55,40 @@ namespace StateMachine.NUnitTests
             State<State, Trigger, float> opened = new State<State, Trigger, float>(State.OPENED);
             State<State, Trigger, float> closed = new State<State, Trigger, float>(State.CLOSED)
             {
-                EndState = true,
                 ClearStack = true
             };
-            opened.Add(new Transition<State, Trigger, float>(Trigger.CLOSE, State.OPENED, State.CLOSED))
-                .Add(new Transition<State, Trigger, float>(Trigger.OPEN, State.OPENED, State.OPENED));
-            closed.Add(new Transition<State, Trigger, float>(Trigger.OPEN, State.CLOSED, State.OPENED))
-                .Add(new Transition<State, Trigger, float>(Trigger.CLOSE, State.CLOSED, State.CLOSED));
+            opened.AddTransisionOn(Trigger.CLOSE, State.CLOSED).AddTransisionOn(Trigger.OPEN, State.OPENED);
+            closed.AddTransisionOn(Trigger.OPEN, State.OPENED).AddTransisionOn(Trigger.CLOSE, State.CLOSED);
 
             Fsm<State, Trigger, float> m =
-                new Fsm<State, Trigger, float>(opened).AddStateChangeHandler(TestTools.ConsoleOut);
-            m.Add(opened);
-            m.Add(closed);
+                new Fsm<State, Trigger, float>(opened).AddStateChangeHandler(TestTools.ConsoleOut)
+                    .Add(opened)
+                    .Add(closed);
 
+            testSimple(m);
+        }
+
+        [Test]
+        [Category("StateMachine.Simple")]
+        public void FluentTest()
+        {
+            var m = Fsm<State, Trigger, float>.Builder(State.OPENED)
+                .State(State.OPENED)
+                    .TransitionTo(State.OPENED).On(Trigger.OPEN)
+                    .TransitionTo(State.CLOSED).On(Trigger.CLOSE)
+                .State(State.CLOSED).ClearsStack()
+                    .TransitionTo(State.CLOSED).On(Trigger.CLOSE)
+                    .TransitionTo(State.OPENED).On(Trigger.OPEN)
+                .Build();
+
+            testSimple(m);
+        }
+        
+        private void testSimple(Fsm<State, Trigger, float> m)
+        {
             m.Trigger(Trigger.OPEN);
             Assert.That(m.Current.Identifier, Is.EqualTo(State.OPENED));
-            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new[] {opened, opened}));
+            Assert.That(m.Stack.Select(x => x.Identifier).ToArray(), Is.EquivalentTo(new[] {State.OPENED, State.OPENED}));
 
             m.Trigger(Trigger.CLOSE);
             Assert.That(m.Current.Identifier, Is.EqualTo(State.CLOSED));
@@ -81,7 +100,37 @@ namespace StateMachine.NUnitTests
 
             m.Trigger(Trigger.OPEN);
             Assert.That(m.Current.Identifier, Is.EqualTo(State.OPENED));
-            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new[] {opened}));
+            Assert.That(m.Stack.Select(x => x.Identifier).ToArray(), Is.EquivalentTo(new[] {State.OPENED}));
+        }
+
+        [Test]
+        [Category("StateMachine.Simple")]
+        public void FluentWithStringTest()
+        {
+            var m = Fsm<string, string, float>.Builder("OPENED")
+                .State("OPENED")
+                    .TransitionTo("OPENED").On("OPEN")
+                    .TransitionTo("CLOSED").On("CLOSE")
+                .State("CLOSED").ClearsStack()
+                    .TransitionTo("CLOSED").On("CLOSE")
+                    .TransitionTo("OPENED").On("OPEN")
+                .Build();
+
+            m.Trigger("OPEN");
+            Assert.That(m.Current.Identifier, Is.EqualTo("OPENED"));
+            Assert.That(m.Stack.Select(x => x.Identifier).ToArray(), Is.EquivalentTo(new[] { "OPENED", "OPENED" }));
+
+            m.Trigger("CLOSE");
+            Assert.That(m.Current.Identifier, Is.EqualTo("CLOSED"));
+            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<State, Trigger, float>[] { }));
+
+            m.Trigger("CLOSE");
+            Assert.That(m.Current.Identifier, Is.EqualTo("CLOSED"));
+            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<State, Trigger, float>[] { }));
+
+            m.Trigger("OPEN");
+            Assert.That(m.Current.Identifier, Is.EqualTo("OPENED"));
+            Assert.That(m.Stack.Select(x => x.Identifier).ToArray(), Is.EquivalentTo(new[] { "OPENED" }));
         }
 
         [Test]
@@ -91,19 +140,21 @@ namespace StateMachine.NUnitTests
             State<State, Trigger, float> opened = new State<State, Trigger, float>(State.OPENED);
             State<State, Trigger, float> closed = new State<State, Trigger, float>(State.CLOSED)
             {
-                EndState = true,
                 ClearStack = true
             };
             State<State, Trigger, float> pop = new State<State, Trigger, float>(State.POP);
-            opened.Add(new Transition<State, Trigger, float>(Trigger.CLOSE, State.OPENED, State.CLOSED))
-                .Add(new Transition<State, Trigger, float>(Trigger.OPEN, State.OPENED, State.OPENED))
-                .Add(new Transition<State, Trigger, float>(Trigger.PUSH_POP, State.OPENED, State.POP));
-            pop.Add(new Transition<State, Trigger, float>(Trigger.PUSH_POP, State.POP, State.OPENED, true));
-            closed.Add(new Transition<State, Trigger, float>(Trigger.OPEN, State.CLOSED, State.OPENED))
-                .Add(new Transition<State, Trigger, float>(Trigger.CLOSE, State.CLOSED, State.CLOSED));
+            opened.AddTransisionOn(Trigger.CLOSE, State.CLOSED)
+                .AddTransisionOn(Trigger.OPEN, State.OPENED)
+                .AddTransisionOn(Trigger.PUSH_POP, State.POP);
+            pop.AddTransisionOn(Trigger.PUSH_POP, State.OPENED, true);
+            closed.AddTransisionOn(Trigger.OPEN, State.OPENED)
+                .AddTransisionOn(Trigger.CLOSE, State.CLOSED);
 
             Fsm<State, Trigger, float> m =
-                new Fsm<State, Trigger, float>(opened).AddStateChangeHandler(TestTools.ConsoleOut);
+                new Fsm<State, Trigger, float>(opened).AddStateChangeHandler(TestTools.ConsoleOut)
+                    .Add(opened)
+                    .Add(closed)
+                    .Add(pop);
 
             m.Trigger(Trigger.OPEN);
             Assert.That(m.Current.Identifier, Is.EqualTo(State.OPENED));

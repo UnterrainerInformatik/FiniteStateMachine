@@ -40,7 +40,7 @@ namespace StateMachine
 
         public State<TState, TTrigger, TData> Current => Model.Current;
         public Stack<State<TState, TTrigger, TData>> Stack => Model.Stack;
-        
+
         /// <exception cref="FsmBuilderException">When the model is null</exception>
         public Fsm(FsmModel<TState, TTrigger, TData> model)
         {

@@ -73,7 +73,8 @@ namespace StateMachine.NUnitTests
         public ButtonKind Kind { get; set; }
         public Timer RefreshTimer { get; }
 
-        public Spell DoAssociatedSpell() {
+        public Spell DoAssociatedSpell()
+        {
             //Do something useful.
             return new Spell();
         }
@@ -103,7 +104,7 @@ namespace StateMachine.NUnitTests
         private void main()
         {
             Hero hero = new Hero();
-            CreateMachineFor(Fsm<State, Trigger, float>.Builder(State.IDLE) , new Button(), hero);
+            CreateMachineFor(Fsm<State, Trigger, float>.Builder(State.IDLE), new Button(), hero);
             CreateMachineFor(Fsm<State, Trigger, float>.Builder(State.IDLE), new Button(), hero);
         }
 
@@ -118,7 +119,9 @@ namespace StateMachine.NUnitTests
                 .TransitionTo(State.PRESSED).On(Trigger.MOUSE_CLICKED)
                 .OnEnter((s, t) => { button.State = Button.ButtonState.OVER; })
                 .State(State.PRESSED)
-                .TransitionTo(State.IDLE).On(Trigger.MOUSE_LEAVE).If((source, target, trigger) => button.Kind == Button.ButtonKind.FLIPBACK)
+                .TransitionTo(State.IDLE)
+                .On(Trigger.MOUSE_LEAVE)
+                .If((source, target, trigger) => button.Kind == Button.ButtonKind.FLIPBACK)
                 .TransitionTo(State.REFRESHING).On(Trigger.MOUSE_RELEASED)
                 .OnEnter((s, t) => { button.State = Button.ButtonState.DOWN; })
                 .State(State.REFRESHING)

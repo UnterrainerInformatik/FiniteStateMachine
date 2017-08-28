@@ -33,55 +33,70 @@ namespace StateMachine.NUnitTests
     [Category("StateMachine.GamingProgrammingPatterns")]
     public class GameProgrammingPatterns1
     {
+        private enum State
+        {
+            DUCKING,
+            STANDING,
+            JUMPING,
+            DIVING
+        }
+
+        private enum Trigger
+        {
+            DOWN,
+            UP
+        }
+        
         [Test]
         [Category("StateMachine.GamingProgrammingPatterns.1")]
         public void GamingProgrammingPatternsTest1()
         {
-            State<string> ducking = new State<string>("ducking");
-            State<string> standing = new State<string>("standing") {ClearStack = true};
-            State<string> jumping = new State<string>("jumping");
-            State<string> diving = new State<string>("diving");
-            ducking.Add(new Transition<string> {Name = "stand_up", Trigger = "down", Target = standing});
-            standing.Add(new Transition<string> {Name = "duck", Trigger = "down", Target = ducking})
-                .Add(new Transition<string> {Name = "jump", Trigger = "B", Target = jumping});
-            jumping.Add(new Transition<string> {Name = "dive", Trigger = "down", Target = diving});
+            Fsm<State, Trigger, float>.Builder(State.STANDING)
+                .State(State.DUCKING)
+                    .TransitionTo(State.STANDING).On(Trigger.DOWN)
+                    .TransitionTo(State.STANDING).On(Trigger.UP)
+                .State(State.STANDING).ClearsStack()
+                    .TransitionTo(State.DUCKING).On(Trigger.DOWN)
+                    .TransitionTo(State.JUMPING).On(Trigger.UP)
+                .State(State.JUMPING)
+                    .TransitionTo(State.DIVING).On(Trigger.DOWN)
+                .State(State.DIVING)
+                .Build();
+        }
 
-            Fsm<string> m =
-                new Fsm<string>(standing).AddStateChangedHandler(TestTools.ConsoleOut);
+        private enum WState
+        {
+            EMPTY_HANDED,
+            GUN,
+            SHOTGUN,
+            LASER_RIFLE
+        }
+
+        private enum WTrigger
+        {
+            TAB,
+            SHIFT_TAB
         }
 
         [Test]
         [Category("StateMachine.GamingProgrammingPatterns.2")]
         public void GamingProgrammingPatternsTest2()
         {
-            State<string> ducking = new State<string>("ducking");
-            State<string> standing = new State<string>("standing") {ClearStack = true};
-            State<string> jumping = new State<string>("jumping");
-            State<string> diving = new State<string>("diving");
-            ducking.Add(new Transition<string> {Name = "stand_up", Trigger = "down", Target = standing});
-            standing.Add(new Transition<string> {Name = "duck", Trigger = "down", Target = ducking})
-                .Add(new Transition<string> {Name = "jump", Trigger = "B", Target = jumping});
-            jumping.Add(new Transition<string> {Name = "dive", Trigger = "down", Target = diving});
-
-            Fsm<string> m =
-                new Fsm<string>(standing).AddStateChangedHandler(TestTools.ConsoleOut);
-
             // Now for the weapons-machine with basic forward- and backward-rotation.
-            State<string> emptyHanded = new State<string>("empty_handed");
-            State<string> gun = new State<string>("gun");
-            State<string> shotgun = new State<string>("shotgun");
-            State<string> laserRifle = new State<string>("laser_rifle");
-            emptyHanded.Add(new Transition<string> {Name = "rotate_weapon", Trigger = "tab", Target = gun})
-                .Add(new Transition<string> {Name = "rotate_weapon_back", Trigger = "shift-tab", Target = laserRifle});
-            gun.Add(new Transition<string> {Name = "rotate_weapon", Trigger = "tab", Target = shotgun})
-                .Add(new Transition<string> {Name = "rotate_weapon_back", Trigger = "shift-tab", Target = emptyHanded});
-            shotgun.Add(new Transition<string> {Name = "rotate_weapon", Trigger = "tab", Target = laserRifle})
-                .Add(new Transition<string> {Name = "rotate_weapon_back", Trigger = "shift-tab", Target = gun});
-            laserRifle.Add(new Transition<string> {Name = "rotate_weapon", Trigger = "tab", Target = emptyHanded})
-                .Add(new Transition<string> {Name = "rotate_weapon_back", Trigger = "shift-tab", Target = shotgun});
-
-            Fsm<string> w =
-                new Fsm<string>(emptyHanded).AddStateChangedHandler(TestTools.ConsoleOut);
+            Fsm<WState, WTrigger, float>.Builder(WState.EMPTY_HANDED)
+                .State(WState.EMPTY_HANDED)
+                    .TransitionTo(WState.GUN).On(WTrigger.TAB)
+                    .TransitionTo(WState.LASER_RIFLE).On(WTrigger.SHIFT_TAB)
+                .State(WState.GUN)
+                    .TransitionTo(WState.SHOTGUN).On(WTrigger.TAB)
+                    .TransitionTo(WState.EMPTY_HANDED).On(WTrigger.SHIFT_TAB)
+                .State(WState.SHOTGUN)
+                    .TransitionTo(WState.LASER_RIFLE).On(WTrigger.TAB)
+                    .TransitionTo(WState.GUN).On(WTrigger.SHIFT_TAB)
+                .State(WState.LASER_RIFLE)
+                    .TransitionTo(WState.EMPTY_HANDED).On(WTrigger.TAB)
+                    .TransitionTo(WState.SHOTGUN).On(WTrigger.SHIFT_TAB)
+                .Build();
         }
     }
 }

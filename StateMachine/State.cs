@@ -43,12 +43,6 @@ namespace StateMachine
             set { Model.ClearStack = value; }
         }
 
-        public bool EndState
-        {
-            get { return Model.EndState; }
-            set { Model.EndState = value; }
-        }
-
         public void RaiseUpdated(UpdateArgs<TState, TTrigger, TData> args) => Model.RaiseUpdated(args);
         public void RaiseEntered(StateChangeArgs<TState, TTrigger, TData> args) => Model.RaiseEntered(args);
         public void RaiseExited(StateChangeArgs<TState, TTrigger, TData> args) => Model.RaiseExited(args);
@@ -67,9 +61,14 @@ namespace StateMachine
         {
             if (t == null) throw FsmBuilderException.TransitionCannotBeNull();
 
-            t.Source = this.Identifier;
+            t.Source = Identifier;
             Model.Transitions.Add(t.Target, t);
             return this;
+        }
+
+        public State<TState, TTrigger, TData> AddTransisionOn(TTrigger trigger, TState target, bool isPop = false)
+        {
+            return Add(new Transition<TState, TTrigger, TData>(trigger, Identifier, target, isPop));
         }
 
         public Transition<TState, TTrigger, TData> Process(TTrigger input)

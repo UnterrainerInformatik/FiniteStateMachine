@@ -41,5 +41,7 @@ namespace StateMachine.Fluent.Api
         StateFluent<TState, TTrigger, TData> OnExit(EventHandler<StateChangeArgs<TState, TTrigger, TData>> exit);
 
         StateFluent<TState, TTrigger, TData> Update(EventHandler<UpdateArgs<TState, TTrigger, TData>> update);
+
+        StateFluent<TState, TTrigger, TData> ClearsStack();
     }
 }

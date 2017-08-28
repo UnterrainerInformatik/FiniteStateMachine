@@ -38,12 +38,13 @@ namespace StateMachine
         private FsmBuilderException(string message, Exception innerException) : base(message, innerException)
         {
         }
-        
+
         public static FsmBuilderException StateCanOnlyBeAddedOnce<TState, TTrigger, TData>(
             State<TState, TTrigger, TData> state)
         {
-            return new FsmBuilderException($"A state [{state.Identifier}] has already been added. You can only one add" +
-                                           " a state with a unique identifier once.");
+            return
+                new FsmBuilderException($"A state [{state.Identifier}] has already been added. You can only one add" +
+                                        " a state with a unique identifier once.");
         }
 
         public static FsmBuilderException TargetStateCannotBeNull()

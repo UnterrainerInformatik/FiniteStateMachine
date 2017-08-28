@@ -38,8 +38,9 @@ namespace StateMachine
         public TState Source { get; set; }
         public TState Target { get; private set; }
         public bool Pop { get; set; }
-        
-        public List<Func<TState, TState, TTrigger, bool>> Conditions { get; } = new List<Func<TState, TState, TTrigger, bool>>();
+
+        public List<Func<TState, TState, TTrigger, bool>> Conditions { get; } =
+            new List<Func<TState, TState, TTrigger, bool>>();
 
         public TransitionModel(TState source, TState target)
         {

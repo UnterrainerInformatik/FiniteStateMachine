@@ -60,18 +60,21 @@ namespace StateMachine
         }
 
         /// <exception cref="FsmBuilderException">When target is null</exception>
-        public Transition(Collection<TTrigger> triggers, TState source, TState target, bool isPop) : this(triggers, source, target)
+        public Transition(Collection<TTrigger> triggers, TState source, TState target, bool isPop)
+            : this(triggers, source, target)
         {
             Model.Pop = isPop;
         }
 
         /// <exception cref="FsmBuilderException">When target is null</exception>
-        public Transition(TTrigger trigger, TState source, TState target) : this(new Collection<TTrigger>{ trigger }, source, target)
+        public Transition(TTrigger trigger, TState source, TState target)
+            : this(new Collection<TTrigger> {trigger}, source, target)
         {
         }
 
         /// <exception cref="FsmBuilderException">When target is null</exception>
-        public Transition(TTrigger trigger, TState source, TState target, bool isPop) : this(new Collection<TTrigger>{ trigger }, source, target, isPop)
+        public Transition(TTrigger trigger, TState source, TState target, bool isPop)
+            : this(new Collection<TTrigger> {trigger}, source, target, isPop)
         {
         }
 
