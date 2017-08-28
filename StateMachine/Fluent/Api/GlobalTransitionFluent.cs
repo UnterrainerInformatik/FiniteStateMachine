@@ -33,8 +33,8 @@ namespace StateMachine.Fluent.Api
     [PublicAPI]
     public interface GlobalTransitionFluent<TState, TTrigger, TData>
     {
-        GlobalTransitionBuilderFluent<TState, TTrigger, TData> On(TTrigger trigger);
+        GlobalTransitionBuilderFluent<TState, TTrigger, TData> OnGlobal(TTrigger trigger);
 
-        GlobalTransitionBuilderFluent<TState, TTrigger, TData> If(Func<bool> condition);
+        GlobalTransitionBuilderFluent<TState, TTrigger, TData> IfGlobal(Func<TState, TState, TTrigger, bool> condition);
     }
 }

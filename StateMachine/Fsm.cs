@@ -98,7 +98,7 @@ namespace StateMachine
         {
             if (t == null) throw FsmBuilderException.TransitionCannotBeNull();
 
-            Model.GlobalTransitions.Add(t.Target.Identifier, t);
+            Model.GlobalTransitions.Add(t.Target, t);
             return this;
         }
 
@@ -107,11 +107,11 @@ namespace StateMachine
             State<TState, TTrigger, TData> s;
             if (Model.States.TryGetValue(state, out s))
             {
-                DoTransition(s, default(TTrigger), isPop);
+                DoTransition(state, default(TTrigger), isPop);
             }
         }
 
-        private void DoTransition(State<TState, TTrigger, TData> state, TTrigger input, bool isPop)
+        private void DoTransition(TState state, TTrigger input, bool isPop)
         {
             if (state == null || input == null) return;
 
@@ -123,7 +123,7 @@ namespace StateMachine
             }
             else
             {
-                Model.Current = state;
+                Model.Current = Model.States[state];
                 Model.Stack.Push(Model.Current);
             }
 

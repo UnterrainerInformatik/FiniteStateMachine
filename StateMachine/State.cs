@@ -33,7 +33,7 @@ namespace StateMachine
     [PublicAPI]
     public class State<TState, TTrigger, TData>
     {
-        private StateModel<TState, TTrigger, TData> Model { get; set; } = new StateModel<TState, TTrigger, TData>();
+        private StateModel<TState, TTrigger, TData> Model { get; set; }
 
         public TState Identifier => Model.Identifier;
 
@@ -58,9 +58,8 @@ namespace StateMachine
             Model = model;
         }
 
-        public State(TState identifier)
+        public State(TState identifier) : this(new StateModel<TState, TTrigger, TData>(identifier))
         {
-            Model.Identifier = identifier;
         }
 
         /// <exception cref="FsmBuilderException"> When the transition is null</exception>
@@ -68,8 +67,8 @@ namespace StateMachine
         {
             if (t == null) throw FsmBuilderException.TransitionCannotBeNull();
 
-            t.Source = this;
-            Model.Transitions.Add(t.Target.Identifier, t);
+            t.Source = this.Identifier;
+            Model.Transitions.Add(t.Target, t);
             return this;
         }
 

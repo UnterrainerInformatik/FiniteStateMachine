@@ -34,6 +34,6 @@ namespace StateMachine.Fluent.Api
     public interface TransitionFluent<TState, TTrigger, TData>
     {
         TransitionStateFluent<TState, TTrigger, TData> On(TTrigger trigger);
-        TransitionStateFluent<TState, TTrigger, TData> If(Func<bool> condition);
+        TransitionStateFluent<TState, TTrigger, TData> If(Func<TState, TState, TTrigger, bool> condition);
     }
 }
