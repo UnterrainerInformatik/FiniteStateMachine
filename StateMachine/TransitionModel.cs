@@ -34,11 +34,17 @@ namespace StateMachine
     [PublicAPI]
     public class TransitionModel<TState, TTrigger, TData>
     {
-        public List<TTrigger> Triggers { get; set; } = new List<TTrigger>();
-        public State<TState, TTrigger, TData> Source { get; set; }
-        public State<TState, TTrigger, TData> Target { get; set; }
+        public ISet<TTrigger> Triggers { get; set; } = new HashSet<TTrigger>();
+        public TState Source { get; set; }
+        public TState Target { get; private set; }
         public bool Pop { get; set; }
-
+        
         public List<Func<TState, TState, TTrigger, bool>> Conditions { get; } = new List<Func<TState, TState, TTrigger, bool>>();
+
+        public TransitionModel(TState source, TState target)
+        {
+            Source = source;
+            Target = target;
+        }
     }
 }

@@ -118,7 +118,7 @@ namespace StateMachine.NUnitTests
                 .TransitionTo(State.PRESSED).On(Trigger.MOUSE_CLICKED)
                 .OnEnter((s, t) => { button.State = Button.ButtonState.OVER; })
                 .State(State.PRESSED)
-                .TransitionTo(State.IDLE).On(Trigger.MOUSE_LEAVE).If(() => button.Kind == Button.ButtonKind.FLIPBACK)
+                .TransitionTo(State.IDLE).On(Trigger.MOUSE_LEAVE).If((source, target, trigger) => button.Kind == Button.ButtonKind.FLIPBACK)
                 .TransitionTo(State.REFRESHING).On(Trigger.MOUSE_RELEASED)
                 .OnEnter((s, t) => { button.State = Button.ButtonState.DOWN; })
                 .State(State.REFRESHING)
@@ -128,12 +128,12 @@ namespace StateMachine.NUnitTests
                     button.RefreshTimer.Start();
                     button.State = Button.ButtonState.REFRESHING;
                 })
-                .Update((machine, gameTime) =>
+                .Update((sender, args) =>
                 {
                     if (button.RefreshTimer.Value <= 0F)
                     {
                         button.RefreshTimer.StopAndReset();
-                        machine.TransitionTo(State.IDLE);
+                        args.Machine.TransitionTo(State.IDLE);
                     }
                 })
                 .Build());

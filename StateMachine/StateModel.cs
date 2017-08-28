@@ -39,12 +39,17 @@ namespace StateMachine
         public event EventHandler<StateChangeArgs<TState, TTrigger, TData>> Exited;
         public event EventHandler<UpdateArgs<TState, TTrigger, TData>> Updated;
 
-        public TState Identifier { get; set; }
+        public TState Identifier { get; private set; }
         public bool EndState { get; set; }
         public bool ClearStack { get; set; }
 
         public Dictionary<TState, Transition<TState, TTrigger, TData>> Transitions { get; } =
             new Dictionary<TState, Transition<TState, TTrigger, TData>>();
+
+        public StateModel(TState identifier)
+        {
+            Identifier = identifier;
+        }
 
         /// <exception cref="FsmBuilderException">When the handler is null</exception>
         public void AddEnteredHandler(

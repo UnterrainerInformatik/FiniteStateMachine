@@ -27,6 +27,7 @@
 
 using System;
 using JetBrains.Annotations;
+using StateMachine.Events;
 
 namespace StateMachine.Fluent.Api
 {
@@ -35,10 +36,10 @@ namespace StateMachine.Fluent.Api
     {
         TransitionFluent<TState, TTrigger, TData> TransitionTo(TState state);
 
-        StateFluent<TState, TTrigger, TData> OnEnter(Action<TState, TTrigger> enter);
+        StateFluent<TState, TTrigger, TData> OnEnter(EventHandler<StateChangeArgs<TState, TTrigger, TData>> enter);
 
-        StateFluent<TState, TTrigger, TData> OnExit(Action<TState, TTrigger> exit);
+        StateFluent<TState, TTrigger, TData> OnExit(EventHandler<StateChangeArgs<TState, TTrigger, TData>> exit);
 
-        StateFluent<TState, TTrigger, TData> Update(Action<Fsm<TState, TTrigger, TData>, TData> update);
+        StateFluent<TState, TTrigger, TData> Update(EventHandler<UpdateArgs<TState, TTrigger, TData>> update);
     }
 }

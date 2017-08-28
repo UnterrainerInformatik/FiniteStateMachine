@@ -32,11 +32,13 @@ namespace StateMachine.Events
     [PublicAPI]
     public struct UpdateArgs<TState, TTrigger, TData>
     {
+        public Fsm<TState, TTrigger, TData> Machine { get; }
         public State<TState, TTrigger, TData> State { get; }
         public TData Data { get; }
 
-        public UpdateArgs(State<TState, TTrigger, TData> state, TData data)
+        public UpdateArgs(Fsm<TState, TTrigger, TData> machine, State<TState, TTrigger, TData> state, TData data)
         {
+            Machine = machine;
             State = state;
             Data = data;
         }

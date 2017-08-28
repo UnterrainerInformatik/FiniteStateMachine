@@ -57,10 +57,10 @@ namespace StateMachine.NUnitTests
                 EndState = true,
                 ClearStack = true
             };
-            opened.Add(new Transition<State, Trigger, float>(Trigger.CLOSE, closed))
-                .Add(new Transition<State, Trigger, float>(Trigger.OPEN, opened));
-            closed.Add(new Transition<State, Trigger, float>(Trigger.OPEN, opened))
-                .Add(new Transition<State, Trigger, float>(Trigger.CLOSE, closed));
+            opened.Add(new Transition<State, Trigger, float>(Trigger.CLOSE, State.OPENED, State.CLOSED))
+                .Add(new Transition<State, Trigger, float>(Trigger.OPEN, State.OPENED, State.OPENED));
+            closed.Add(new Transition<State, Trigger, float>(Trigger.OPEN, State.CLOSED, State.OPENED))
+                .Add(new Transition<State, Trigger, float>(Trigger.CLOSE, State.CLOSED, State.CLOSED));
 
             Fsm<State, Trigger, float> m =
                 new Fsm<State, Trigger, float>(opened).AddStateChangeHandler(TestTools.ConsoleOut);
@@ -95,12 +95,12 @@ namespace StateMachine.NUnitTests
                 ClearStack = true
             };
             State<State, Trigger, float> pop = new State<State, Trigger, float>(State.POP);
-            opened.Add(new Transition<State, Trigger, float>(Trigger.CLOSE, closed))
-                .Add(new Transition<State, Trigger, float>(Trigger.OPEN, opened))
-                .Add(new Transition<State, Trigger, float>(Trigger.PUSH_POP, pop));
-            pop.Add(new Transition<State, Trigger, float>(Trigger.PUSH_POP, opened, true));
-            closed.Add(new Transition<State, Trigger, float>(Trigger.OPEN, opened))
-                .Add(new Transition<State, Trigger, float>(Trigger.CLOSE, closed));
+            opened.Add(new Transition<State, Trigger, float>(Trigger.CLOSE, State.OPENED, State.CLOSED))
+                .Add(new Transition<State, Trigger, float>(Trigger.OPEN, State.OPENED, State.OPENED))
+                .Add(new Transition<State, Trigger, float>(Trigger.PUSH_POP, State.OPENED, State.POP));
+            pop.Add(new Transition<State, Trigger, float>(Trigger.PUSH_POP, State.POP, State.OPENED, true));
+            closed.Add(new Transition<State, Trigger, float>(Trigger.OPEN, State.CLOSED, State.OPENED))
+                .Add(new Transition<State, Trigger, float>(Trigger.CLOSE, State.CLOSED, State.CLOSED));
 
             Fsm<State, Trigger, float> m =
                 new Fsm<State, Trigger, float>(opened).AddStateChangeHandler(TestTools.ConsoleOut);

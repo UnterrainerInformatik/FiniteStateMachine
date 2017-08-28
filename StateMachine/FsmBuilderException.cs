@@ -61,6 +61,11 @@ namespace StateMachine
             return new FsmBuilderException("The state cannot be null.");
         }
 
+        public static FsmBuilderException StartStateCannotBeNull()
+        {
+            return new FsmBuilderException("The start state cannot be null.");
+        }
+
         public static FsmBuilderException ModelCannotBeNull()
         {
             return new FsmBuilderException("The model cannot be null.");
