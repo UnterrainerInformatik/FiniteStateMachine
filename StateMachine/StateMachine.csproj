@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\IfArgs.cs" />
     <Compile Include="Events\StateChangeArgs.cs" />
     <Compile Include="Fluent\Api\BuilderFluent.cs" />
     <Compile Include="Fluent\Api\FluentImplementation.cs" />

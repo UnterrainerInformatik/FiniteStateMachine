@@ -113,25 +113,25 @@ namespace StateMachine.NUnitTests
             buttonMachines.Add(button, builder
                 .State(State.IDLE)
                 .TransitionTo(State.OVER).On(Trigger.MOUSE_OVER)
-                .OnEnter((s, t) => { button.State = Button.ButtonState.IDLE; })
+                .OnEnter(t => { button.State = Button.ButtonState.IDLE; })
                 .State(State.OVER)
                 .TransitionTo(State.IDLE).On(Trigger.MOUSE_LEAVE)
                 .TransitionTo(State.PRESSED).On(Trigger.MOUSE_CLICKED)
-                .OnEnter((s, t) => { button.State = Button.ButtonState.OVER; })
+                .OnEnter(t => { button.State = Button.ButtonState.OVER; })
                 .State(State.PRESSED)
                 .TransitionTo(State.IDLE)
                 .On(Trigger.MOUSE_LEAVE)
-                .If((source, target, trigger) => button.Kind == Button.ButtonKind.FLIPBACK)
+                .If(a => button.Kind == Button.ButtonKind.FLIPBACK)
                 .TransitionTo(State.REFRESHING).On(Trigger.MOUSE_RELEASED)
-                .OnEnter((s, t) => { button.State = Button.ButtonState.DOWN; })
+                .OnEnter(t => { button.State = Button.ButtonState.DOWN; })
                 .State(State.REFRESHING)
-                .OnEnter((s, t) =>
+                .OnEnter(t =>
                 {
                     hero.DoSpell(button.DoAssociatedSpell());
                     button.RefreshTimer.Start();
                     button.State = Button.ButtonState.REFRESHING;
                 })
-                .Update((sender, args) =>
+                .Update(args =>
                 {
                     if (button.RefreshTimer.Value <= 0F)
                     {

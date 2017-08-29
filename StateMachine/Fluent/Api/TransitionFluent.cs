@@ -27,13 +27,24 @@
 
 using System;
 using JetBrains.Annotations;
+using StateMachine.Events;
 
 namespace StateMachine.Fluent.Api
 {
     [PublicAPI]
     public interface TransitionFluent<TState, TTrigger, TData>
     {
+        /// <summary>
+        ///     Specifies the trigger, that has to be served as input in order to walk the transition you're currently describing.
+        /// </summary>
+        /// <param name="trigger">The trigger.</param>
         TransitionStateFluent<TState, TTrigger, TData> On(TTrigger trigger);
-        TransitionStateFluent<TState, TTrigger, TData> If(Func<TState, TState, TTrigger, bool> condition);
+
+        /// <summary>
+        ///     Specifies the condition, that has to be met, in addition to the trigger, to walk the transition you're currently
+        ///     describing.
+        /// </summary>
+        /// <param name="condition">The condition.</param>
+        TransitionStateFluent<TState, TTrigger, TData> If(Func<IfArgs<TState, TTrigger>, bool> condition);
     }
 }

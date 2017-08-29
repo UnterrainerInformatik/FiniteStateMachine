@@ -25,27 +25,22 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
 using JetBrains.Annotations;
-using StateMachine.Events;
 
-namespace StateMachine.Fluent.Api
+namespace StateMachine.Events
 {
     [PublicAPI]
-    public interface GlobalTransitionFluent<TState, TTrigger, TData>
+    public struct IfArgs<TState, TTrigger>
     {
-        /// <summary>
-        ///     Specifies the trigger, that has to be served as input in order to walk the global transition you're currently
-        ///     describing.
-        /// </summary>
-        /// <param name="trigger">The trigger.</param>
-        GlobalTransitionBuilderFluent<TState, TTrigger, TData> OnGlobal(TTrigger trigger);
+        public TState Source { get; }
+        public TState Target { get; }
+        public TTrigger Trigger { get; }
 
-        /// <summary>
-        ///     Specifies the condition, that has to be met, in addition to the trigger, to walk the global transition you're
-        ///     currently describing.
-        /// </summary>
-        /// <param name="condition">The condition.</param>
-        GlobalTransitionBuilderFluent<TState, TTrigger, TData> IfGlobal(Func<IfArgs<TState, TTrigger>, bool> condition);
+        public IfArgs(TState source, TState target, TTrigger trigger)
+        {
+            Source = source;
+            Target = target;
+            Trigger = trigger;
+        }
     }
 }

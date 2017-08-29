@@ -40,6 +40,7 @@ namespace StateMachine
         public State<TState, TTrigger, TData> Current { get; set; }
 
         public Stack<State<TState, TTrigger, TData>> Stack { get; } = new Stack<State<TState, TTrigger, TData>>();
+        public bool StackEnabled { get; set; }
 
         public Dictionary<TState, State<TState, TTrigger, TData>> States { get; } =
             new Dictionary<TState, State<TState, TTrigger, TData>>();

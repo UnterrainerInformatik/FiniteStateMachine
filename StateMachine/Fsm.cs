@@ -47,24 +47,30 @@ namespace StateMachine
             if (model == null) throw FsmBuilderException.ModelCannotBeNull();
 
             Model = model;
-            if (!model.Current.ClearStack)
+            if (Model.StackEnabled && !model.Current.ClearStack)
             {
                 Model.Stack.Push(model.Current);
             }
         }
 
         /// <exception cref="FsmBuilderException">When the initial state is null</exception>
-        public Fsm(State<TState, TTrigger, TData> current)
+        public Fsm(State<TState, TTrigger, TData> current, bool stackEnabled = false)
         {
+            Model.StackEnabled = stackEnabled;
             if (current == null) throw FsmBuilderException.StateCannotBeNull();
 
             Model.Current = current;
-            if (!current.ClearStack)
+            if (Model.StackEnabled && !current.ClearStack)
             {
                 Model.Stack.Push(current);
             }
         }
 
+        /// <summary>
+        /// Gets you a builder for a Finite-State-Machine (FSM).
+        /// </summary>
+        /// <param name="startState">The start state's key.</param>
+        /// <returns></returns>
         public static BuilderFluent<TState, TTrigger, TData> Builder(TState startState)
         {
             return new FluentImplementation<TState, TTrigger, TData>(startState);
@@ -110,13 +116,13 @@ namespace StateMachine
                 DoTransition(state, default(TTrigger), isPop);
             }
         }
-
+        
         private void DoTransition(TState state, TTrigger input, bool isPop)
         {
             if (state == null || input == null) return;
 
             State<TState, TTrigger, TData> old = Model.Current;
-            if (isPop)
+            if (Model.StackEnabled && isPop)
             {
                 Model.Stack.Pop();
                 Model.Current = Model.Stack.Peek();
@@ -124,10 +130,11 @@ namespace StateMachine
             else
             {
                 Model.Current = Model.States[state];
-                Model.Stack.Push(Model.Current);
+                if (Model.StackEnabled)
+                    Model.Stack.Push(Model.Current);
             }
 
-            if (Model.Current.ClearStack)
+            if (Model.StackEnabled && Model.Current.ClearStack)
             {
                 Model.Stack.Clear();
             }

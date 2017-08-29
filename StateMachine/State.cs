@@ -66,9 +66,14 @@ namespace StateMachine
             return this;
         }
 
-        public State<TState, TTrigger, TData> AddTransisionOn(TTrigger trigger, TState target, bool isPop = false)
+        public State<TState, TTrigger, TData> AddTransisionOn(TTrigger trigger, TState target)
         {
-            return Add(new Transition<TState, TTrigger, TData>(trigger, Identifier, target, isPop));
+            return Add(new Transition<TState, TTrigger, TData>(trigger, Identifier, target));
+        }
+
+        public State<TState, TTrigger, TData> AddPopTransisionOn(TTrigger trigger)
+        {
+            return Add(new Transition<TState, TTrigger, TData>(trigger, Identifier));
         }
 
         public Transition<TState, TTrigger, TData> Process(TTrigger input)

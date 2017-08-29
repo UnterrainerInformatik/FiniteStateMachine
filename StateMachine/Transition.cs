@@ -27,6 +27,7 @@
 
 using System.Collections.ObjectModel;
 using JetBrains.Annotations;
+using StateMachine.Events;
 
 namespace StateMachine
 {
@@ -59,11 +60,16 @@ namespace StateMachine
             Model.Triggers.UnionWith(triggers);
         }
 
-        /// <exception cref="FsmBuilderException">When target is null</exception>
-        public Transition(Collection<TTrigger> triggers, TState source, TState target, bool isPop)
-            : this(triggers, source, target)
+        /// <summary>
+        ///     Generates a new Transition that will pop from the stack and therefore doesn't need a target.<br />
+        ///     The target will vary depending on the items on the stack.
+        /// </summary>
+        /// <param name="triggers">The triggers.</param>
+        /// <param name="source">The source.</param>
+        public Transition(Collection<TTrigger> triggers, TState source)
+            : this(triggers, source, default(TState))
         {
-            Model.Pop = isPop;
+            Model.Pop = true;
         }
 
         /// <exception cref="FsmBuilderException">When target is null</exception>
@@ -72,9 +78,14 @@ namespace StateMachine
         {
         }
 
-        /// <exception cref="FsmBuilderException">When target is null</exception>
-        public Transition(TTrigger trigger, TState source, TState target, bool isPop)
-            : this(new Collection<TTrigger> {trigger}, source, target, isPop)
+        /// <summary>
+        ///     Generates a new Transition that will pop from the stack and therefore doesn't need a target.<br />
+        ///     The target will vary depending on the items on the stack.
+        /// </summary>
+        /// <param name="trigger">The trigger.</param>
+        /// <param name="source">The source.</param>
+        public Transition(TTrigger trigger, TState source)
+            : this(new Collection<TTrigger> {trigger}, source)
         {
         }
 
@@ -89,7 +100,7 @@ namespace StateMachine
         public bool Process(State<TState, TTrigger, TData> from, TTrigger input)
         {
             return Model.Triggers.Contains(input) &&
-                   Model.Conditions.TrueForAll(x => x(from.Identifier, Model.Target, input));
+                   Model.Conditions.TrueForAll(x => x(new IfArgs<TState, TTrigger>(from.Identifier, Model.Target, input)));
         }
 
         public override string ToString()

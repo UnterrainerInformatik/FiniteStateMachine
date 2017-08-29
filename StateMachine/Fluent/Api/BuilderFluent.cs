@@ -32,10 +32,35 @@ namespace StateMachine.Fluent.Api
     [PublicAPI]
     public interface BuilderFluent<TState, TTrigger, TData>
     {
+        /// <summary>
+        ///     Enables the stack and turns this Finite-State-Machine (FSM) into a Stack-Based-FSM (SBFSM).<br />
+        ///     Beware that you will have to specify "ClearsStack()" on some of the states, as otherwise the stack will grow and
+        ///     never be cleared.
+        /// </summary>
+        BuilderFluent<TState, TTrigger, TData> EnableStack();
+
+        /// <summary>
+        ///     Sets a global transition to a state.<br />
+        ///     This will generate a transision that will be triggered regardless of the current state's position in the graph and
+        ///     regardless of the transitions connected to that state.<p />
+        ///     Think of it as a 'catch all' transition.<br />
+        ///     Usually you would use such global transitions to reset a graph when ESC is pressed or something like that.
+        /// </summary>
+        /// <param name="state">The state the global transition should lead to.</param>
         GlobalTransitionFluent<TState, TTrigger, TData> GlobalTransitionTo(TState state);
 
+        /// <summary>
+        ///     Generates a new state.<br />
+        ///     An FSM can have multiple states connected via transitions.<br />
+        ///     Only a single transition is active at any given time and that transition will receive 'Update(TData)' calls and
+        ///     will be checked for transitions that may be triggered by an input, which, in turn, would activate the next state.
+        /// </summary>
+        /// <param name="state">The state.</param>
         StateFluent<TState, TTrigger, TData> State(TState state);
 
+        /// <summary>
+        /// Builds this instance of an FSM (or SBFSM).
+        /// </summary>
         Fsm<TState, TTrigger, TData> Build();
     }
 }

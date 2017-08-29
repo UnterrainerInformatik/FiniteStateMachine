@@ -35,9 +35,9 @@ namespace StateMachine
     [PublicAPI]
     public class StateModel<TState, TTrigger, TData>
     {
-        public event EventHandler<StateChangeArgs<TState, TTrigger, TData>> Entered;
-        public event EventHandler<StateChangeArgs<TState, TTrigger, TData>> Exited;
-        public event EventHandler<UpdateArgs<TState, TTrigger, TData>> Updated;
+        public event Action<StateChangeArgs<TState, TTrigger, TData>> Entered;
+        public event Action<StateChangeArgs<TState, TTrigger, TData>> Exited;
+        public event Action<UpdateArgs<TState, TTrigger, TData>> Updated;
 
         public TState Identifier { get; private set; }
         public bool EndState { get; set; }
@@ -52,8 +52,7 @@ namespace StateMachine
         }
 
         /// <exception cref="FsmBuilderException">When the handler is null</exception>
-        public void AddEnteredHandler(
-            EventHandler<StateChangeArgs<TState, TTrigger, TData>> e)
+        public void AddEnteredHandler(Action<StateChangeArgs<TState, TTrigger, TData>> e)
         {
             if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
 
@@ -62,12 +61,11 @@ namespace StateMachine
 
         public void RaiseEntered(StateChangeArgs<TState, TTrigger, TData> e)
         {
-            Entered?.Invoke(this, e);
+            Entered?.Invoke(e);
         }
 
         /// <exception cref="FsmBuilderException">When the handler is null</exception>
-        public void AddExitedHandler(
-            EventHandler<StateChangeArgs<TState, TTrigger, TData>> e)
+        public void AddExitedHandler(Action<StateChangeArgs<TState, TTrigger, TData>> e)
         {
             if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
 
@@ -76,12 +74,11 @@ namespace StateMachine
 
         public void RaiseExited(StateChangeArgs<TState, TTrigger, TData> e)
         {
-            Exited?.Invoke(this, e);
+            Exited?.Invoke(e);
         }
 
         /// <exception cref="FsmBuilderException">When the handler is null</exception>
-        public void AddUpdatedHandler(
-            EventHandler<UpdateArgs<TState, TTrigger, TData>> e)
+        public void AddUpdatedHandler(Action<UpdateArgs<TState, TTrigger, TData>> e)
         {
             if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
 
@@ -90,7 +87,7 @@ namespace StateMachine
 
         public void RaiseUpdated(UpdateArgs<TState, TTrigger, TData> data)
         {
-            Updated?.Invoke(this, data);
+            Updated?.Invoke(data);
         }
     }
 }

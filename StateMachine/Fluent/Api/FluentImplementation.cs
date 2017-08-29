@@ -78,19 +78,19 @@ namespace StateMachine.Fluent.Api
             return this;
         }
 
-        public StateFluent<TState, TTrigger, TData> OnEnter(EventHandler<StateChangeArgs<TState, TTrigger, TData>> enter)
+        public StateFluent<TState, TTrigger, TData> OnEnter(Action<StateChangeArgs<TState, TTrigger, TData>> enter)
         {
             stateModels[currentState].AddEnteredHandler(enter);
             return this;
         }
 
-        public StateFluent<TState, TTrigger, TData> OnExit(EventHandler<StateChangeArgs<TState, TTrigger, TData>> exit)
+        public StateFluent<TState, TTrigger, TData> OnExit(Action<StateChangeArgs<TState, TTrigger, TData>> exit)
         {
             stateModels[currentState].AddExitedHandler(exit);
             return this;
         }
 
-        public StateFluent<TState, TTrigger, TData> Update(EventHandler<UpdateArgs<TState, TTrigger, TData>> update)
+        public StateFluent<TState, TTrigger, TData> Update(Action<UpdateArgs<TState, TTrigger, TData>> update)
         {
             stateModels[currentState].AddUpdatedHandler(update);
             return this;
@@ -116,7 +116,7 @@ namespace StateMachine.Fluent.Api
         }
 
         public GlobalTransitionBuilderFluent<TState, TTrigger, TData> IfGlobal(
-            Func<TState, TState, TTrigger, bool> condition)
+            Func<IfArgs<TState, TTrigger>, bool> condition)
         {
             globalTransitionModels[currentGlobalTransition].Conditions.Add(condition);
             return this;
@@ -141,7 +141,7 @@ namespace StateMachine.Fluent.Api
             return this;
         }
 
-        public TransitionStateFluent<TState, TTrigger, TData> If(Func<TState, TState, TTrigger, bool> condition)
+        public TransitionStateFluent<TState, TTrigger, TData> If(Func<IfArgs<TState, TTrigger>, bool> condition)
         {
             transitionModels[currentTransition].Conditions.Add(condition);
             return this;
@@ -150,6 +150,19 @@ namespace StateMachine.Fluent.Api
         public StateFluent<TState, TTrigger, TData> ClearsStack()
         {
             FsmModel.States[currentState.Item1].ClearStack = true;
+            return this;
+        }
+
+        public BuilderFluent<TState, TTrigger, TData> EnableStack()
+        {
+            FsmModel.StackEnabled = true;
+            return this;
+        }
+
+        public TransitionFluent<TState, TTrigger, TData> PopTransition()
+        {
+            TransitionTo(default(TState));
+            transitionModels[currentTransition].Pop = true;
             return this;
         }
     }
