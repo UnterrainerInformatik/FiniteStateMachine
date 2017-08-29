@@ -34,7 +34,7 @@ using StateMachine.Fluent.Api;
 namespace StateMachine
 {
     [PublicAPI]
-    public class Fsm<TState, TTrigger, TData> : Updatable<UpdateArgs<TState, TTrigger, TData>>
+    public class Fsm<TState, TTrigger, TData> : Updatable<TData>
     {
         private FsmModel<TState, TTrigger, TData> Model { get; set; } = new FsmModel<TState, TTrigger, TData>();
 
@@ -169,9 +169,9 @@ namespace StateMachine
             }
         }
 
-        public void Update(UpdateArgs<TState, TTrigger, TData> data)
+        public void Update(TData data)
         {
-            Model.Current.RaiseUpdated(data);
+            Model.Current.RaiseUpdated(new UpdateArgs<TState, TTrigger, TData>(this, Current, data));
         }
     }
 }
