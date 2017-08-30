@@ -51,7 +51,7 @@ namespace StateMachine.NUnitTests
         [Category("StateMachine.GamingProgrammingPatterns.1")]
         public void GamingProgrammingPatternsTest1()
         {
-            Fsm<State, Trigger, float>.Builder(State.STANDING)
+            Fsm<State, Trigger>.Builder(State.STANDING)
                 .State(State.DUCKING)
                     .TransitionTo(State.STANDING).On(Trigger.DOWN)
                     .TransitionTo(State.STANDING).On(Trigger.UP)
@@ -83,7 +83,7 @@ namespace StateMachine.NUnitTests
         public void GamingProgrammingPatternsTest2()
         {
             // Now for the weapons-machine with basic forward- and backward-rotation.
-            Fsm<WState, WTrigger, float>.Builder(WState.EMPTY_HANDED)
+            Fsm<WState, WTrigger>.Builder(WState.EMPTY_HANDED)
                 .State(WState.EMPTY_HANDED)
                     .TransitionTo(WState.GUN).On(WTrigger.TAB)
                     .TransitionTo(WState.LASER_RIFLE).On(WTrigger.SHIFT_TAB)

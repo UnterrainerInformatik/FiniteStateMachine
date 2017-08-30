@@ -16,7 +16,25 @@ In this example the state of the GUI ('selection-grid-mode' or not) would be suc
 
 We place those machines in a single class where they could 'talk with each other' by reading their respective states. That way it is possible to construct and react on compound states.
 
-A nice example for such a machine is the setup of a multiplayer game.
+### Example
+
+```c#
+Fsm<State, Trigger>.Builder(State.STANDING)
+  .State(State.DUCKING)
+    .TransitionTo(State.STANDING).On(Trigger.DOWN)
+    .TransitionTo(State.STANDING).On(Trigger.UP)
+  .State(State.STANDING).ClearsStack()
+    .TransitionTo(State.DUCKING).On(Trigger.DOWN)
+    .TransitionTo(State.JUMPING).On(Trigger.UP)
+  .State(State.JUMPING)
+    .TransitionTo(State.DIVING).On(Trigger.DOWN)
+    .State(State.DIVING)
+  .Build();
+```
+
+
+
+A nice and more complex example for such a machine is the setup of a multiplayer game.
 It would be like the following:
 
 ##### Server:
