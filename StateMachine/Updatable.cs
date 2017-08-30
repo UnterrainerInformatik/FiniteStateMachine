@@ -25,9 +25,12 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using JetBrains.Annotations;
+
 namespace StateMachine
 {
-    public interface Updatable<T>
+    [PublicAPI]
+    public interface Updatable<in T>
     {
         void Update(T data);
     }

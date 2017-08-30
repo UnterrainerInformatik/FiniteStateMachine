@@ -33,10 +33,26 @@ using StateMachine.Fluent.Api;
 
 namespace StateMachine
 {
+    public class Fsm<TState, TTrigger> : Fsm<TState, TTrigger, float>
+    {
+        public Fsm(FsmModel<TState, TTrigger, float> model) : base(model)
+        {
+        }
+
+        public Fsm(State<TState, TTrigger, float> current, bool stackEnabled = false) : base(current, stackEnabled)
+        {
+        }
+
+        public void Update()
+        {
+            Model.Current.RaiseUpdated(new UpdateArgs<TState, TTrigger, float>(this, Current, 0f));
+        }
+    }
+
     [PublicAPI]
     public class Fsm<TState, TTrigger, TData> : Updatable<TData>
     {
-        private FsmModel<TState, TTrigger, TData> Model { get; set; } = new FsmModel<TState, TTrigger, TData>();
+        protected FsmModel<TState, TTrigger, TData> Model { get; set; } = new FsmModel<TState, TTrigger, TData>();
 
         public State<TState, TTrigger, TData> Current => Model.Current;
         public Stack<State<TState, TTrigger, TData>> Stack => Model.Stack;

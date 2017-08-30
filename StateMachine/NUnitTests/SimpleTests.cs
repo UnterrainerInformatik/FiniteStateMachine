@@ -73,7 +73,7 @@ namespace StateMachine.NUnitTests
         [Category("StateMachine.Simple")]
         public void FluentTest()
         {
-            var m = Fsm<State, Trigger, float>.Builder(State.OPENED)
+            var m = Fsm<State, Trigger>.Builder(State.OPENED)
                 .EnableStack()
                 .State(State.OPENED)
                     .TransitionTo(State.OPENED).On(Trigger.OPEN)
@@ -109,7 +109,7 @@ namespace StateMachine.NUnitTests
         [Category("StateMachine.Simple")]
         public void FluentWithStringTest()
         {
-            var m = Fsm<string, string, float>.Builder("OPENED")
+            var m = Fsm<string, string>.Builder("OPENED")
                 .EnableStack()
                 .State("OPENED")
                     .TransitionTo("OPENED").On("OPEN")
@@ -167,7 +167,7 @@ namespace StateMachine.NUnitTests
         [Category("StateMachine.Simple")]
         public void FluentTestWithPop()
         {
-            var m = Fsm<State, Trigger, float>.Builder(State.OPENED)
+            var m = Fsm<State, Trigger>.Builder(State.OPENED)
                 .EnableStack()
                 .State(State.OPENED)
                     .TransitionTo(State.OPENED).On(Trigger.OPEN)
