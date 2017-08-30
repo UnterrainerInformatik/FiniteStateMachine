@@ -193,7 +193,8 @@ public void main() {
 }
 
 protected override void Update(GameTime gameTime) {
-  if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+  if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
+      Keyboard.GetState().IsKeyDown(Keys.Escape))
     Exit();
   
   var s = Keyboard.GetState();
@@ -233,7 +234,8 @@ Another example with a spell-button that has a refresh-time:
 private enum State { IDLE, OVER, PRESSED, REFRESHING };
 private enum Trigger { MOUSE_CLICKED, MOUSE_RELEASED, MOUSE_OVER, MOUSE_LEAVE };
 
-private Dictionary<Button, Fsm<State, Trigger, GameTime>> buttonMachines = new Dictionary<Button, Fsm<State, Trigger, GameTime>>();
+private Dictionary<Button, Fsm<State, Trigger, GameTime>> buttonMachines = new
+  Dictionary<Button, Fsm<State, Trigger, GameTime>>();
 
 private void CreateMachineFor(Button button)
   buttonMachines.Add(button, Fsm.Builder<State, Trigger, GameTime>(IDLE)
