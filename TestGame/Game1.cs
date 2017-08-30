@@ -31,6 +31,7 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended.Animations;
 using MonoGame.Extended.Animations.SpriteSheets;
 using MonoGame.Extended.TextureAtlases;
+using StateMachine;
 using SpriteExtensions = MonoGame.Extended.Sprites.SpriteExtensions;
 
 namespace TestGame
@@ -45,6 +46,8 @@ namespace TestGame
         private TextureAtlas atlas;
         private AnimatedSprite hero;
         private bool lastWasRight;
+
+        Fsm<string, Keys, GameTime> heroStateMachine;
 
         public Game1()
         {
@@ -81,7 +84,84 @@ namespace TestGame
             factory.Add("duck_right", new SpriteSheetAnimationData(new[] {2}));
 
             hero = new AnimatedSprite(factory);
+            
+            heroStateMachine = Fsm<string, Keys, GameTime>.Builder("idle_left")
+                .State("idle_left")
+                    .Update(args => hero.Play(args.State.Identifier))
+                    .TransitionTo("walk_left").On(Keys.Left)
+                    .TransitionTo("duck_left").On(Keys.Down)
+                    .TransitionTo("jump_left").On(Keys.Up)
+                    .TransitionTo("idle_right").On(Keys.Right)
+                .State("idle_right")
+                    .Update(args => hero.Play(args.State.Identifier))
+                    .TransitionTo("walk_right").On(Keys.Right)
+                    .TransitionTo("duck_right").On(Keys.Down)
+                    .TransitionTo("jump_right").On(Keys.Up)
+                    .TransitionTo("idle_left").On(Keys.Left)
+                .State("walk_left")
+                    .Update(args => {
+                        if (Keyboard.GetState().IsKeyDown(Keys.Left))
+                        {
+                            hero.Play(args.State.Identifier);
+                        }
+                        else
+                        {
+                            args.Machine.TransitionTo("idle_left");
+                        }
+                    })
+                    .TransitionTo("duck_left").On(Keys.Down)
+                    .TransitionTo("jump_left").On(Keys.Up)
+                    .TransitionTo("idle_right").On(Keys.Right)
+                .State("walk_right")
+                    .Update(args => {
+                        if (Keyboard.GetState().IsKeyDown(Keys.Right))
+                        {
+                            hero.Play(args.State.Identifier);
+                        }
+                        else
+                        {
+                            args.Machine.TransitionTo("idle_right");
+                        }
+                    })
+                    .TransitionTo("duck_right").On(Keys.Down)
+                    .TransitionTo("jump_right").On(Keys.Up)
+                    .TransitionTo("idle_left").On(Keys.Left)
+                .State("jump_left")
+                    .OnEnter(args => hero.Play(args.To.Identifier).OnCompleted = () => args.Fsm.TransitionTo("idle_left"))
+                .State("jump_right")
+                    .OnEnter(args => hero.Play(args.To.Identifier).OnCompleted = () => args.Fsm.TransitionTo("idle_right"))
+                .State("duck_left")
+                    .Update(args => {
+                        if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                        {
+                            hero.Play(args.State.Identifier);
+                        }
+                        else
+                        {
+                            args.Machine.TransitionTo("idle_left");
+                        }
+                    })
+                    .TransitionTo("walk_right").On(Keys.Right)
+                    .TransitionTo("walk_left").On(Keys.Left)
+                    .TransitionTo("jump_left").On(Keys.Up)
+                .State("duck_right")
+                    .Update(args => {
+                        if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                        { 
+                            hero.Play(args.State.Identifier);
+                        }
+                        else
+                        {
+                            args.Machine.TransitionTo("idle_right");
+                        }
+                    })
+                    .TransitionTo("walk_right").On(Keys.Right)
+                    .TransitionTo("walk_left").On(Keys.Left)
+                    .TransitionTo("jump_right").On(Keys.Up)
+                .Build();
         }
+
+
 
         /// <summary>
         ///     Allows the game to run logic such as updating the world,
@@ -96,6 +176,29 @@ namespace TestGame
 
             hero.Position = new Vector2(GraphicsDevice.Viewport.Width / 2f, GraphicsDevice.Viewport.Height / 2f);
 
+            if (Keyboard.GetState().CapsLock)
+            {
+                UpdateOld(gameTime);
+            }
+            else
+            {
+                UpdateNew(gameTime);
+            }
+
+            hero.Update(gameTime);
+            base.Update(gameTime);
+        }
+
+        protected void UpdateNew(GameTime gameTime)
+        {
+            foreach (Keys key in Keyboard.GetState().GetPressedKeys())
+            {
+                heroStateMachine.Trigger(key);
+            }
+            heroStateMachine.Update(gameTime);
+        }
+
+        protected void UpdateOld(GameTime gameTime) {
             var s = Keyboard.GetState();
             if (s.IsKeyDown(Keys.Left))
             {
@@ -140,9 +243,6 @@ namespace TestGame
                     hero.Play("idle_left");
                 }
             }
-            hero.Update(gameTime);
-
-            base.Update(gameTime);
         }
 
         /// <summary>
