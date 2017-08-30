@@ -6,7 +6,7 @@ Furthermore it implements even a Stack-Based-FSM (SBFSM). So you may tell it to 
 
 You describe your FSM using a nice and well documented DSL (Domain Specific Language).
 
-#### Description
+## Description
 
 This replaces the code we usually had for keyboard-input (run-left-right-duck-jump), clicked buttons on the GUI (idle-over-down-refreshing), tower-states (idle-aiming-firing-reloading) or for the connection procedure when setting up peer2peer connections in our games (more complex; example further down).
 
@@ -31,8 +31,7 @@ It would be like the following:
 * Start the game
 
 
-
-#### Test-drive
+### Test-drive
 
 Time to take it for a test-drive.
 
@@ -281,7 +280,7 @@ public void main() {
 }
 ```
 
-# Inspired by:
+## Inspired by:
 
 * [Fluent-State-Machine](https://github.com/Real-Serious-Games/Fluent-State-Machine) - by RoryDungan (MIT License)
 * [Nate](https://github.com/mmonteleone/nate) - by mmonteleone (MIT License)
