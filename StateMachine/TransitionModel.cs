@@ -33,7 +33,7 @@ using StateMachine.Events;
 namespace StateMachine
 {
     [PublicAPI]
-    public class TransitionModel<TState, TTrigger, TData>
+    public class TransitionModel<TState, TTrigger>
     {
         public ISet<TTrigger> Triggers { get; set; } = new HashSet<TTrigger>();
         public TState Source { get; set; }

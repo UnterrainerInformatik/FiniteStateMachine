@@ -44,11 +44,11 @@ namespace StateMachine.Fluent.Api
         private Dictionary<Tuple<TState>, StateModel<TState, TTrigger, TData>> stateModels =
             new Dictionary<Tuple<TState>, StateModel<TState, TTrigger, TData>>();
 
-        private Dictionary<Tuple<TState, TState>, TransitionModel<TState, TTrigger, TData>> transitionModels =
-            new Dictionary<Tuple<TState, TState>, TransitionModel<TState, TTrigger, TData>>();
+        private Dictionary<Tuple<TState, TState>, TransitionModel<TState, TTrigger>> transitionModels =
+            new Dictionary<Tuple<TState, TState>, TransitionModel<TState, TTrigger>>();
 
-        private Dictionary<Tuple<TState>, TransitionModel<TState, TTrigger, TData>> globalTransitionModels =
-            new Dictionary<Tuple<TState>, TransitionModel<TState, TTrigger, TData>>();
+        private Dictionary<Tuple<TState>, TransitionModel<TState, TTrigger>> globalTransitionModels =
+            new Dictionary<Tuple<TState>, TransitionModel<TState, TTrigger>>();
 
         public FluentImplementation(TState startState)
         {
@@ -101,8 +101,7 @@ namespace StateMachine.Fluent.Api
             currentGlobalTransition = Tuple.Create(state);
             if (!globalTransitionModels.ContainsKey(currentGlobalTransition))
             {
-                globalTransitionModels[currentGlobalTransition] =
-                    new TransitionModel<TState, TTrigger, TData>(startState, state);
+                globalTransitionModels[currentGlobalTransition] = new TransitionModel<TState, TTrigger>(startState, state);
                 FsmModel.GlobalTransitions[state] =
                     new Transition<TState, TTrigger, TData>(globalTransitionModels[currentGlobalTransition]);
             }
@@ -127,8 +126,7 @@ namespace StateMachine.Fluent.Api
             currentTransition = Tuple.Create(currentState.Item1, state);
             if (!transitionModels.ContainsKey(currentTransition))
             {
-                transitionModels[currentTransition] = new TransitionModel<TState, TTrigger, TData>(currentState.Item1,
-                    state);
+                transitionModels[currentTransition] = new TransitionModel<TState, TTrigger>(currentState.Item1, state);
                 stateModels[currentState].Transitions[state] =
                     new Transition<TState, TTrigger, TData>(transitionModels[currentTransition]);
             }
