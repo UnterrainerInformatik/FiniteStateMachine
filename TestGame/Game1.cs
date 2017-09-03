@@ -106,7 +106,7 @@ namespace TestGame
                         }
                         else
                         {
-                            args.Machine.TransitionTo("idle_left");
+                            args.Machine.JumpTo("idle_left");
                         }
                     })
                     .TransitionTo("duck_left").On(Keys.Down)
@@ -120,16 +120,16 @@ namespace TestGame
                         }
                         else
                         {
-                            args.Machine.TransitionTo("idle_right");
+                            args.Machine.JumpTo("idle_right");
                         }
                     })
                     .TransitionTo("duck_right").On(Keys.Down)
                     .TransitionTo("jump_right").On(Keys.Up)
                     .TransitionTo("idle_left").On(Keys.Left)
                 .State("jump_left")
-                    .OnEnter(args => hero.Play(args.To.Identifier).OnCompleted = () => args.Fsm.TransitionTo("idle_left"))
+                    .OnEnter(args => hero.Play(args.To.Identifier).OnCompleted = () => args.Fsm.JumpTo("idle_left"))
                 .State("jump_right")
-                    .OnEnter(args => hero.Play(args.To.Identifier).OnCompleted = () => args.Fsm.TransitionTo("idle_right"))
+                    .OnEnter(args => hero.Play(args.To.Identifier).OnCompleted = () => args.Fsm.JumpTo("idle_right"))
                 .State("duck_left")
                     .Update(args => {
                         if (Keyboard.GetState().IsKeyDown(Keys.Down))
@@ -138,7 +138,7 @@ namespace TestGame
                         }
                         else
                         {
-                            args.Machine.TransitionTo("idle_left");
+                            args.Machine.JumpTo("idle_left");
                         }
                     })
                     .TransitionTo("walk_right").On(Keys.Right)
@@ -152,7 +152,7 @@ namespace TestGame
                         }
                         else
                         {
-                            args.Machine.TransitionTo("idle_right");
+                            args.Machine.JumpTo("idle_right");
                         }
                     })
                     .TransitionTo("walk_right").On(Keys.Right)
