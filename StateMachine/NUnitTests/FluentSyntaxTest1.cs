@@ -88,7 +88,7 @@ namespace StateMachine.NUnitTests
             OVER,
             PRESSED,
             REFRESHING
-        };
+        }
 
         private enum Trigger
         {
@@ -96,12 +96,12 @@ namespace StateMachine.NUnitTests
             MOUSE_RELEASED,
             MOUSE_OVER,
             MOUSE_LEAVE
-        };
+        }
 
         private readonly Dictionary<Button, Fsm<State, Trigger, float>> buttonMachines =
             new Dictionary<Button, Fsm<State, Trigger, float>>();
 
-        private void main()
+        private void Main()
         {
             Hero hero = new Hero();
             CreateMachineFor(Fsm<State, Trigger>.Builder(State.IDLE), new Button(), hero);
@@ -113,17 +113,17 @@ namespace StateMachine.NUnitTests
             buttonMachines.Add(button, builder
                 .State(State.IDLE)
                 .TransitionTo(State.OVER).On(Trigger.MOUSE_OVER)
-                .OnEnter(t => { button.State = Button.ButtonState.IDLE; })
+                .OnEnter(t => button.State = Button.ButtonState.IDLE)
                 .State(State.OVER)
                 .TransitionTo(State.IDLE).On(Trigger.MOUSE_LEAVE)
                 .TransitionTo(State.PRESSED).On(Trigger.MOUSE_CLICKED)
-                .OnEnter(t => { button.State = Button.ButtonState.OVER; })
+                .OnEnter(t => button.State = Button.ButtonState.OVER)
                 .State(State.PRESSED)
                 .TransitionTo(State.IDLE)
                 .On(Trigger.MOUSE_LEAVE)
                 .If(a => button.Kind == Button.ButtonKind.FLIPBACK)
                 .TransitionTo(State.REFRESHING).On(Trigger.MOUSE_RELEASED)
-                .OnEnter(t => { button.State = Button.ButtonState.DOWN; })
+                .OnEnter(t => button.State = Button.ButtonState.DOWN)
                 .State(State.REFRESHING)
                 .OnEnter(t =>
                 {
@@ -136,7 +136,7 @@ namespace StateMachine.NUnitTests
                     if (button.RefreshTimer.Value <= 0F)
                     {
                         button.RefreshTimer.StopAndReset();
-                        args.Machine.TransitionTo(State.IDLE);
+                        args.Machine.JumpTo(State.IDLE);
                     }
                 })
                 .Build());

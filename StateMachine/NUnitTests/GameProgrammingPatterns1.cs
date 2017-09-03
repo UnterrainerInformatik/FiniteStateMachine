@@ -46,16 +46,14 @@ namespace StateMachine.NUnitTests
             DOWN,
             UP
         }
-        
+
         [Test]
         [Category("StateMachine.GamingProgrammingPatterns.1")]
         public void GamingProgrammingPatternsTest1()
         {
-            Fsm<State, Trigger>.Builder(State.STANDING)
+            var m = Fsm<State, Trigger>.Builder(State.STANDING)
                 .State(State.DUCKING)
-                    .TransitionTo(State.STANDING).On(Trigger.DOWN)
                     .TransitionTo(State.STANDING).On(Trigger.UP)
-                .State(State.STANDING)
                 .State(State.STANDING)
                     .TransitionTo(State.DUCKING).On(Trigger.DOWN)
                     .TransitionTo(State.JUMPING).On(Trigger.UP)
@@ -63,6 +61,20 @@ namespace StateMachine.NUnitTests
                     .TransitionTo(State.DIVING).On(Trigger.DOWN)
                 .State(State.DIVING)
                 .Build();
+
+            Assert.That(m.Current.Identifier, Is.EqualTo(State.STANDING));
+            m.Trigger(Trigger.DOWN);
+            Assert.That(m.Current.Identifier, Is.EqualTo(State.DUCKING));
+            m.Trigger(Trigger.DOWN);
+            Assert.That(m.Current.Identifier, Is.EqualTo(State.DUCKING));
+            m.Trigger(Trigger.UP);
+            Assert.That(m.Current.Identifier, Is.EqualTo(State.STANDING));
+            m.Trigger(Trigger.UP);
+            Assert.That(m.Current.Identifier, Is.EqualTo(State.JUMPING));
+            m.Trigger(Trigger.UP);
+            Assert.That(m.Current.Identifier, Is.EqualTo(State.JUMPING));
+            m.Trigger(Trigger.DOWN);
+            Assert.That(m.Current.Identifier, Is.EqualTo(State.DIVING));
         }
 
         private enum WState
@@ -84,7 +96,7 @@ namespace StateMachine.NUnitTests
         public void GamingProgrammingPatternsTest2()
         {
             // Now for the weapons-machine with basic forward- and backward-rotation.
-            Fsm<WState, WTrigger>.Builder(WState.EMPTY_HANDED)
+            var m = Fsm<WState, WTrigger>.Builder(WState.EMPTY_HANDED)
                 .State(WState.EMPTY_HANDED)
                     .TransitionTo(WState.GUN).On(WTrigger.TAB)
                     .TransitionTo(WState.LASER_RIFLE).On(WTrigger.SHIFT_TAB)
@@ -98,6 +110,24 @@ namespace StateMachine.NUnitTests
                     .TransitionTo(WState.EMPTY_HANDED).On(WTrigger.TAB)
                     .TransitionTo(WState.SHOTGUN).On(WTrigger.SHIFT_TAB)
                 .Build();
+
+            Assert.That(m.Current.Identifier, Is.EqualTo(WState.EMPTY_HANDED));
+            m.Trigger(WTrigger.TAB);
+            Assert.That(m.Current.Identifier, Is.EqualTo(WState.GUN));
+            m.Trigger(WTrigger.TAB);
+            Assert.That(m.Current.Identifier, Is.EqualTo(WState.SHOTGUN));
+            m.Trigger(WTrigger.TAB);
+            Assert.That(m.Current.Identifier, Is.EqualTo(WState.LASER_RIFLE));
+            m.Trigger(WTrigger.TAB);
+            Assert.That(m.Current.Identifier, Is.EqualTo(WState.EMPTY_HANDED));
+            m.Trigger(WTrigger.SHIFT_TAB);
+            Assert.That(m.Current.Identifier, Is.EqualTo(WState.LASER_RIFLE));
+            m.Trigger(WTrigger.SHIFT_TAB);
+            Assert.That(m.Current.Identifier, Is.EqualTo(WState.SHOTGUN));
+            m.Trigger(WTrigger.SHIFT_TAB);
+            Assert.That(m.Current.Identifier, Is.EqualTo(WState.GUN));
+            m.Trigger(WTrigger.SHIFT_TAB);
+            Assert.That(m.Current.Identifier, Is.EqualTo(WState.EMPTY_HANDED));
         }
     }
 }

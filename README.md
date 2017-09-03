@@ -87,60 +87,60 @@ private Hero hero;
 public void main() {
   horizontalMachine = Fsm.Builder<HState, HTrigger, GameTime>(STANDING)
     .State(STANDING)
-      .TransisionTo(WALKING_LEFT).On(LEFT_PRESSED)
-      .TransisionTo(WALKING_RIGHT).On(RIGHT_PRESSED)
+      .TransitionTo(WALKING_LEFT).On(LEFT_PRESSED)
+      .TransitionTo(WALKING_RIGHT).On(RIGHT_PRESSED)
       .OnEnter(e => {
         ConsoleOut();
         hero.HAnimation = HAnimation.STANDING;
         hero.delayTimer.StopAndReset();
       })
     .State(WALKING_LEFT)
-      .TransisionTo(WALKING_DELAY_LEFT).On(LEFT_RELEASED)
+      .TransitionTo(WALKING_DELAY_LEFT).On(LEFT_RELEASED)
       .OnEnter(e => {
         ConsoleOut();
         hero.HAnimation = HAnimation.WALK_LEFT;
         hero.delayTimer.StopAndReset();
       })
     .State(WALKING_RIGHT)
-      .TransisionTo(WALKING_DELAY_RIGHT).On(RIGHT_RELEASED)
+      .TransitionTo(WALKING_DELAY_RIGHT).On(RIGHT_RELEASED)
       .OnEnter(e => {
         ConsoleOut();
         hero.HAnimation = HAnimation.WALK_RIGHT;
         hero.delayTimer.StopAndReset();
       })
     .State(WALKING_DELAY_LEFT)
-      .TransisionTo(WALKING_RIGHT).On(RIGHT_PRESSED)
-      .TransisionTo(RUNNING_LEFT).On(LEFT_PRESSED)
+      .TransitionTo(WALKING_RIGHT).On(RIGHT_PRESSED)
+      .TransitionTo(RUNNING_LEFT).On(LEFT_PRESSED)
       .OnEnter(e => {
         hero.delayTimer.Start();
       })
       .Update(a => {
         hero.delayTimer.Update(a.GameTime);
         if(hero.delayTimer) {
-          horizontalMachine.TransitionTo(STANDING);
+          horizontalMachine.JumpTo(STANDING);
         }
       })
     .State(WALKING_DELAY_RIGHT)
-      .TransisionTo(WALKING_LEFT).On(LEFT_PRESSED)
-      .TransisionTo(RUNNING_RIGHT).On(RIGHT_PRESSED)
+      .TransitionTo(WALKING_LEFT).On(LEFT_PRESSED)
+      .TransitionTo(RUNNING_RIGHT).On(RIGHT_PRESSED)
       .OnEnter(e => {
         hero.delayTimer.Start();
       })
       .Update(a => {
         hero.delayTimer.Update(a.GameTime);
         if(hero.delayTimer) {
-          horizontalMachine.TransitionTo(STANDING);
+          horizontalMachine.JumpTo(STANDING);
         }
       })
     .State(RUNNING_LEFT)
-      .TransisionTo(STANDING).On(LEFT_RELEASED)
+      .TransitionTo(STANDING).On(LEFT_RELEASED)
       .OnEnter(e => {
         ConsoleOut();
         hero.HAnimation = HAnimation.RUNNING_LEFT;
         hero.delayTimer.StopAndReset();
       })
     .State(RUNNING_RIGHT)
-      .TransisionTo(STANDING).On(RIGHT_RELEASED)
+      .TransitionTo(STANDING).On(RIGHT_RELEASED)
       .OnEnter(e => {
         ConsoleOut();
         hero.HAnimation = HAnimation.RUNNING_RIGHT;
@@ -151,22 +151,22 @@ public void main() {
   
   verticalMachine = Fsm.Builder<VState, VTrigger, GameTime>(STANDING)
     .State(STANDING)
-      .TransisionTo(DUCKING).On(DOWN_PRESSED)
-      .TransisionTo(JUMPING).On(UP_PRESSED)
+      .TransitionTo(DUCKING).On(DOWN_PRESSED)
+      .TransitionTo(JUMPING).On(UP_PRESSED)
       .OnEnter(e => {
         ConsoleOut();
         hero.VAnimation = VAnimation.IDLE;
       })
       .OnExit(Console.Out.WriteLine($"From [{e.From}] with [{e.Input}] to [{e.To}]"))
     .State(DUCKING)
-      .TransisionTo(STANDING).On(DOWN_RELEASED)
+      .TransitionTo(STANDING).On(DOWN_RELEASED)
       .OnEnter(e => {
         ConsoleOut();
         hero.VAnimation = VAnimation.DUCKING;
       })
       .OnExit(ConsoleOut)
     .State(JUMPING)
-      .TransisionTo(DIVING).On(DOWN_PRESSED)
+      .TransitionTo(DIVING).On(DOWN_PRESSED)
       .OnEnter(e => {
         ConsoleOut();
         hero.VAnimation = VAnimation.JUMPING;
@@ -178,7 +178,7 @@ public void main() {
           verticalMachine.TransitionTo(DESCENDING);
       })
     .State(DESCENDING)
-      .TransisionTo(DIVING).On(DOWN_PRESSED)
+      .TransitionTo(DIVING).On(DOWN_PRESSED)
       .OnEnter(e => {
         ConsoleOut();
         hero.VAnimation = VAnimation.DESCENDING;
@@ -192,7 +192,7 @@ public void main() {
         }
       })
     .State(DIVING)
-      .TransisionTo(DESCENDING).On(DOWN_RELEASED)
+      .TransitionTo(DESCENDING).On(DOWN_RELEASED)
       .OnEnter(e => {
         ConsoleOut();
         hero.VAnimation = VAnimation.DIVING;
@@ -257,19 +257,19 @@ private Dictionary<Button, Fsm<State, Trigger, GameTime>> buttonMachines = new
 private void CreateMachineFor(Button button)
   buttonMachines.Add(button, Fsm.Builder<State, Trigger, GameTime>(IDLE)
     .State(IDLE)
-      .TransisionTo(OVER).On(MOUSE_OVER)
+      .TransitionTo(OVER).On(MOUSE_OVER)
       .OnEnter(e => {
         button.State = ButtonState.IDLE;
       })
     .State(OVER)
-      .TransisionTo(IDLE).On(MOUSE_LEAVE)
-      .TransisionTo(PRESSED).On(MOUSE_CLICKED)
+      .TransitionTo(IDLE).On(MOUSE_LEAVE)
+      .TransitionTo(PRESSED).On(MOUSE_CLICKED)
       .OnEnter(e => {
         button.State = ButtonState.OVER;
       })
     .State(PRESSED)
-      .TransisionTo(IDLE).On(MOUSE_LEAVE).If(button.Kind == Kind.FLIPBACK)
-      .TransisionTo(REFRESHING).On(MOUSE_RELEASED)
+      .TransitionTo(IDLE).On(MOUSE_LEAVE).If(button.Kind == Kind.FLIPBACK)
+      .TransitionTo(REFRESHING).On(MOUSE_RELEASED)
       .OnEnter(e => {
         button.State = ButtonState.DOWN;
       })
@@ -282,7 +282,7 @@ private void CreateMachineFor(Button button)
       .Update(a => {
         if(button.RefreshTimer.Value <= 0F) {
           button.RefreshTimer.StopAndReset();
-          machine.TransitionTo(IDLE);
+          machine.JumpTo(IDLE);
         }
       })
     .Build();

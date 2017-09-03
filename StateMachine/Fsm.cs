@@ -124,7 +124,7 @@ namespace StateMachine
             return this;
         }
 
-        public void TransitionTo(TState state, bool isPop = false)
+        public void JumpTo(TState state, bool isPop = false)
         {
             State<TState, TTrigger, TData> s;
             if (Model.States.TryGetValue(state, out s))
