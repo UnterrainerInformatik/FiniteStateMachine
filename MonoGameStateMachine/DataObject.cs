@@ -26,13 +26,31 @@
 // ***************************************************************************
 
 using JetBrains.Annotations;
+using Microsoft.Xna.Framework;
 
-namespace StateMachine.Fluent.Api
+namespace MonoGameStateMachine
 {
     [PublicAPI]
-    public interface GlobalTransitionBuilderFluent<TS, TT, TD> :
-        GlobalTransitionFluent<TS, TT, TD>,
-        BuilderFluent<TS, TT, TD>
+    public struct DataObject<T>
     {
+        public T Data { get; set; }
+        public GameTime GameTime { get; set; }
+
+        public DataObject(T data, GameTime gameTime)
+        {
+            Data = data;
+            GameTime = gameTime;
+        }
+
+        public DataObject(GameTime gameTime)
+        {
+            Data = default(T);
+            GameTime = gameTime;
+        }
+
+        public static DataObject<T> Of(GameTime gameTime)
+        {
+            return new DataObject<T>(gameTime);
+        }
     }
 }

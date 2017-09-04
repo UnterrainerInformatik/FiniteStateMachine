@@ -31,31 +31,31 @@ using StateMachine.Events;
 
 namespace StateMachine.Fluent.Api
 {
-    public class FluentImplementation<TState, TTrigger, TData> : GlobalTransitionBuilderFluent<TState, TTrigger, TData>,
-        TransitionStateFluent<TState, TTrigger, TData>
+    public class FluentImplementation<TS, TT, TD> : GlobalTransitionBuilderFluent<TS, TT, TD>,
+        TransitionStateFluent<TS, TT, TD>
     {
-        private FsmModel<TState, TTrigger, TData> FsmModel { get; set; } = new FsmModel<TState, TTrigger, TData>();
-        private TState startState;
+        protected FsmModel<TS, TT, TD> FsmModel { get; set; } = new FsmModel<TS, TT, TD>();
+        protected TS startState;
 
-        private Tuple<TState> currentState;
-        private Tuple<TState, TState> currentTransition;
-        private Tuple<TState> currentGlobalTransition;
+        protected Tuple<TS> currentState;
+        protected Tuple<TS, TS> currentTransition;
+        protected Tuple<TS> currentGlobalTransition;
 
-        private Dictionary<Tuple<TState>, StateModel<TState, TTrigger, TData>> stateModels =
-            new Dictionary<Tuple<TState>, StateModel<TState, TTrigger, TData>>();
+        protected Dictionary<Tuple<TS>, StateModel<TS, TT, TD>> stateModels =
+            new Dictionary<Tuple<TS>, StateModel<TS, TT, TD>>();
 
-        private Dictionary<Tuple<TState, TState>, TransitionModel<TState, TTrigger, TData>> transitionModels =
-            new Dictionary<Tuple<TState, TState>, TransitionModel<TState, TTrigger, TData>>();
+        protected Dictionary<Tuple<TS, TS>, TransitionModel<TS, TT, TD>> transitionModels =
+            new Dictionary<Tuple<TS, TS>, TransitionModel<TS, TT, TD>>();
 
-        private Dictionary<Tuple<TState>, TransitionModel<TState, TTrigger, TData>> globalTransitionModels =
-            new Dictionary<Tuple<TState>, TransitionModel<TState, TTrigger, TData>>();
+        protected Dictionary<Tuple<TS>, TransitionModel<TS, TT, TD>> globalTransitionModels =
+            new Dictionary<Tuple<TS>, TransitionModel<TS, TT, TD>>();
 
-        public FluentImplementation(TState startState)
+        public FluentImplementation(TS startState)
         {
             this.startState = startState;
         }
 
-        public Fsm<TState, TTrigger, TData> Build()
+        public Fsm<TS, TT, TD> Build()
         {
             if (FsmModel.States[startState] == null)
             {
@@ -63,105 +63,105 @@ namespace StateMachine.Fluent.Api
             }
 
             FsmModel.Current = FsmModel.States[startState];
-            Fsm<TState, TTrigger, TData> fsm = new Fsm<TState, TTrigger, TData>(FsmModel);
+            Fsm<TS, TT, TD> fsm = new Fsm<TS, TT, TD>(FsmModel);
             return fsm;
         }
 
-        public StateFluent<TState, TTrigger, TData> State(TState state)
+        public StateFluent<TS, TT, TD> State(TS state)
         {
             currentState = Tuple.Create(state);
             if (!FsmModel.States.ContainsKey(state))
             {
-                stateModels[currentState] = new StateModel<TState, TTrigger, TData>(state);
-                FsmModel.States[state] = new State<TState, TTrigger, TData>(stateModels[currentState]);
+                stateModels[currentState] = new StateModel<TS, TT, TD>(state);
+                FsmModel.States[state] = new State<TS, TT, TD>(stateModels[currentState]);
             }
             return this;
         }
 
-        public StateFluent<TState, TTrigger, TData> OnEnter(Action<StateChangeArgs<TState, TTrigger, TData>> enter)
+        public StateFluent<TS, TT, TD> OnEnter(Action<StateChangeArgs<TS, TT, TD>> enter)
         {
             stateModels[currentState].AddEnteredHandler(enter);
             return this;
         }
 
-        public StateFluent<TState, TTrigger, TData> OnExit(Action<StateChangeArgs<TState, TTrigger, TData>> exit)
+        public StateFluent<TS, TT, TD> OnExit(Action<StateChangeArgs<TS, TT, TD>> exit)
         {
             stateModels[currentState].AddExitedHandler(exit);
             return this;
         }
 
-        public StateFluent<TState, TTrigger, TData> Update(Action<UpdateArgs<TState, TTrigger, TData>> update)
+        public StateFluent<TS, TT, TD> Update(Action<UpdateArgs<TS, TT, TD>> update)
         {
             stateModels[currentState].AddUpdatedHandler(update);
             return this;
         }
 
-        public GlobalTransitionFluent<TState, TTrigger, TData> GlobalTransitionTo(TState state)
+        public GlobalTransitionFluent<TS, TT, TD> GlobalTransitionTo(TS state)
         {
             currentGlobalTransition = Tuple.Create(state);
             if (!globalTransitionModels.ContainsKey(currentGlobalTransition))
             {
                 globalTransitionModels[currentGlobalTransition] =
-                    new TransitionModel<TState, TTrigger, TData>(startState, state);
+                    new TransitionModel<TS, TT, TD>(startState, state);
                 FsmModel.GlobalTransitions[state] =
-                    new Transition<TState, TTrigger, TData>(globalTransitionModels[currentGlobalTransition]);
+                    new Transition<TS, TT, TD>(globalTransitionModels[currentGlobalTransition]);
             }
             return this;
         }
 
-        public GlobalTransitionBuilderFluent<TState, TTrigger, TData> OnGlobal(TTrigger trigger)
+        public GlobalTransitionBuilderFluent<TS, TT, TD> OnGlobal(TT trigger)
         {
             globalTransitionModels[currentGlobalTransition].Triggers.Add(trigger);
             return this;
         }
 
-        public GlobalTransitionBuilderFluent<TState, TTrigger, TData> IfGlobal(
-            Func<IfArgs<TState, TTrigger>, bool> condition)
+        public GlobalTransitionBuilderFluent<TS, TT, TD> IfGlobal(
+            Func<IfArgs<TS, TT>, bool> condition)
         {
             globalTransitionModels[currentGlobalTransition].Conditions.Add(condition);
             return this;
         }
 
-        public TransitionFluent<TState, TTrigger, TData> TransitionTo(TState state)
+        public TransitionFluent<TS, TT, TD> TransitionTo(TS state)
         {
             currentTransition = Tuple.Create(currentState.Item1, state);
             if (!transitionModels.ContainsKey(currentTransition))
             {
-                transitionModels[currentTransition] = new TransitionModel<TState, TTrigger, TData>(currentState.Item1,
+                transitionModels[currentTransition] = new TransitionModel<TS, TT, TD>(currentState.Item1,
                     state);
                 stateModels[currentState].Transitions[state] =
-                    new Transition<TState, TTrigger, TData>(transitionModels[currentTransition]);
+                    new Transition<TS, TT, TD>(transitionModels[currentTransition]);
             }
             return this;
         }
 
-        public TransitionStateFluent<TState, TTrigger, TData> On(TTrigger trigger)
+        public TransitionStateFluent<TS, TT, TD> On(TT trigger)
         {
             transitionModels[currentTransition].Triggers.Add(trigger);
             return this;
         }
 
-        public TransitionStateFluent<TState, TTrigger, TData> If(Func<IfArgs<TState, TTrigger>, bool> condition)
+        public TransitionStateFluent<TS, TT, TD> If(Func<IfArgs<TS, TT>, bool> condition)
         {
             transitionModels[currentTransition].Conditions.Add(condition);
             return this;
         }
 
-        public StateFluent<TState, TTrigger, TData> ClearsStack()
+        public StateFluent<TS, TT, TD> ClearsStack()
         {
             FsmModel.States[currentState.Item1].ClearStack = true;
             return this;
         }
 
-        public BuilderFluent<TState, TTrigger, TData> EnableStack()
+        public BuilderFluent<TS, TT, TD> EnableStack()
         {
             FsmModel.StackEnabled = true;
             return this;
         }
 
-        public TransitionFluent<TState, TTrigger, TData> PopTransition()
+        public TransitionFluent<TS, TT, TD> PopTransition()
         {
-            TransitionTo(default(TState));
+            TransitionTo(default(TS));
             transitionModels[currentTransition].Pop = true;
             return this;
         }

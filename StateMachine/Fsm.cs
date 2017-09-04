@@ -33,6 +33,7 @@ using StateMachine.Fluent.Api;
 
 namespace StateMachine
 {
+    [PublicAPI]
     public class Fsm<TState, TTrigger> : Fsm<TState, TTrigger, float>
     {
         public Fsm(FsmModel<TState, TTrigger, float> model) : base(model)
@@ -50,7 +51,7 @@ namespace StateMachine
     }
 
     [PublicAPI]
-    public class Fsm<TState, TTrigger, TData> : Updatable<TData>
+    public class Fsm<TState, TTrigger, TData>
     {
         protected FsmModel<TState, TTrigger, TData> Model { get; set; } = new FsmModel<TState, TTrigger, TData>();
 

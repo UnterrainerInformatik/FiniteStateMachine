@@ -30,8 +30,8 @@ using JetBrains.Annotations;
 namespace StateMachine.Fluent.Api
 {
     [PublicAPI]
-    public interface TransitionStateFluent<TState, TTrigger, TData> : TransitionFluent<TState, TTrigger, TData>,
-        StateFluent<TState, TTrigger, TData>
+    public interface TransitionStateFluent<TS, TT, TD> : TransitionFluent<TS, TT, TD>,
+        StateFluent<TS, TT, TD>
     {
     }
 }

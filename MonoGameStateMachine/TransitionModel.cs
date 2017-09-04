@@ -25,14 +25,17 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using JetBrains.Annotations;
+using System;
+using System.Collections.Generic;
 
-namespace StateMachine.Fluent.Api
+namespace MonoGameStateMachine
 {
-    [PublicAPI]
-    public interface GlobalTransitionBuilderFluent<TS, TT, TD> :
-        GlobalTransitionFluent<TS, TT, TD>,
-        BuilderFluent<TS, TT, TD>
+    public class TransitionModel<TS, TT, TD> : StateMachine.TransitionModel<TS, TT, TD>
     {
+        public List<Tuple<float, TimeUnit>> AfterEntries { get; set; } = new List<Tuple<float, TimeUnit>>();
+
+        public TransitionModel(TS source, TS target) : base(source, target)
+        {
+        }
     }
 }

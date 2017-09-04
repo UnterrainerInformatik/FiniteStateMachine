@@ -27,12 +27,18 @@
 
 using JetBrains.Annotations;
 
-namespace StateMachine.Fluent.Api
+namespace MonoGameStateMachine
 {
     [PublicAPI]
-    public interface GlobalTransitionBuilderFluent<TS, TT, TD> :
-        GlobalTransitionFluent<TS, TT, TD>,
-        BuilderFluent<TS, TT, TD>
+    public enum TimeUnit
     {
+        MILLISECONDS,
+        SECONDS,
+        MINUTES,
+        HOURS,
+        DAYS,
+        WEEKS,
+        MONTHS,
+        YEARS
     }
 }

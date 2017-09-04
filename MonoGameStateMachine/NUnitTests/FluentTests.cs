@@ -25,9 +25,11 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System;
+using Microsoft.Xna.Framework;
 using NUnit.Framework;
 
-namespace StateMachine.NUnitTests
+namespace MonoGameStateMachine.NUnitTests
 {
     public class FluentTests
     {
@@ -58,7 +60,7 @@ namespace StateMachine.NUnitTests
         }
 
         [Test]
-        [Category("StateMachine.FluentTests.OnMethods")]
+        [Category("MonoGameStateMachine.FluentTests.OnMethods")]
         public void OnMethodTests()
         {
             var button = new Button();
@@ -82,19 +84,11 @@ namespace StateMachine.NUnitTests
                 .State(State.REFRESHING)
                     .OnEnter(t => button.BtnState = State.REFRESHING)
                     .OnExit(t => button.OldState = button.BtnState)
-                    .Update(a =>
-                    {
-                        button.RefreshTimer -= a.Data;
-                        if (button.RefreshTimer <= 0F)
-                        {
-                            button.RefreshTimer = 0F;
-                            a.Machine.JumpTo(State.OVER); // or m.JumpTo(State.IDLE);
-                        }
-                        button.UpdateCounter = button.UpdateCounter + 1;
-                    })
+                    .TransitionTo(State.OVER).After(1, TimeUnit.SECONDS)
+                .GlobalTransitionTo(State.IDLE).AfterGlobal(10, TimeUnit.SECONDS)
                 .Build();
 
-            m.Update(2F); // Should do nothing.
+            m.Update(new GameTime(TimeSpan.Zero, TimeSpan.FromMilliseconds(16))); // Should do nothing.
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
             m.Trigger(Trigger.MOUSE_CLICKED);
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
@@ -103,6 +97,8 @@ namespace StateMachine.NUnitTests
             m.Trigger(Trigger.MOUSE_RELEASED);
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
             m.Trigger(Trigger.MOUSE_OVER);
+            m.Update(new GameTime(TimeSpan.Zero, TimeSpan.FromMilliseconds(16)));
+            m.Update(new GameTime(TimeSpan.Zero, TimeSpan.FromMilliseconds(16)));
             Assert.That(m.Current.Identifier, Is.EqualTo(State.OVER));
             Assert.That(button.BtnState, Is.EqualTo(State.OVER));
             Assert.That(button.OldState, Is.EqualTo(State.IDLE));
@@ -119,14 +115,18 @@ namespace StateMachine.NUnitTests
             Assert.That(m.Current.Identifier, Is.EqualTo(State.REFRESHING));
             Assert.That(button.BtnState, Is.EqualTo(State.REFRESHING));
             Assert.That(button.OldState, Is.EqualTo(State.PRESSED));
-            m.Update(.5F); // No transition yet...
+            m.Update(new GameTime(TimeSpan.Zero, TimeSpan.FromMilliseconds(500))); // No transition yet...
             Assert.That(m.Current.Identifier, Is.EqualTo(State.REFRESHING));
             Assert.That(button.BtnState, Is.EqualTo(State.REFRESHING));
             Assert.That(button.OldState, Is.EqualTo(State.PRESSED));
-            m.Update(.5F); // But now.
+            m.Update(new GameTime(TimeSpan.Zero, TimeSpan.FromMilliseconds(500))); // But now.
             Assert.That(m.Current.Identifier, Is.EqualTo(State.OVER));
             Assert.That(button.BtnState, Is.EqualTo(State.OVER));
             Assert.That(button.OldState, Is.EqualTo(State.REFRESHING));
+            m.Update(new GameTime(TimeSpan.Zero, TimeSpan.FromMilliseconds(10000)));
+            Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
+            Assert.That(button.BtnState, Is.EqualTo(State.IDLE));
+            Assert.That(button.OldState, Is.EqualTo(State.OVER));
 
             // Update was triggered twice over all states.
             Assert.That(button.UpdateCounter, Is.EqualTo(2F));

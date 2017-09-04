@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("StateMachine")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("MonoGameStateMachine")]
+[assembly: AssemblyProduct("MonoGameStateMachine")]
 [assembly: AssemblyConfiguration("")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyCompany("Unterrainer Informatik OG")]
-[assembly: AssemblyProduct("StateMachine")]
 [assembly: AssemblyCopyright("Copyright Unterrainer Informatik ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("b44cddae-3ba6-4be2-8a42-12576cb4efce")]
+[assembly: Guid("65227cb6-80c3-4f33-b82e-b2f84b8d7bec")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.1.0.6")]
-[assembly: AssemblyFileVersion("1.1.0.6")]
+[assembly: AssemblyVersion("1.0.2.0")]
+[assembly: AssemblyFileVersion("1.0.2.0")]

@@ -25,42 +25,49 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System;
 using JetBrains.Annotations;
+using StateMachine.Events;
 
-namespace StateMachine.Fluent.Api
+namespace MonoGameStateMachine.Api
 {
     [PublicAPI]
-    public interface BuilderFluent<TS, TT, TD>
+    public interface StateFluent<TS, TT, TD> : BuilderFluent<TS, TT, TD>
     {
         /// <summary>
-        ///     Enables the stack and turns this Finite-State-Machine (FSM) into a Stack-Based-FSM (SBFSM).<br />
-        ///     Beware that you will have to specify "ClearsStack()" on some of the states, as otherwise the stack will grow and
-        ///     never be cleared.
+        ///     Adds a new transition to the state, you currently describe.
         /// </summary>
-        BuilderFluent<TS, TT, TD> EnableStack();
+        /// <param name="state">The state the transition will lead to.</param>
+        TransitionFluent<TS, TT, TD> TransitionTo(TS state);
 
         /// <summary>
-        ///     Sets a global transition to a state.<br />
-        ///     This will generate a transision that will be triggered regardless of the current state's position in the graph and
-        ///     regardless of the transitions connected to that state.<p />
-        ///     Think of it as a 'catch all' transition.<br />
-        ///     Usually you would use such global transitions to reset a graph when ESC is pressed or something like that.
+        ///     Adding a transition that, being triggered, will result in the last state on the stack being popped and set to be
+        ///     the current one.<br />
+        ///     For this to work 'EnableStack' has to be set (this machine has to be a Stack-Based-FSM (SBFSM)).
         /// </summary>
-        /// <param name="state">The state the global transition should lead to.</param>
-        GlobalTransitionFluent<TS, TT, TD> GlobalTransitionTo(TS state);
+        TransitionFluent<TS, TT, TD> PopTransition();
 
         /// <summary>
-        ///     Generates a new state.<br />
-        ///     An FSM can have multiple states connected via transitions.<br />
-        ///     Only a single transition is active at any given time and that transition will receive 'Update(TData)' calls and
-        ///     will be checked for transitions that may be triggered by an input, which, in turn, would activate the next state.
+        ///     Called when the state, you currently describe, is entered.
         /// </summary>
-        /// <param name="state">The state.</param>
-        StateFluent<TS, TT, TD> State(TS state);
+        /// <param name="stateChangeArgs">The state change arguments.</param>
+        StateFluent<TS, TT, TD> OnEnter(Action<StateChangeArgs<TS, TT, TD>> stateChangeArgs);
 
         /// <summary>
-        ///     Builds this instance of an FSM (or SBFSM).
+        ///     Called when the state, you currently describe, is exited.
         /// </summary>
-        Fsm<TS, TT, TD> Build();
+        /// <param name="stateChangeArgs">The state change arguments.</param>
+        StateFluent<TS, TT, TD> OnExit(Action<StateChangeArgs<TS, TT, TD>> stateChangeArgs);
+
+        /// <summary>
+        ///     Called when the FSM's 'Update(TData)' method is called and the state, you currently describe, is active.
+        /// </summary>
+        /// <param name="updateArgs">The update arguments.</param>
+        StateFluent<TS, TT, TD> Update(Action<UpdateArgs<TS, TT, TD>> updateArgs);
+
+        /// <summary>
+        ///     Clears the stack when the state, you currently describe, is entered.
+        /// </summary>
+        StateFluent<TS, TT, TD> ClearsStack();
     }
 }

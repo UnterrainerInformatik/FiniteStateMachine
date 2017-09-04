@@ -1,3 +1,7 @@
+StateMachine:[![NuGet](https://img.shields.io/nuget/v/StateMachine.svg?maxAge=2592000)](https://www.nuget.org/packages/StateMachine/)
+ MonoGameStateMachine:[![NuGet](https://img.shields.io/nuget/v/MonoGameStateMachine.svg?maxAge=2592000)](https://www.nuget.org/packages/MonoGameStateMachine/)
+[![license](https://img.shields.io/github/license/unterrainerinformatik/FiniteStateMachine.svg?maxAge=2592000)](http://unlicense.org)  [![Twitter Follow](https://img.shields.io/twitter/follow/throbax.svg?style=social&label=Follow&maxAge=2592000)](https://twitter.com/throbax)  
+
 # Finite-State-Machine
 
 This project implements a Finite-State-Machine (FSM) designed to be used in games.
@@ -5,6 +9,29 @@ This project implements a Finite-State-Machine (FSM) designed to be used in game
 Furthermore it implements even a Stack-Based-FSM (SBFSM). So you may tell it to 'continue with the last state before the active one'.
 
 You describe your FSM using a nice and well documented DSL (Domain Specific Language).
+
+#### StateMachine
+
+Is the generic implementation.
+It references no other library (no dependencies).
+
+Nice if you want to use it outside of MonoGame.
+
+#### MonoGameStateMachine
+
+Includes a reference to MonoGame so that it can use MonoGame's `GameTime` structure.It is a mandatory parameter when calling `Update` in this implementation and so it can add the `After()` feature to transitions like so:
+
+````c#
+Fsm<State, Trigger>.Builder(State.STANDING)
+  .State(State.DUCKING)
+    .TransitionTo(State.STANDING).After(500, TimeUnit.MILLISECONDS)
+  ...
+````
+
+This **only** works in the MonoGame-version.
+This functionality is achieved by updating the `After` conditions **before** evaluating the `Update` function - Be advised that this happens directly before the `Update` call with the `GameTime` you've specified in the call to `Update`. If the `After` function triggers, the call to `Update` will be omitted.
+
+> The nuget-badges above lead to the appropriate targets on nuget.org.
 
 ## Description
 
