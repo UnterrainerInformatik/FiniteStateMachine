@@ -25,17 +25,22 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace MonoGameStateMachine
 {
-    public class TransitionModel<TS, TT, TD> : StateMachine.TransitionModel<TS, TT, TD>
+    [PublicAPI]
+    public struct Timer
     {
-        public List<Tuple<float, TimeUnit>> AfterEntries { get; set; } = new List<Tuple<float, TimeUnit>>();
+        public float Value { get; set; }
+        public TimeUnit Unit { get; set; }
+        public float Time { get; set; }
 
-        public TransitionModel(TS source, TS target) : base(source, target)
+        public Timer(float value, TimeUnit unit)
         {
+            Value = value;
+            Unit = unit;
+            Time = value;
         }
     }
 }

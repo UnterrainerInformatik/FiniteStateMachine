@@ -25,6 +25,8 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
 using MonoGameStateMachine.Api;
@@ -34,7 +36,7 @@ using StateMachine.Events;
 namespace MonoGameStateMachine
 {
     [PublicAPI]
-    public class Fsm<TS, TT> : StateMachine.Fsm<TS, TT, GameTime>
+    public class Fsm<TS, TT> : Fsm<TS, TT, GameTime>
     {
         public Fsm(FsmModel<TS, TT, GameTime> model) : base(model)
         {
@@ -45,7 +47,7 @@ namespace MonoGameStateMachine
         }
 
         /// <summary>
-        /// Gets you a builder for a Finite-State-Machine (FSM).
+        ///     Gets you a builder for a Finite-State-Machine (FSM).
         /// </summary>
         /// <param name="startState">The start state's key.</param>
         /// <returns></returns>
@@ -53,28 +55,24 @@ namespace MonoGameStateMachine
         {
             return new FluentImplementation<TS, TT, GameTime>(startState);
         }
-
-        public new void Update(GameTime gameTime)
-        {
-            Model.Current.RaiseUpdated(new UpdateArgs<TS, TT, GameTime>(this, Current, gameTime));
-        }
     }
 
     [PublicAPI]
-    public class Fsm<TS, TT, TD> : StateMachine.Fsm<TS, TT, DataObject<TD>>
+    public class Fsm<TS, TT, TD> : StateMachine.Fsm<TS, TT, TD>
     {
-        
+        public Dictionary<Tuple<TS, TS>, List<Timer>> AfterEntries { get; set; } = new Dictionary<Tuple<TS, TS>, List<Timer>>();
+        public Dictionary<Tuple<TS>, List<Timer>> GlobalAfterEntries { get; set; } = new Dictionary<Tuple<TS>, List<Timer>>();
 
-        public Fsm(FsmModel<TS, TT, DataObject<TD>> model) : base(model)
+        public Fsm(FsmModel<TS, TT, TD> model) : base(model)
         {
         }
 
-        public Fsm(State<TS, TT, DataObject<TD>> current, bool stackEnabled = false) : base(current, stackEnabled)
+        public Fsm(State<TS, TT, TD> current, bool stackEnabled = false) : base(current, stackEnabled)
         {
         }
-        
+
         /// <summary>
-        /// Gets you a builder for a Finite-State-Machine (FSM).
+        ///     Gets you a builder for a Finite-State-Machine (FSM).
         /// </summary>
         /// <param name="startState">The start state's key.</param>
         /// <returns></returns>
@@ -83,9 +81,32 @@ namespace MonoGameStateMachine
             return new FluentImplementation<TS, TT, DataObject<TD>>(startState);
         }
 
-        public new void Update(DataObject<TD> gameTime)
+        public new void Update(TD data)
         {
-            Model.Current.RaiseUpdated(new UpdateArgs<TS, TT, DataObject<TD>>(this, Current, gameTime));
+            List<Timer> l;
+            if (!AfterEntries.TryGetValue(Current, out l))
+            {
+                l = new List<Tuple<float, TimeUnit>>();
+                AfterEntries.Add(key, l);
+            }
+            l.Add(new Tuple<float, TimeUnit>(amount, timeUnit));
+
+            foreach (var e in GlobalAfterEntries)
+            {
+                var target = e.Key;
+                var ts = e.Value;
+                foreach (var t in ts)
+                {
+                    
+                }
+            }
+            if (!GlobalAfterEntries.TryGetValue(key, out l))
+            {
+                l = new List<Tuple<float, TimeUnit>>();
+                GlobalAfterEntries.Add(key, l);
+            }
+
+            Model.Current.RaiseUpdated(new UpdateArgs<TS, TT, TD>(this, Current, data));
         }
     }
 }

@@ -66,7 +66,7 @@ namespace StateMachine.Fluent.Api
             Fsm<TS, TT, TD> fsm = new Fsm<TS, TT, TD>(FsmModel);
             return fsm;
         }
-
+        
         public StateFluent<TS, TT, TD> State(TS state)
         {
             currentState = Tuple.Create(state);

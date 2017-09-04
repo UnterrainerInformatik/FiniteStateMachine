@@ -54,7 +54,6 @@ namespace MonoGameStateMachine.NUnitTests
             public bool IsActivated { get; set; }
             public State BtnState { get; set; }
             public State OldState { get; set; } = State.IDLE;
-            public float RefreshTimer { get; set; } = 1F;
 
             public int UpdateCounter { get; set; }
         }

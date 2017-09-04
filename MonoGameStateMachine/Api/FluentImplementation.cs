@@ -27,17 +27,15 @@
 
 using System;
 using System.Collections.Generic;
-using StateMachine;
 using StateMachine.Events;
 
 namespace MonoGameStateMachine.Api
 {
-    public class FluentImplementation<TS, TT, TD> :
-        StateMachine.Fluent.Api.FluentImplementation<TS, TT, TD>,
+    public class FluentImplementation<TS, TT, TD> : StateMachine.Fluent.Api.FluentImplementation<TS, TT, TD>,
         TransitionStateFluent<TS, TT, TD>, GlobalTransitionBuilderFluent<TS, TT, TD>
     {
-        protected new Dictionary<Tuple<TS, TS>, TransitionModel<TS, TT, TD>> transitionModels =
-            new Dictionary<Tuple<TS, TS>, TransitionModel<TS, TT, TD>>();
+        public Dictionary<Tuple<TS, TS>, List<Timer>> AfterEntries { get; set; } = new Dictionary<Tuple<TS, TS>, List<Timer>>();
+        public Dictionary<Tuple<TS>, List<Timer>> GlobalAfterEntries { get; set; } = new Dictionary<Tuple<TS>, List<Timer>>();
 
         public FluentImplementation(TS startState) : base(startState)
         {
@@ -45,25 +43,36 @@ namespace MonoGameStateMachine.Api
 
         public new Fsm<TS, TT, TD> Build()
         {
-            if (FsmModel.States[startState] == null)
-            {
-                throw FsmBuilderException.StartStateCannotBeNull();
-            }
-
-            FsmModel.Current = FsmModel.States[startState];
-            Fsm<TS, TT, TD> fsm = new Fsm<TS, TT, TD>(FsmModel);
-            return fsm;
+            base.Build();
+            var m = new Fsm<TS, TT, TD>(FsmModel);
+            m.AfterEntries = AfterEntries;
+            m.GlobalAfterEntries = GlobalAfterEntries;
+            return m;
         }
 
         public TransitionStateFluent<TS, TT, TD> After(float amount, TimeUnit timeUnit)
         {
-            throw new NotImplementedException();
+            List<Timer> l;
+            var key = currentTransition;
+            if (!AfterEntries.TryGetValue(key, out l))
+            {
+                l = new List<Timer>();
+                AfterEntries.Add(key, l);
+            }
+            l.Add(new Timer(amount, timeUnit));
             return this;
         }
 
         public TransitionStateFluent<TS, TT, TD> AfterGlobal(float amount, TimeUnit timeUnit)
         {
-            throw new NotImplementedException();
+            List<Timer> l;
+            var key = currentGlobalTransition;
+            if (!GlobalAfterEntries.TryGetValue(key, out l))
+            {
+                l = new List<Timer>();
+                GlobalAfterEntries.Add(key, l);
+            }
+            l.Add(new Timer(amount, timeUnit));
             return this;
         }
 
@@ -135,13 +144,13 @@ namespace MonoGameStateMachine.Api
             return this;
         }
 
-        public GlobalTransitionBuilderFluent<TS, TT, TD> OnGlobal(TT trigger)
+        public new GlobalTransitionBuilderFluent<TS, TT, TD> OnGlobal(TT trigger)
         {
             base.OnGlobal(trigger);
             return this;
         }
 
-        public GlobalTransitionBuilderFluent<TS, TT, TD> IfGlobal(
+        public new GlobalTransitionBuilderFluent<TS, TT, TD> IfGlobal(
             Func<IfArgs<TS, TT>, bool> condition)
         {
             base.IfGlobal(condition);

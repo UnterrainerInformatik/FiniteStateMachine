@@ -25,8 +25,11 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using JetBrains.Annotations;
+
 namespace MonoGameStateMachine.Api
 {
+    [PublicAPI]
     public interface BuilderFluent<TS, TT, TD>
     {
         /// <summary>

@@ -71,8 +71,8 @@
     <Compile Include="Api\StateFluent.cs" />
     <Compile Include="Api\TransitionStateFluent.cs" />
     <Compile Include="DataObject.cs" />
+    <Compile Include="Timer.cs" />
     <Compile Include="Fsm.cs" />
-    <Compile Include="TransitionModel.cs" />
     <Compile Include="NUnitTests\FluentTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TimeUnit.cs" />
