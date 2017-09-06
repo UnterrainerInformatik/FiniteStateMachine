@@ -33,17 +33,17 @@ using StateMachine.Events;
 namespace StateMachine
 {
     [PublicAPI]
-    public class TransitionModel<TState, TTrigger, TData>
+    public class TransitionModel<TS, TT, TD>
     {
-        public ISet<TTrigger> Triggers { get; set; } = new HashSet<TTrigger>();
-        public TState Source { get; set; }
-        public TState Target { get; private set; }
+        public ISet<TT> Triggers { get; set; } = new HashSet<TT>();
+        public TS Source { get; set; }
+        public TS Target { get; private set; }
         public bool Pop { get; set; }
 
-        public List<Func<IfArgs<TState, TTrigger>, bool>> Conditions { get; } =
-            new List<Func<IfArgs<TState, TTrigger>, bool>>();
+        public List<Func<IfArgs<TS, TT>, bool>> Conditions { get; } =
+            new List<Func<IfArgs<TS, TT>, bool>>();
 
-        public TransitionModel(TState source, TState target)
+        public TransitionModel(TS source, TS target)
         {
             Source = source;
             Target = target;

@@ -31,11 +31,11 @@ using StateMachine.Events;
 namespace StateMachine
 {
     [PublicAPI]
-    public class State<TState, TTrigger, TData>
+    public class State<TS, TT, TD>
     {
-        private StateModel<TState, TTrigger, TData> Model { get; set; }
+        private StateModel<TS, TT, TD> Model { get; set; }
 
-        public TState Identifier => Model.Identifier;
+        public TS Identifier => Model.Identifier;
 
         public bool ClearStack
         {
@@ -43,21 +43,21 @@ namespace StateMachine
             set { Model.ClearStack = value; }
         }
 
-        public void RaiseUpdated(UpdateArgs<TState, TTrigger, TData> args) => Model.RaiseUpdated(args);
-        public void RaiseEntered(StateChangeArgs<TState, TTrigger, TData> args) => Model.RaiseEntered(args);
-        public void RaiseExited(StateChangeArgs<TState, TTrigger, TData> args) => Model.RaiseExited(args);
+        public void RaiseUpdated(UpdateArgs<TS, TT, TD> args) => Model.RaiseUpdated(args);
+        public void RaiseEntered(StateChangeArgs<TS, TT, TD> args) => Model.RaiseEntered(args);
+        public void RaiseExited(StateChangeArgs<TS, TT, TD> args) => Model.RaiseExited(args);
 
-        public State(StateModel<TState, TTrigger, TData> model)
+        public State(StateModel<TS, TT, TD> model)
         {
             Model = model;
         }
 
-        public State(TState identifier) : this(new StateModel<TState, TTrigger, TData>(identifier))
+        public State(TS identifier) : this(new StateModel<TS, TT, TD>(identifier))
         {
         }
 
         /// <exception cref="FsmBuilderException"> When the transition is null</exception>
-        public State<TState, TTrigger, TData> Add(Transition<TState, TTrigger, TData> t)
+        public State<TS, TT, TD> Add(Transition<TS, TT, TD> t)
         {
             if (t == null) throw FsmBuilderException.TransitionCannotBeNull();
 
@@ -66,17 +66,17 @@ namespace StateMachine
             return this;
         }
 
-        public State<TState, TTrigger, TData> AddTransisionOn(TTrigger trigger, TState target)
+        public State<TS, TT, TD> AddTransisionOn(TT trigger, TS target)
         {
-            return Add(new Transition<TState, TTrigger, TData>(trigger, Identifier, target));
+            return Add(new Transition<TS, TT, TD>(trigger, Identifier, target));
         }
 
-        public State<TState, TTrigger, TData> AddPopTransisionOn(TTrigger trigger)
+        public State<TS, TT, TD> AddPopTransisionOn(TT trigger)
         {
-            return Add(new Transition<TState, TTrigger, TData>(trigger, Identifier));
+            return Add(new Transition<TS, TT, TD>(trigger, Identifier));
         }
 
-        public Transition<TState, TTrigger, TData> Process(TTrigger input)
+        public Transition<TS, TT, TD> Process(TT input)
         {
             foreach (var t in Model.Transitions.Values)
             {

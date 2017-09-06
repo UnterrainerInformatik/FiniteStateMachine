@@ -32,31 +32,31 @@ using StateMachine.Events;
 namespace StateMachine
 {
     [PublicAPI]
-    public class Transition<TState, TTrigger, TData>
+    public class Transition<TS, TT, TD>
     {
-        private TransitionModel<TState, TTrigger, TData> Model { get; set; }
+        private TransitionModel<TS, TT, TD> Model { get; set; }
 
-        public TState Target => Model.Target;
+        public TS Target => Model.Target;
 
         public bool Pop => Model.Pop;
 
-        public TState Source
+        public TS Source
         {
             get { return Model.Source; }
             set { Model.Source = value; }
         }
 
-        public Transition(TransitionModel<TState, TTrigger, TData> model)
+        public Transition(TransitionModel<TS, TT, TD> model)
         {
             Model = model;
         }
 
         /// <exception cref="FsmBuilderException">When target is null</exception>
-        public Transition(Collection<TTrigger> triggers, TState source, TState target)
+        public Transition(Collection<TT> triggers, TS source, TS target)
         {
             if (target == null) throw FsmBuilderException.TargetStateCannotBeNull();
 
-            Model = new TransitionModel<TState, TTrigger, TData>(source, target);
+            Model = new TransitionModel<TS, TT, TD>(source, target);
             Model.Triggers.UnionWith(triggers);
         }
 
@@ -66,15 +66,15 @@ namespace StateMachine
         /// </summary>
         /// <param name="triggers">The triggers.</param>
         /// <param name="source">The source.</param>
-        public Transition(Collection<TTrigger> triggers, TState source)
-            : this(triggers, source, default(TState))
+        public Transition(Collection<TT> triggers, TS source)
+            : this(triggers, source, default(TS))
         {
             Model.Pop = true;
         }
 
         /// <exception cref="FsmBuilderException">When target is null</exception>
-        public Transition(TTrigger trigger, TState source, TState target)
-            : this(new Collection<TTrigger> {trigger}, source, target)
+        public Transition(TT trigger, TS source, TS target)
+            : this(new Collection<TT> {trigger}, source, target)
         {
         }
 
@@ -84,23 +84,28 @@ namespace StateMachine
         /// </summary>
         /// <param name="trigger">The trigger.</param>
         /// <param name="source">The source.</param>
-        public Transition(TTrigger trigger, TState source)
-            : this(new Collection<TTrigger> {trigger}, source)
+        public Transition(TT trigger, TS source)
+            : this(new Collection<TT> {trigger}, source)
         {
         }
 
         /// <exception cref="FsmBuilderException">When trigger has been declared before</exception>
-        public void Add(TTrigger trigger)
+        public void Add(TT trigger)
         {
             if (Model.Triggers.Contains(trigger)) throw FsmBuilderException.TriggerAlreadyDeclared(trigger);
 
             Model.Triggers.Add(trigger);
         }
 
-        public bool Process(State<TState, TTrigger, TData> from, TTrigger input)
+        public bool Process(State<TS, TT, TD> from, TT input)
         {
-            return Model.Triggers.Contains(input) &&
-                   Model.Conditions.TrueForAll(x => x(new IfArgs<TState, TTrigger>(from.Identifier, Model.Target, input)));
+            return Model.Triggers.Contains(input) && ConditionsMet(from.Identifier, input);
+        }
+
+        public bool ConditionsMet(TS state, TT input)
+        {
+            return
+                Model.Conditions.TrueForAll(x => x(new IfArgs<TS, TT>(state, Model.Target, input)));
         }
 
         public override string ToString()

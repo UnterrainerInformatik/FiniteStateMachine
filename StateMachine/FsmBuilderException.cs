@@ -39,8 +39,8 @@ namespace StateMachine
         {
         }
 
-        public static FsmBuilderException StateCanOnlyBeAddedOnce<TState, TTrigger, TData>(
-            State<TState, TTrigger, TData> state)
+        public static FsmBuilderException StateCanOnlyBeAddedOnce<TS, TT, TD>(
+            State<TS, TT, TD> state)
         {
             return
                 new FsmBuilderException($"A state [{state.Identifier}] has already been added. You can only one add" +
@@ -72,7 +72,7 @@ namespace StateMachine
             return new FsmBuilderException("The model cannot be null.");
         }
 
-        public static FsmBuilderException TriggerAlreadyDeclared<TTrigger>(TTrigger trigger)
+        public static FsmBuilderException TriggerAlreadyDeclared<TT>(TT trigger)
         {
             return new FsmBuilderException($"The transition already contains the trigger [{trigger}]");
         }
