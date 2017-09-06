@@ -116,7 +116,7 @@ namespace StateMachine.Fluent.Api
         }
 
         public GlobalTransitionBuilderFluent<TS, TT, TD> IfGlobal(
-            Func<IfArgs<TS, TT>, bool> condition)
+            Func<IfArgs<TS>, bool> condition)
         {
             globalTransitionModels[currentGlobalTransition].Conditions.Add(condition);
             return this;
@@ -141,7 +141,7 @@ namespace StateMachine.Fluent.Api
             return this;
         }
 
-        public TransitionStateFluent<TS, TT, TD> If(Func<IfArgs<TS, TT>, bool> condition)
+        public TransitionStateFluent<TS, TT, TD> If(Func<IfArgs<TS>, bool> condition)
         {
             transitionModels[currentTransition].Conditions.Add(condition);
             return this;

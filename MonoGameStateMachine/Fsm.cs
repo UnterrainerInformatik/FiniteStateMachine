@@ -38,6 +38,11 @@ namespace MonoGameStateMachine
     [PublicAPI]
     public class Fsm<TS, TT> : Fsm<TS, TT, GameTime>
     {
+        private GameTime gt = new GameTime();
+
+        public Dictionary<Tuple<TS, TS>, List<Timer<TS>>> AfterEntries { get; set; } = new Dictionary<Tuple<TS, TS>, List<Timer<TS>>>();
+        public List<Timer<TS>> GlobalAfterEntries { get; set; } = new List<Timer<TS>>();
+
         public Fsm(FsmModel<TS, TT, GameTime> model) : base(model)
         {
         }
@@ -53,60 +58,61 @@ namespace MonoGameStateMachine
         /// <returns></returns>
         public new static BuilderFluent<TS, TT, GameTime> Builder(TS startState)
         {
-            return new FluentImplementation<TS, TT, GameTime>(startState);
-        }
-    }
-
-    [PublicAPI]
-    public class Fsm<TS, TT, TD> : StateMachine.Fsm<TS, TT, TD>
-    {
-        public Dictionary<Tuple<TS, TS>, List<Timer>> AfterEntries { get; set; } = new Dictionary<Tuple<TS, TS>, List<Timer>>();
-        public Dictionary<Tuple<TS>, List<Timer>> GlobalAfterEntries { get; set; } = new Dictionary<Tuple<TS>, List<Timer>>();
-
-        public Fsm(FsmModel<TS, TT, TD> model) : base(model)
-        {
+            return new FluentImplementation<TS, TT>(startState);
         }
 
-        public Fsm(State<TS, TT, TD> current, bool stackEnabled = false) : base(current, stackEnabled)
+        public new void Update(GameTime gameTime)
         {
-        }
-
-        /// <summary>
-        ///     Gets you a builder for a Finite-State-Machine (FSM).
-        /// </summary>
-        /// <param name="startState">The start state's key.</param>
-        /// <returns></returns>
-        public new static BuilderFluent<TS, TT, DataObject<TD>> Builder(TS startState)
-        {
-            return new FluentImplementation<TS, TT, DataObject<TD>>(startState);
-        }
-
-        public new void Update(TD data)
-        {
-            List<Timer> l;
-            if (!AfterEntries.TryGetValue(Current, out l))
+            // After-entries on transitions.
+            foreach (var k in Current.Model.Transitions.Keys)
             {
-                l = new List<Tuple<float, TimeUnit>>();
-                AfterEntries.Add(key, l);
-            }
-            l.Add(new Tuple<float, TimeUnit>(amount, timeUnit));
-
-            foreach (var e in GlobalAfterEntries)
-            {
-                var target = e.Key;
-                var ts = e.Value;
-                foreach (var t in ts)
+                List<Timer<TS>> currentAfterEntries;
+                if (AfterEntries.TryGetValue(new Tuple<TS, TS>(Current.Identifier, k), out currentAfterEntries))
                 {
-                    
+                    if (CheckAfterEntries(currentAfterEntries, Current.Model.Transitions, gameTime))
+                    {
+                        return;
+                    }
                 }
             }
-            if (!GlobalAfterEntries.TryGetValue(key, out l))
-            {
-                l = new List<Tuple<float, TimeUnit>>();
-                GlobalAfterEntries.Add(key, l);
-            }
 
-            Model.Current.RaiseUpdated(new UpdateArgs<TS, TT, TD>(this, Current, data));
+            // Global after-entries.
+            if (CheckAfterEntries(GlobalAfterEntries, Model.GlobalTransitions, gameTime))
+            {
+                return;
+            }
+            
+            Model.Current.RaiseUpdated(new UpdateArgs<TS, TT, GameTime>(this, Current, gameTime));
+        }
+
+        private bool CheckAfterEntries(List<Timer<TS>> afterEntries,
+            Dictionary<TS, Transition<TS, TT, GameTime>> transitions, GameTime g)
+        {
+            for (int i = 0; i < afterEntries.Count; i++)
+            {
+                Timer<TS> e = afterEntries[i];
+                Transition<TS, TT, GameTime> t;
+                if (transitions.TryGetValue(e.Target, out t))
+                {
+                    if (t.ConditionsMet(Current.Identifier))
+                    {
+                        double? r = e.Tick(g.ElapsedGameTime.TotalMilliseconds);
+                        afterEntries[i] = e;
+                        if (r.HasValue)
+                        {
+                            // It triggered.
+                            DoTransition(e.Target, default(TT), t.Pop);
+                            gt.IsRunningSlowly = g.IsRunningSlowly;
+                            gt.TotalGameTime = g.TotalGameTime.Subtract(TimeSpan.FromMilliseconds(r.Value));
+                            gt.ElapsedGameTime =
+                                g.ElapsedGameTime.Subtract(TimeSpan.FromMilliseconds(r.Value));
+                            Update(gt);
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
     }
 }

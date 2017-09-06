@@ -35,51 +35,28 @@ namespace StateMachine
         {
         }
 
-        private FsmBuilderException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-
         public static FsmBuilderException StateCanOnlyBeAddedOnce<TS, TT, TD>(
             State<TS, TT, TD> state)
-        {
-            return
-                new FsmBuilderException($"A state [{state.Identifier}] has already been added. You can only one add" +
-                                        " a state with a unique identifier once.");
-        }
+            => new FsmBuilderException($"A state [{state.Identifier}] has already been added. You can only one add" +
+                                       " a state with a unique identifier once.");
 
         public static FsmBuilderException TargetStateCannotBeNull()
-        {
-            return new FsmBuilderException("The target of a transition cannot be null.");
-        }
+            => new FsmBuilderException("The target of a transition cannot be null.");
 
         public static FsmBuilderException TransitionCannotBeNull()
-        {
-            return new FsmBuilderException("The transition cannot be null.");
-        }
+            => new FsmBuilderException("The transition cannot be null.");
 
-        public static FsmBuilderException StateCannotBeNull()
-        {
-            return new FsmBuilderException("The state cannot be null.");
-        }
+        public static FsmBuilderException StateCannotBeNull() => new FsmBuilderException("The state cannot be null.");
 
         public static FsmBuilderException StartStateCannotBeNull()
-        {
-            return new FsmBuilderException("The start state cannot be null.");
-        }
+            => new FsmBuilderException("The start state cannot be null.");
 
-        public static FsmBuilderException ModelCannotBeNull()
-        {
-            return new FsmBuilderException("The model cannot be null.");
-        }
+        public static FsmBuilderException ModelCannotBeNull() => new FsmBuilderException("The model cannot be null.");
 
         public static FsmBuilderException TriggerAlreadyDeclared<TT>(TT trigger)
-        {
-            return new FsmBuilderException($"The transition already contains the trigger [{trigger}]");
-        }
+            => new FsmBuilderException($"The transition already contains the trigger [{trigger}]");
 
         public static FsmBuilderException HandlerCannotBeNull()
-        {
-            return new FsmBuilderException("The handler you want to add cannot be null.");
-        }
+            => new FsmBuilderException("The handler you want to add cannot be null.");
     }
 }

@@ -30,17 +30,43 @@ using JetBrains.Annotations;
 namespace MonoGameStateMachine
 {
     [PublicAPI]
-    public struct Timer
+    public struct Timer<TS>
     {
-        public float Value { get; set; }
+        public double Value { get; set; }
         public TimeUnit Unit { get; set; }
-        public float Time { get; set; }
+        public double Time { get; set; }
+        public TS Target { get; set; }
 
-        public Timer(float value, TimeUnit unit)
+        public Timer(TS target, double value, TimeUnit unit)
         {
+            Target = target;
             Value = value;
             Unit = unit;
-            Time = value;
+            Time = 0;
+            Reset();
+        }
+
+        private void Reset()
+        {
+            Time = Value * (long) Unit;
+        }
+
+        /// <summary>
+        ///     Lets the specified time tick away and subtracts it from the Timer.<br />
+        ///     If the timer triggered the time that was left after the Timer triggered is returned.
+        /// </summary>
+        /// <param name="timeInMillis">The time to tick away.</param>
+        /// <returns>Null if the timer didn't trigger, a positive value otherwise.</returns>
+        public double? Tick(double timeInMillis)
+        {
+            Time -= timeInMillis;
+            if (Time <= 0D)
+            {
+                double d = Time * -1D;
+                Reset();
+                return d;
+            }
+            return null;
         }
     }
 }

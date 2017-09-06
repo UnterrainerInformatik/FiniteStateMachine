@@ -87,7 +87,7 @@ namespace MonoGameStateMachine.NUnitTests
                 .GlobalTransitionTo(State.IDLE).AfterGlobal(10, TimeUnit.SECONDS)
                 .Build();
 
-            m.Update(new GameTime(TimeSpan.Zero, TimeSpan.FromMilliseconds(16))); // Should do nothing.
+            m.Update(new GameTime(TimeSpan.FromDays(1), TimeSpan.FromMilliseconds(16))); // Should do nothing.
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
             m.Trigger(Trigger.MOUSE_CLICKED);
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
@@ -96,8 +96,8 @@ namespace MonoGameStateMachine.NUnitTests
             m.Trigger(Trigger.MOUSE_RELEASED);
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
             m.Trigger(Trigger.MOUSE_OVER);
-            m.Update(new GameTime(TimeSpan.Zero, TimeSpan.FromMilliseconds(16)));
-            m.Update(new GameTime(TimeSpan.Zero, TimeSpan.FromMilliseconds(16)));
+            m.Update(new GameTime(TimeSpan.FromDays(1), TimeSpan.FromMilliseconds(16)));
+            m.Update(new GameTime(TimeSpan.FromDays(1), TimeSpan.FromMilliseconds(16)));
             Assert.That(m.Current.Identifier, Is.EqualTo(State.OVER));
             Assert.That(button.BtnState, Is.EqualTo(State.OVER));
             Assert.That(button.OldState, Is.EqualTo(State.IDLE));
@@ -114,21 +114,21 @@ namespace MonoGameStateMachine.NUnitTests
             Assert.That(m.Current.Identifier, Is.EqualTo(State.REFRESHING));
             Assert.That(button.BtnState, Is.EqualTo(State.REFRESHING));
             Assert.That(button.OldState, Is.EqualTo(State.PRESSED));
-            m.Update(new GameTime(TimeSpan.Zero, TimeSpan.FromMilliseconds(500))); // No transition yet...
+            m.Update(new GameTime(TimeSpan.FromDays(1), TimeSpan.FromMilliseconds(500))); // No transition yet...
             Assert.That(m.Current.Identifier, Is.EqualTo(State.REFRESHING));
             Assert.That(button.BtnState, Is.EqualTo(State.REFRESHING));
             Assert.That(button.OldState, Is.EqualTo(State.PRESSED));
-            m.Update(new GameTime(TimeSpan.Zero, TimeSpan.FromMilliseconds(500))); // But now.
+            m.Update(new GameTime(TimeSpan.FromDays(1), TimeSpan.FromMilliseconds(600))); // But now.
             Assert.That(m.Current.Identifier, Is.EqualTo(State.OVER));
             Assert.That(button.BtnState, Is.EqualTo(State.OVER));
             Assert.That(button.OldState, Is.EqualTo(State.REFRESHING));
-            m.Update(new GameTime(TimeSpan.Zero, TimeSpan.FromMilliseconds(10000)));
+            m.Update(new GameTime(TimeSpan.FromDays(1), TimeSpan.FromMilliseconds(10000)));
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
             Assert.That(button.BtnState, Is.EqualTo(State.IDLE));
             Assert.That(button.OldState, Is.EqualTo(State.OVER));
 
             // Update was triggered twice over all states.
-            Assert.That(button.UpdateCounter, Is.EqualTo(2F));
+            Assert.That(button.UpdateCounter, Is.EqualTo(3F));
         }
     }
 }

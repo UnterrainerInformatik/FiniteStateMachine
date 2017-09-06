@@ -46,6 +46,6 @@ namespace StateMachine.Fluent.Api
         ///     currently describing.
         /// </summary>
         /// <param name="condition">The condition.</param>
-        GlobalTransitionBuilderFluent<TS, TT, TD> IfGlobal(Func<IfArgs<TS, TT>, bool> condition);
+        GlobalTransitionBuilderFluent<TS, TT, TD> IfGlobal(Func<IfArgs<TS>, bool> condition);
     }
 }

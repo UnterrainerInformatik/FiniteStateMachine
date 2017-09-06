@@ -53,6 +53,6 @@ namespace MonoGameStateMachine.Api
         ///     describing.
         /// </summary>
         /// <param name="condition">The condition.</param>
-        TransitionStateFluent<TS, TT, TD> If(Func<IfArgs<TS, TT>, bool> condition);
+        TransitionStateFluent<TS, TT, TD> If(Func<IfArgs<TS>, bool> condition);
     }
 }

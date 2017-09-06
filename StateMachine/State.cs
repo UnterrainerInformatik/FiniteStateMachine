@@ -33,7 +33,7 @@ namespace StateMachine
     [PublicAPI]
     public class State<TS, TT, TD>
     {
-        private StateModel<TS, TT, TD> Model { get; set; }
+        public StateModel<TS, TT, TD> Model { get; set; }
 
         public TS Identifier => Model.Identifier;
 
@@ -67,14 +67,9 @@ namespace StateMachine
         }
 
         public State<TS, TT, TD> AddTransisionOn(TT trigger, TS target)
-        {
-            return Add(new Transition<TS, TT, TD>(trigger, Identifier, target));
-        }
+            => Add(new Transition<TS, TT, TD>(trigger, Identifier, target));
 
-        public State<TS, TT, TD> AddPopTransisionOn(TT trigger)
-        {
-            return Add(new Transition<TS, TT, TD>(trigger, Identifier));
-        }
+        public State<TS, TT, TD> AddPopTransisionOn(TT trigger) => Add(new Transition<TS, TT, TD>(trigger, Identifier));
 
         public Transition<TS, TT, TD> Process(TT input)
         {
@@ -88,9 +83,6 @@ namespace StateMachine
             return null;
         }
 
-        public override string ToString()
-        {
-            return Model.Identifier.ToString();
-        }
+        public override string ToString() => Model.Identifier.ToString();
     }
 }

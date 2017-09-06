@@ -55,39 +55,27 @@ namespace StateMachine
         public void AddEnteredHandler(Action<StateChangeArgs<TS, TT, TD>> e)
         {
             if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
-
             Entered += e;
         }
 
-        public void RaiseEntered(StateChangeArgs<TS, TT, TD> e)
-        {
-            Entered?.Invoke(e);
-        }
+        public void RaiseEntered(StateChangeArgs<TS, TT, TD> e) => Entered?.Invoke(e);
 
         /// <exception cref="FsmBuilderException">When the handler is null</exception>
         public void AddExitedHandler(Action<StateChangeArgs<TS, TT, TD>> e)
         {
             if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
-
             Exited += e;
         }
 
-        public void RaiseExited(StateChangeArgs<TS, TT, TD> e)
-        {
-            Exited?.Invoke(e);
-        }
+        public void RaiseExited(StateChangeArgs<TS, TT, TD> e) => Exited?.Invoke(e);
 
         /// <exception cref="FsmBuilderException">When the handler is null</exception>
         public void AddUpdatedHandler(Action<UpdateArgs<TS, TT, TD>> e)
         {
             if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
-
             Updated += e;
         }
 
-        public void RaiseUpdated(UpdateArgs<TS, TT, TD> data)
-        {
-            Updated?.Invoke(data);
-        }
+        public void RaiseUpdated(UpdateArgs<TS, TT, TD> data) => Updated?.Invoke(data);
     }
 }

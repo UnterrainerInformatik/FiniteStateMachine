@@ -44,10 +44,7 @@ namespace StateMachine
         {
         }
 
-        public void Update()
-        {
-            Model.Current.RaiseUpdated(new UpdateArgs<TS, TT, float>(this, Current, 0f));
-        }
+        public void Update() => Model.Current.RaiseUpdated(new UpdateArgs<TS, TT, float>(this, Current, 0f));
     }
 
     [PublicAPI]
@@ -89,16 +86,13 @@ namespace StateMachine
         /// <param name="startState">The start state's key.</param>
         /// <returns></returns>
         public static BuilderFluent<TS, TT, TD> Builder(TS startState)
-        {
-            return new FluentImplementation<TS, TT, TD>(startState);
-        }
+            => new FluentImplementation<TS, TT, TD>(startState);
 
         /// <exception cref="FsmBuilderException">When the handler is null</exception>
         public Fsm<TS, TT, TD> AddStateChangeHandler(
             EventHandler<StateChangeArgs<TS, TT, TD>> e)
         {
             if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
-
             Model.StateChanged += e;
             return this;
         }
@@ -120,7 +114,6 @@ namespace StateMachine
         public Fsm<TS, TT, TD> Add(Transition<TS, TT, TD> t)
         {
             if (t == null) throw FsmBuilderException.TransitionCannotBeNull();
-
             Model.GlobalTransitions.Add(t.Target, t);
             return this;
         }
@@ -134,7 +127,7 @@ namespace StateMachine
             }
         }
 
-        private void DoTransition(TS state, TT input, bool isPop)
+        protected void DoTransition(TS state, TT input, bool isPop)
         {
             if (state == null || input == null) return;
 
@@ -186,9 +179,6 @@ namespace StateMachine
             }
         }
 
-        public void Update(TD data)
-        {
-            Model.Current.RaiseUpdated(new UpdateArgs<TS, TT, TD>(this, Current, data));
-        }
+        public void Update(TD data) => Model.Current.RaiseUpdated(new UpdateArgs<TS, TT, TD>(this, Current, data));
     }
 }

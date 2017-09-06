@@ -40,8 +40,7 @@ namespace StateMachine
         public TS Target { get; private set; }
         public bool Pop { get; set; }
 
-        public List<Func<IfArgs<TS, TT>, bool>> Conditions { get; } =
-            new List<Func<IfArgs<TS, TT>, bool>>();
+        public List<Func<IfArgs<TS>, bool>> Conditions { get; } = new List<Func<IfArgs<TS>, bool>>();
 
         public TransitionModel(TS source, TS target)
         {

@@ -26,6 +26,7 @@
 // ***************************************************************************
 
 using System.Collections.ObjectModel;
+using System.Linq;
 using JetBrains.Annotations;
 using StateMachine.Events;
 
@@ -93,24 +94,15 @@ namespace StateMachine
         public void Add(TT trigger)
         {
             if (Model.Triggers.Contains(trigger)) throw FsmBuilderException.TriggerAlreadyDeclared(trigger);
-
             Model.Triggers.Add(trigger);
         }
 
         public bool Process(State<TS, TT, TD> from, TT input)
-        {
-            return Model.Triggers.Contains(input) && ConditionsMet(from.Identifier, input);
-        }
+            => Model.Triggers.Contains(input) && ConditionsMet(from.Identifier);
 
-        public bool ConditionsMet(TS state, TT input)
-        {
-            return
-                Model.Conditions.TrueForAll(x => x(new IfArgs<TS, TT>(state, Model.Target, input)));
-        }
+        public bool ConditionsMet(TS state)
+            => Model.Conditions.TrueForAll(x => x(new IfArgs<TS>(state, Model.Target)));
 
-        public override string ToString()
-        {
-            return $"{Model.Source}-({Model.Triggers})->{Model.Target}";
-        }
+        public override string ToString() => $"{Model.Source}-({string.Join(",", Model.Triggers)})->{Model.Target}";
     }
 }

@@ -46,7 +46,7 @@ namespace MonoGameStateMachine.Api
         ///     currently describing.
         /// </summary>
         /// <param name="condition">The condition.</param>
-        GlobalTransitionBuilderFluent<TS, TT, TD> IfGlobal(Func<IfArgs<TS, TT>, bool> condition);
+        GlobalTransitionBuilderFluent<TS, TT, TD> IfGlobal(Func<IfArgs<TS>, bool> condition);
 
         /// <summary>
         ///     Automatically walks the transition you're currently describing, if the specified amount of time has passed.

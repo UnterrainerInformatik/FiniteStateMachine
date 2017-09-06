@@ -30,17 +30,15 @@ using JetBrains.Annotations;
 namespace StateMachine.Events
 {
     [PublicAPI]
-    public struct IfArgs<TState, TTrigger>
+    public struct IfArgs<TState>
     {
         public TState Source { get; }
         public TState Target { get; }
-        public TTrigger Trigger { get; }
 
-        public IfArgs(TState source, TState target, TTrigger trigger)
+        public IfArgs(TState source, TState target)
         {
             Source = source;
             Target = target;
-            Trigger = trigger;
         }
     }
 }

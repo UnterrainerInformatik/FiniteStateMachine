@@ -42,8 +42,7 @@ namespace StateMachine
         public Stack<State<TS, TT, TD>> Stack { get; } = new Stack<State<TS, TT, TD>>();
         public bool StackEnabled { get; set; }
 
-        public Dictionary<TS, State<TS, TT, TD>> States { get; } =
-            new Dictionary<TS, State<TS, TT, TD>>();
+        public Dictionary<TS, State<TS, TT, TD>> States { get; } = new Dictionary<TS, State<TS, TT, TD>>();
 
         public Dictionary<TS, Transition<TS, TT, TD>> GlobalTransitions { get; } =
             new Dictionary<TS, Transition<TS, TT, TD>>();
@@ -52,13 +51,9 @@ namespace StateMachine
             EventHandler<StateChangeArgs<TS, TT, TD>> e)
         {
             if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
-
             StateChanged += e;
         }
 
-        public void RaiseStateChanged(StateChangeArgs<TS, TT, TD> e)
-        {
-            StateChanged?.Invoke(this, e);
-        }
+        public void RaiseStateChanged(StateChangeArgs<TS, TT, TD> e) => StateChanged?.Invoke(this, e);
     }
 }
