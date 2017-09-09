@@ -96,6 +96,7 @@ namespace MonoGameStateMachine
                 {
                     if (t.ConditionsMet(Current.Identifier))
                     {
+                        double timerMax = e.Time;
                         double? r = e.Tick(g.ElapsedGameTime.TotalMilliseconds);
                         afterEntries[i] = e;
                         if (r.HasValue)
@@ -103,9 +104,9 @@ namespace MonoGameStateMachine
                             // It triggered.
                             DoTransition(e.Target, default(TT), t.Pop);
                             gt.IsRunningSlowly = g.IsRunningSlowly;
-                            gt.TotalGameTime = g.TotalGameTime.Subtract(TimeSpan.FromMilliseconds(r.Value));
+                            gt.TotalGameTime = g.TotalGameTime.Subtract(TimeSpan.FromMilliseconds(timerMax));
                             gt.ElapsedGameTime =
-                                g.ElapsedGameTime.Subtract(TimeSpan.FromMilliseconds(r.Value));
+                                g.ElapsedGameTime.Subtract(TimeSpan.FromMilliseconds(timerMax));
                             Update(gt);
                             return true;
                         }

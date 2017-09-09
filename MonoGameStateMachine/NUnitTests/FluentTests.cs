@@ -59,8 +59,8 @@ namespace MonoGameStateMachine.NUnitTests
         }
 
         [Test]
-        [Category("MonoGameStateMachine.FluentTests.OnMethods")]
-        public void OnMethodTests()
+        [Category("MonoGameStateMachine.FluentTests")]
+        public void OnMethodHooksShouldBeTriggeredCorrectly()
         {
             var button = new Button();
 
@@ -129,6 +129,57 @@ namespace MonoGameStateMachine.NUnitTests
 
             // Update was triggered twice over all states.
             Assert.That(button.UpdateCounter, Is.EqualTo(3F));
+        }
+
+        [Test]
+        [Category("MonoGameStateMachine.FluentTests")]
+        public void WhenMultipleAfterConditionsFireOnASingleUpdateAdvanceStateCorrectly()
+        {
+            var m = Fsm<State, Trigger>.Builder(State.IDLE)
+                .State(State.IDLE)
+                    .TransitionTo(State.OVER).After(10, TimeUnit.MILLISECONDS)
+                .State(State.OVER)
+                    .TransitionTo(State.PRESSED).After(10, TimeUnit.MILLISECONDS)
+                .State(State.PRESSED)
+                    .TransitionTo(State.REFRESHING).After(10, TimeUnit.MILLISECONDS)
+                .State(State.REFRESHING)
+                    .TransitionTo(State.IDLE).After(10, TimeUnit.MILLISECONDS)
+                .Build();
+
+            Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
+            m.Update(new GameTime(TimeSpan.FromDays(1), TimeSpan.FromMilliseconds(40)));
+            Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
+        }
+
+        [Test]
+        [Category("MonoGameStateMachine.FluentTests")]
+        public void WhenMultipleAfterConditionsFireOnASingleUpdateOnEnterAndOnExitShoudFire()
+        {
+            int enterCount = 0;
+            int exitCount = 0;
+            var m = Fsm<State, Trigger>.Builder(State.IDLE)
+                .State(State.IDLE)
+                    .OnEnter(t => enterCount++)
+                    .OnExit(t => exitCount++)
+                    .TransitionTo(State.OVER).After(10, TimeUnit.MILLISECONDS)
+                .State(State.OVER)
+                    .OnEnter(t => enterCount++)
+                    .OnExit(t => exitCount++)
+                    .TransitionTo(State.PRESSED).After(10, TimeUnit.MILLISECONDS)
+                .State(State.PRESSED)
+                    .OnEnter(t => enterCount++)
+                    .OnExit(t => exitCount++)
+                    .TransitionTo(State.REFRESHING).After(10, TimeUnit.MILLISECONDS)
+                .State(State.REFRESHING)
+                    .OnEnter(t => enterCount++)
+                    .OnExit(t => exitCount++)
+                    .TransitionTo(State.IDLE).After(10, TimeUnit.MILLISECONDS)
+                .Build();
+
+            Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
+            m.Update(new GameTime(TimeSpan.FromDays(1), TimeSpan.FromMilliseconds(40)));
+            Assert.That(enterCount, Is.EqualTo(4));
+            Assert.That(exitCount, Is.EqualTo(4));
         }
     }
 }

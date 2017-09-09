@@ -1,6 +1,9 @@
-StateMachine:[![NuGet](https://img.shields.io/nuget/v/StateMachine.svg?maxAge=2592000)](https://www.nuget.org/packages/StateMachine/)
- MonoGameStateMachine:[![NuGet](https://img.shields.io/nuget/v/MonoGameStateMachine.svg?maxAge=2592000)](https://www.nuget.org/packages/MonoGameStateMachine/)
-[![license](https://img.shields.io/github/license/unterrainerinformatik/FiniteStateMachine.svg?maxAge=2592000)](http://unlicense.org)  [![Twitter Follow](https://img.shields.io/twitter/follow/throbax.svg?style=social&label=Follow&maxAge=2592000)](https://twitter.com/throbax)  
+[![license](https://img.shields.io/github/license/unterrainerinformatik/FiniteStateMachine.svg?maxAge=2592000)](http://unlicense.org)  [![Twitter Follow](https://img.shields.io/twitter/follow/throbax.svg?style=social&label=Follow&maxAge=2592000)](https://twitter.com/throbax)
+
+| Project              |                 Package                  |
+| -------------------- | :--------------------------------------: |
+| StateMachine         | [![NuGet](https://img.shields.io/nuget/v/StateMachine.svg?maxAge=2592000)](https://www.nuget.org/packages/StateMachine/) |
+| MonoGameStateMachine | [![NuGet](https://img.shields.io/nuget/v/MonoGameStateMachine.svg?maxAge=2592000)](https://www.nuget.org/packages/MonoGameStateMachine/) |
 
 # Finite-State-Machine
 
