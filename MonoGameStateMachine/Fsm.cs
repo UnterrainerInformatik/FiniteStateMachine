@@ -61,6 +61,29 @@ namespace MonoGameStateMachine
             return new FluentImplementation<TS, TT>(startState);
         }
 
+        private void ResetCurrentAfterEntries()
+        {
+            foreach (var k in Current.Model.Transitions.Keys)
+            {
+                List<Timer<TS>> currentAfterEntries;
+                if (AfterEntries.TryGetValue(new Tuple<TS, TS>(Current.Identifier, k), out currentAfterEntries))
+                {
+                    for (int i = 0; i < currentAfterEntries.Count; i++)
+                    {
+                        Timer<TS> e = currentAfterEntries[i];
+                        e.Reset();
+                        currentAfterEntries[i] = e;
+                    }
+                }
+            }
+        }
+
+        protected override void Entered(StateChangeArgs<TS, TT, GameTime> args)
+        {
+            ResetCurrentAfterEntries();
+            base.Entered(args);
+        }
+
         public new void Update(GameTime gameTime)
         {
             // After-entries on transitions.
@@ -84,7 +107,7 @@ namespace MonoGameStateMachine
             
             Model.Current.RaiseUpdated(new UpdateArgs<TS, TT, GameTime>(this, Current, gameTime));
         }
-
+        
         private bool CheckAfterEntries(List<Timer<TS>> afterEntries,
             Dictionary<TS, Transition<TS, TT, GameTime>> transitions, GameTime g)
         {

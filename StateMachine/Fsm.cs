@@ -153,10 +153,25 @@ namespace StateMachine
             {
                 StateChangeArgs<TS, TT, TD> args =
                     new StateChangeArgs<TS, TT, TD>(this, old, Model.Current, input);
-                old.RaiseExited(args);
-                Model.Current.RaiseEntered(args);
-                Model.RaiseStateChanged(args);
+                Exited(old, args);
+                Entered(args);
+                StateChanged(args);
             }
+        }
+
+        protected virtual void Entered(StateChangeArgs<TS, TT, TD> args)
+        {
+            Model.Current.RaiseEntered(args);
+        }
+
+        protected virtual void Exited(State<TS, TT, TD> old, StateChangeArgs<TS, TT, TD> args)
+        {
+            old.RaiseExited(args);
+        }
+
+        protected virtual void StateChanged(StateChangeArgs<TS, TT, TD> args)
+        {
+            Model.RaiseStateChanged(args);
         }
 
         public void Trigger(TT input)

@@ -46,7 +46,7 @@ namespace MonoGameStateMachine
             Reset();
         }
 
-        private void Reset()
+        public void Reset()
         {
             Time = Value * (long) Unit;
         }

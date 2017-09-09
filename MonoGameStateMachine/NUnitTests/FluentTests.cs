@@ -181,5 +181,28 @@ namespace MonoGameStateMachine.NUnitTests
             Assert.That(enterCount, Is.EqualTo(4));
             Assert.That(exitCount, Is.EqualTo(4));
         }
+
+        [Test]
+        [Category("MonoGameStateMachine.FluentTests")]
+        public void WhenAnAfterConditionDoesNotFiresAndATransitionHappensTheTimerIsResetOnReentry()
+        {
+            var m = Fsm<State, Trigger>.Builder(State.IDLE)
+                .State(State.IDLE)
+                    .TransitionTo(State.OVER).After(10, TimeUnit.MILLISECONDS)
+                    .TransitionTo(State.OVER).On(Trigger.MOUSE_CLICKED)
+                .State(State.OVER)
+                    .TransitionTo(State.IDLE).On(Trigger.MOUSE_CLICKED)
+                .Build();
+
+            Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
+            m.Update(new GameTime(TimeSpan.FromDays(1), TimeSpan.FromMilliseconds(5)));
+            Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
+            m.Trigger(Trigger.MOUSE_CLICKED);
+            Assert.That(m.Current.Identifier, Is.EqualTo(State.OVER));
+            m.Trigger(Trigger.MOUSE_CLICKED);
+            Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
+            m.Update(new GameTime(TimeSpan.FromDays(1), TimeSpan.FromMilliseconds(5)));
+            Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
+        }
     }
 }
