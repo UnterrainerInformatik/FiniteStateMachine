@@ -59,7 +59,7 @@ namespace StateMachine.NUnitTests
 
         [Test]
         [Category("StateMachine.FluentTests.OnMethods")]
-        public void OnMethodTests()
+        public void WhenStateChangesOnEnterAndOnExitHooksShouldTrigger()
         {
             var button = new Button();
 

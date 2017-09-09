@@ -50,7 +50,7 @@ namespace StateMachine.NUnitTests
 
         [Test]
         [Category("StateMachine.Simple")]
-        public void SimpleTest()
+        public void WhenBuiltManuallyStackMachineShouldWork()
         {
             State<State, Trigger, float> opened = new State<State, Trigger, float>(State.OPENED);
             State<State, Trigger, float> closed = new State<State, Trigger, float>(State.CLOSED)
@@ -71,7 +71,7 @@ namespace StateMachine.NUnitTests
 
         [Test]
         [Category("StateMachine.Simple")]
-        public void SimpleFluentTest()
+        public void WhenBuiltWithBuilderStackMachineShouldWork()
         {
             var m = Fsm<State, Trigger>.Builder(State.OPENED)
                 .EnableStack()
@@ -108,7 +108,7 @@ namespace StateMachine.NUnitTests
 
         [Test]
         [Category("StateMachine.Simple")]
-        public void FluentWithStringTest()
+        public void WhenBuiltWithBuilderAndStringsStackMachineShouldWork()
         {
             var m = Fsm<string, string>.Builder("OPENED")
                 .EnableStack()
@@ -139,7 +139,7 @@ namespace StateMachine.NUnitTests
 
         [Test]
         [Category("StateMachine.Simple")]
-        public void SimpleTestWithPop()
+        public void WhenCallingPopOnStackMachineBuiltManuallyShouldBehaveCorrectly()
         {
             State<State, Trigger, float> opened = new State<State, Trigger, float>(State.OPENED);
             State<State, Trigger, float> closed = new State<State, Trigger, float>(State.CLOSED)
@@ -166,7 +166,7 @@ namespace StateMachine.NUnitTests
 
         [Test]
         [Category("StateMachine.Simple")]
-        public void FluentTestWithPop()
+        public void WhenCallingPopOnStackMachineBuiltWithBuilderShouldBehaveCorrectly()
         {
             var m = Fsm<State, Trigger>.Builder(State.OPENED)
                 .EnableStack()

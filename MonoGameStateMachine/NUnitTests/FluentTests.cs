@@ -60,7 +60,7 @@ namespace MonoGameStateMachine.NUnitTests
 
         [Test]
         [Category("MonoGameStateMachine.FluentTests")]
-        public void OnMethodHooksShouldBeTriggeredCorrectly()
+        public void WhenAfterConditionFiresOnEnterAndOnExitHooksShouldTrigger()
         {
             var button = new Button();
 
