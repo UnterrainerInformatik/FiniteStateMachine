@@ -3,7 +3,7 @@
 | Project              |                 Package                  |
 | -------------------- | :--------------------------------------: |
 | StateMachine         | [![NuGet](https://img.shields.io/nuget/v/StateMachine.svg?maxAge=2592000)](https://www.nuget.org/packages/StateMachine/) |
-| MonoGameStateMachine | [![NuGet](https://img.shields.io/nuget/v/MonoGameStateMachine.svg?maxAge=2592000)](https://www.nuget.org/packages/MonoGameStateMachine/) |
+| MonoGameStateMachine | [![NuGet](https://img.shields.io/nuget/v/MonoGameStateMachine.svg)](https://www.nuget.org/packages/MonoGameStateMachine/) |
 
 # Finite-State-Machine
 

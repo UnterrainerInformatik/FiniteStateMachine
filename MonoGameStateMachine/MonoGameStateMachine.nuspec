@@ -15,11 +15,13 @@
 	  Furthermore it implements even a Stack-Based-FSM (SBFSM). So you may tell it to 'continue with the last state before the active one'.
 	  You describe your FSM using a nice and well documented DSL (Domain Specific Language).
 
+	  This machine also adds the function '.After(time)' to transitions so you can set timed transitions that don't necessarily have to have a trigger at all.
+	  
       This replaces the code we usually had for keyboard-input (run-left-right-duck-jump), clicked buttons on the GUI (idle-over-down-refreshing), tower-states (idle-aiming-firing-reloading) or for the connection procedure when setting up peer2peer connections in our games....
     </summary>
     <releaseNotes></releaseNotes>
     <copyright>Copyright 2017</copyright>
     <language>en-US</language>
-    <tags>state finite machine gamestate transition fluent</tags>
+    <tags>state finite machine gamestate transition fluent gametime monogame mg after timer</tags>
   </metadata>
 </package>
