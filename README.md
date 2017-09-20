@@ -13,14 +13,14 @@ Furthermore it implements even a Stack-Based-FSM (SBFSM). So you may tell it to 
 
 You describe your FSM using a nice and well documented DSL (Domain Specific Language).
 
-#### StateMachine
+#### ![Icon](https://github.com/UnterrainerInformatik/FiniteStateMachine/raw/master/StateMachine/icon.png)StateMachine
 
 Is the generic implementation.
 It references no other library (no dependencies).
 
 Nice if you want to use it outside of MonoGame.
 
-#### MonoGameStateMachine
+#### ![Icon](https://github.com/UnterrainerInformatik/FiniteStateMachine/raw/master/MonoGameStateMachine/icon.png)MonoGameStateMachine
 
 Includes a reference to MonoGame so that it can use MonoGame's `GameTime` structure.It is a mandatory parameter when calling `Update` in this implementation and so it can add the `After()` feature to transitions like so:
 

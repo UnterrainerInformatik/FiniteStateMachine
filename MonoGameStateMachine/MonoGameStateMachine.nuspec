@@ -7,6 +7,7 @@
     <authors>Unterrainer Informatik OG Team</authors>
     <owners>Public Domain</owners>
     <licenseUrl>http://unlicense.org</licenseUrl>
+	<iconUrl>https://github.com/UnterrainerInformatik/FiniteStateMachine/raw/master/MonoGameStateMachine/icon.png</iconUrl>
     <projectUrl>https://github.com/UnterrainerInformatik/FiniteStateMachine</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Build complex machines holding the state of your game components using an intuitive fluent DSL.</description>
