@@ -63,8 +63,7 @@ namespace StateMachine.Fluent.Api
             }
 
             FsmModel.Current = FsmModel.States[startState];
-            Fsm<TState, TTrigger, TData> fsm = new Fsm<TState, TTrigger, TData>(FsmModel);
-            return fsm;
+            return new Fsm<TState, TTrigger, TData>(FsmModel); ;
         }
 
         public StateFluent<TState, TTrigger, TData> State(TState state)
