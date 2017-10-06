@@ -32,20 +32,20 @@ using StateMachine.Events;
 namespace StateMachine.Fluent.Api
 {
     [PublicAPI]
-    public interface GlobalTransitionFluent<TState, TTrigger, TData>
+    public interface GlobalTransitionFluent<TS, TT, TD>
     {
         /// <summary>
         ///     Specifies the trigger, that has to be served as input in order to walk the global transition you're currently
         ///     describing.
         /// </summary>
         /// <param name="trigger">The trigger.</param>
-        GlobalTransitionBuilderFluent<TState, TTrigger, TData> OnGlobal(TTrigger trigger);
+        GlobalTransitionBuilderFluent<TS, TT, TD> OnGlobal(TT trigger);
 
         /// <summary>
         ///     Specifies the condition, that has to be met, in addition to the trigger, to walk the global transition you're
         ///     currently describing.
         /// </summary>
         /// <param name="condition">The condition.</param>
-        GlobalTransitionBuilderFluent<TState, TTrigger, TData> IfGlobal(Func<IfArgs<TState, TTrigger>, bool> condition);
+        GlobalTransitionBuilderFluent<TS, TT, TD> IfGlobal(Func<IfArgs<TS>, bool> condition);
     }
 }

@@ -37,11 +37,11 @@ namespace StateMachine.Events
         public State<TState, TTrigger, TData> To { get; }
         public TTrigger Input { get; }
 
-        public StateChangeArgs(Fsm<TState, TTrigger, TData> fsm, State<TState, TTrigger, TData> @from,
+        public StateChangeArgs(Fsm<TState, TTrigger, TData> fsm, State<TState, TTrigger, TData> from,
             State<TState, TTrigger, TData> to, TTrigger input)
         {
             Fsm = fsm;
-            From = @from;
+            From = from;
             To = to;
             Input = input;
         }

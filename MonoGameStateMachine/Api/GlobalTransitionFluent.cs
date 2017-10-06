@@ -25,13 +25,35 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System;
 using JetBrains.Annotations;
+using StateMachine.Events;
 
-namespace StateMachine
+namespace MonoGameStateMachine.Api
 {
     [PublicAPI]
-    public interface Updatable<in T>
+    public interface GlobalTransitionFluent<TS, TT, TD>
     {
-        void Update(T data);
+        /// <summary>
+        ///     Specifies the trigger, that has to be served as input in order to walk the global transition you're currently
+        ///     describing.
+        /// </summary>
+        /// <param name="trigger">The trigger.</param>
+        GlobalTransitionBuilderFluent<TS, TT, TD> OnGlobal(TT trigger);
+
+        /// <summary>
+        ///     Specifies the condition, that has to be met, in addition to the trigger, to walk the global transition you're
+        ///     currently describing.
+        /// </summary>
+        /// <param name="condition">The condition.</param>
+        GlobalTransitionBuilderFluent<TS, TT, TD> IfGlobal(Func<IfArgs<TS>, bool> condition);
+
+        /// <summary>
+        ///     Automatically walks the transition you're currently describing, if the specified amount of time has passed.
+        /// </summary>
+        /// <param name="amount">The amount.</param>
+        /// <param name="timeUnit">The time unit.</param>
+        /// <returns></returns>
+        TransitionStateFluent<TS, TT, TD> AfterGlobal(float amount, TimeUnit timeUnit);
     }
 }

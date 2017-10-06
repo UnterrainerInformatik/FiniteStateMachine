@@ -32,42 +32,42 @@ using StateMachine.Events;
 namespace StateMachine.Fluent.Api
 {
     [PublicAPI]
-    public interface StateFluent<TState, TTrigger, TData> : BuilderFluent<TState, TTrigger, TData>
+    public interface StateFluent<TS, TT, TD> : BuilderFluent<TS, TT, TD>
     {
         /// <summary>
         ///     Adds a new transition to the state, you currently describe.
         /// </summary>
         /// <param name="state">The state the transition will lead to.</param>
-        TransitionFluent<TState, TTrigger, TData> TransitionTo(TState state);
+        TransitionFluent<TS, TT, TD> TransitionTo(TS state);
 
         /// <summary>
         ///     Adding a transition that, being triggered, will result in the last state on the stack being popped and set to be
         ///     the current one.<br />
         ///     For this to work 'EnableStack' has to be set (this machine has to be a Stack-Based-FSM (SBFSM)).
         /// </summary>
-        TransitionFluent<TState, TTrigger, TData> PopTransition();
+        TransitionFluent<TS, TT, TD> PopTransition();
 
         /// <summary>
         ///     Called when the state, you currently describe, is entered.
         /// </summary>
         /// <param name="stateChangeArgs">The state change arguments.</param>
-        StateFluent<TState, TTrigger, TData> OnEnter(Action<StateChangeArgs<TState, TTrigger, TData>> stateChangeArgs);
+        StateFluent<TS, TT, TD> OnEnter(Action<StateChangeArgs<TS, TT, TD>> stateChangeArgs);
 
         /// <summary>
         ///     Called when the state, you currently describe, is exited.
         /// </summary>
         /// <param name="stateChangeArgs">The state change arguments.</param>
-        StateFluent<TState, TTrigger, TData> OnExit(Action<StateChangeArgs<TState, TTrigger, TData>> stateChangeArgs);
+        StateFluent<TS, TT, TD> OnExit(Action<StateChangeArgs<TS, TT, TD>> stateChangeArgs);
 
         /// <summary>
         ///     Called when the FSM's 'Update(TData)' method is called and the state, you currently describe, is active.
         /// </summary>
         /// <param name="updateArgs">The update arguments.</param>
-        StateFluent<TState, TTrigger, TData> Update(Action<UpdateArgs<TState, TTrigger, TData>> updateArgs);
+        StateFluent<TS, TT, TD> Update(Action<UpdateArgs<TS, TT, TD>> updateArgs);
 
         /// <summary>
         ///     Clears the stack when the state, you currently describe, is entered.
         /// </summary>
-        StateFluent<TState, TTrigger, TData> ClearsStack();
+        StateFluent<TS, TT, TD> ClearsStack();
     }
 }

@@ -27,7 +27,7 @@
 
 using JetBrains.Annotations;
 
-namespace StateMachine.Fluent.Api
+namespace MonoGameStateMachine.Api
 {
     [PublicAPI]
     public interface BuilderFluent<TS, TT, TD>
@@ -61,6 +61,6 @@ namespace StateMachine.Fluent.Api
         /// <summary>
         ///     Builds this instance of an FSM (or SBFSM).
         /// </summary>
-        Fsm<TS, TT, TD> Build();
+        Fsm<TS, TT> Build();
     }
 }

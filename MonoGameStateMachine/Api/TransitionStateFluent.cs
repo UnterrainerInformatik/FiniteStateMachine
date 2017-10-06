@@ -25,14 +25,10 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using JetBrains.Annotations;
-
-namespace StateMachine.Fluent.Api
+namespace MonoGameStateMachine.Api
 {
-    [PublicAPI]
-    public interface GlobalTransitionBuilderFluent<TS, TT, TD> :
-        GlobalTransitionFluent<TS, TT, TD>,
-        BuilderFluent<TS, TT, TD>
+    public interface TransitionStateFluent<TS, TT, TD> :
+        TransitionFluent<TS, TT, TD>, StateFluent<TS, TT, TD>
     {
     }
 }

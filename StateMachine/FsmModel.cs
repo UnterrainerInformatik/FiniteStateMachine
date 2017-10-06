@@ -33,32 +33,27 @@ using StateMachine.Events;
 namespace StateMachine
 {
     [PublicAPI]
-    public class FsmModel<TState, TTrigger, TData>
+    public class FsmModel<TS, TT, TD>
     {
-        public event EventHandler<StateChangeArgs<TState, TTrigger, TData>> StateChanged;
+        public event EventHandler<StateChangeArgs<TS, TT, TD>> StateChanged;
 
-        public State<TState, TTrigger, TData> Current { get; set; }
+        public State<TS, TT, TD> Current { get; set; }
 
-        public Stack<State<TState, TTrigger, TData>> Stack { get; } = new Stack<State<TState, TTrigger, TData>>();
+        public Stack<State<TS, TT, TD>> Stack { get; } = new Stack<State<TS, TT, TD>>();
         public bool StackEnabled { get; set; }
 
-        public Dictionary<TState, State<TState, TTrigger, TData>> States { get; } =
-            new Dictionary<TState, State<TState, TTrigger, TData>>();
+        public Dictionary<TS, State<TS, TT, TD>> States { get; } = new Dictionary<TS, State<TS, TT, TD>>();
 
-        public Dictionary<TState, Transition<TState, TTrigger, TData>> GlobalTransitions { get; } =
-            new Dictionary<TState, Transition<TState, TTrigger, TData>>();
+        public Dictionary<TS, Transition<TS, TT, TD>> GlobalTransitions { get; } =
+            new Dictionary<TS, Transition<TS, TT, TD>>();
 
         public void AddStateChangedHandler(
-            EventHandler<StateChangeArgs<TState, TTrigger, TData>> e)
+            EventHandler<StateChangeArgs<TS, TT, TD>> e)
         {
             if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
-
             StateChanged += e;
         }
 
-        public void RaiseStateChanged(StateChangeArgs<TState, TTrigger, TData> e)
-        {
-            StateChanged?.Invoke(this, e);
-        }
+        public void RaiseStateChanged(StateChangeArgs<TS, TT, TD> e) => StateChanged?.Invoke(this, e);
     }
 }

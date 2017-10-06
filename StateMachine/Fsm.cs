@@ -33,32 +33,30 @@ using StateMachine.Fluent.Api;
 
 namespace StateMachine
 {
-    public class Fsm<TState, TTrigger> : Fsm<TState, TTrigger, float>
+    [PublicAPI]
+    public class Fsm<TS, TT> : Fsm<TS, TT, float>
     {
-        public Fsm(FsmModel<TState, TTrigger, float> model) : base(model)
+        public Fsm(FsmModel<TS, TT, float> model) : base(model)
         {
         }
 
-        public Fsm(State<TState, TTrigger, float> current, bool stackEnabled = false) : base(current, stackEnabled)
+        public Fsm(State<TS, TT, float> current, bool stackEnabled = false) : base(current, stackEnabled)
         {
         }
 
-        public void Update()
-        {
-            Model.Current.RaiseUpdated(new UpdateArgs<TState, TTrigger, float>(this, Current, 0f));
-        }
+        public void Update() => Model.Current.RaiseUpdated(new UpdateArgs<TS, TT, float>(this, Current, 0f));
     }
 
     [PublicAPI]
-    public class Fsm<TState, TTrigger, TData> : Updatable<TData>
+    public class Fsm<TS, TT, TD>
     {
-        protected FsmModel<TState, TTrigger, TData> Model { get; set; } = new FsmModel<TState, TTrigger, TData>();
+        protected FsmModel<TS, TT, TD> Model { get; set; } = new FsmModel<TS, TT, TD>();
 
-        public State<TState, TTrigger, TData> Current => Model.Current;
-        public Stack<State<TState, TTrigger, TData>> Stack => Model.Stack;
+        public State<TS, TT, TD> Current => Model.Current;
+        public Stack<State<TS, TT, TD>> Stack => Model.Stack;
 
         /// <exception cref="FsmBuilderException">When the model is null</exception>
-        public Fsm(FsmModel<TState, TTrigger, TData> model)
+        public Fsm(FsmModel<TS, TT, TD> model)
         {
             if (model == null) throw FsmBuilderException.ModelCannotBeNull();
 
@@ -70,7 +68,7 @@ namespace StateMachine
         }
 
         /// <exception cref="FsmBuilderException">When the initial state is null</exception>
-        public Fsm(State<TState, TTrigger, TData> current, bool stackEnabled = false)
+        public Fsm(State<TS, TT, TD> current, bool stackEnabled = false)
         {
             Model.StackEnabled = stackEnabled;
             if (current == null) throw FsmBuilderException.StateCannotBeNull();
@@ -83,27 +81,24 @@ namespace StateMachine
         }
 
         /// <summary>
-        /// Gets you a builder for a Finite-State-Machine (FSM).
+        ///     Gets you a builder for a Finite-State-Machine (FSM).
         /// </summary>
         /// <param name="startState">The start state's key.</param>
         /// <returns></returns>
-        public static BuilderFluent<TState, TTrigger, TData> Builder(TState startState)
-        {
-            return new FluentImplementation<TState, TTrigger, TData>(startState);
-        }
+        public static BuilderFluent<TS, TT, TD> Builder(TS startState)
+            => new FluentImplementation<TS, TT, TD>(startState);
 
         /// <exception cref="FsmBuilderException">When the handler is null</exception>
-        public Fsm<TState, TTrigger, TData> AddStateChangeHandler(
-            EventHandler<StateChangeArgs<TState, TTrigger, TData>> e)
+        public Fsm<TS, TT, TD> AddStateChangeHandler(
+            EventHandler<StateChangeArgs<TS, TT, TD>> e)
         {
             if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
-
             Model.StateChanged += e;
             return this;
         }
 
         /// <exception cref="FsmBuilderException">When the state is null or the state has already been added before</exception>
-        public Fsm<TState, TTrigger, TData> Add(State<TState, TTrigger, TData> state)
+        public Fsm<TS, TT, TD> Add(State<TS, TT, TD> state)
         {
             if (state == null) throw FsmBuilderException.StateCannotBeNull();
             if (Model.States.ContainsKey(state.Identifier)) throw FsmBuilderException.StateCanOnlyBeAddedOnce(state);
@@ -116,28 +111,27 @@ namespace StateMachine
         ///     When the transition is null or another transition already leads to the same
         ///     target state
         /// </exception>
-        public Fsm<TState, TTrigger, TData> Add(Transition<TState, TTrigger, TData> t)
+        public Fsm<TS, TT, TD> Add(Transition<TS, TT, TD> t)
         {
             if (t == null) throw FsmBuilderException.TransitionCannotBeNull();
-
             Model.GlobalTransitions.Add(t.Target, t);
             return this;
         }
 
-        public void JumpTo(TState state, bool isPop = false)
+        public void JumpTo(TS state, bool isPop = false)
         {
-            State<TState, TTrigger, TData> s;
+            State<TS, TT, TD> s;
             if (Model.States.TryGetValue(state, out s))
             {
-                DoTransition(state, default(TTrigger), isPop);
+                DoTransition(state, default(TT), isPop);
             }
         }
-        
-        private void DoTransition(TState state, TTrigger input, bool isPop)
+
+        protected void DoTransition(TS state, TT input, bool isPop)
         {
             if (state == null || input == null) return;
 
-            State<TState, TTrigger, TData> old = Model.Current;
+            State<TS, TT, TD> old = Model.Current;
             if (Model.StackEnabled && isPop)
             {
                 Model.Stack.Pop();
@@ -157,15 +151,30 @@ namespace StateMachine
 
             if (!Model.Current.Equals(old))
             {
-                StateChangeArgs<TState, TTrigger, TData> args =
-                    new StateChangeArgs<TState, TTrigger, TData>(this, old, Model.Current, input);
-                old.RaiseExited(args);
-                Model.Current.RaiseEntered(args);
-                Model.RaiseStateChanged(args);
+                StateChangeArgs<TS, TT, TD> args =
+                    new StateChangeArgs<TS, TT, TD>(this, old, Model.Current, input);
+                Exited(old, args);
+                Entered(args);
+                StateChanged(args);
             }
         }
 
-        public void Trigger(TTrigger input)
+        protected virtual void Entered(StateChangeArgs<TS, TT, TD> args)
+        {
+            Model.Current.RaiseEntered(args);
+        }
+
+        protected virtual void Exited(State<TS, TT, TD> old, StateChangeArgs<TS, TT, TD> args)
+        {
+            old.RaiseExited(args);
+        }
+
+        protected virtual void StateChanged(StateChangeArgs<TS, TT, TD> args)
+        {
+            Model.RaiseStateChanged(args);
+        }
+
+        public void Trigger(TT input)
         {
             if (input == null) return;
 
@@ -178,16 +187,13 @@ namespace StateMachine
                 }
             }
 
-            Transition<TState, TTrigger, TData> t = Model.Current.Process(input);
+            Transition<TS, TT, TD> t = Model.Current.Process(input);
             if (t != null)
             {
                 DoTransition(t.Target, input, t.Pop);
             }
         }
 
-        public void Update(TData data)
-        {
-            Model.Current.RaiseUpdated(new UpdateArgs<TState, TTrigger, TData>(this, Current, data));
-        }
+        public void Update(TD data) => Model.Current.RaiseUpdated(new UpdateArgs<TS, TT, TD>(this, Current, data));
     }
 }
