@@ -35,7 +35,7 @@ namespace StateMachine
     [PublicAPI]
     public class Transition<TS, TT, TD>
     {
-        private TransitionModel<TS, TT, TD> Model { get; set; }
+        private TransitionModel<TS, TT> Model { get; set; }
 
         public TS Target => Model.Target;
 
@@ -47,7 +47,7 @@ namespace StateMachine
             set { Model.Source = value; }
         }
 
-        public Transition(TransitionModel<TS, TT, TD> model)
+        public Transition(TransitionModel<TS, TT> model)
         {
             Model = model;
         }
@@ -57,7 +57,7 @@ namespace StateMachine
         {
             if (target == null) throw FsmBuilderException.TargetStateCannotBeNull();
 
-            Model = new TransitionModel<TS, TT, TD>(source, target);
+            Model = new TransitionModel<TS, TT>(source, target);
             Model.Triggers.UnionWith(triggers);
         }
 

@@ -44,11 +44,11 @@ namespace StateMachine.Fluent.Api
         protected Dictionary<Tuple<TS>, StateModel<TS, TT, TD>> stateModels =
             new Dictionary<Tuple<TS>, StateModel<TS, TT, TD>>();
 
-        protected Dictionary<Tuple<TS, TS>, TransitionModel<TS, TT, TD>> transitionModels =
-            new Dictionary<Tuple<TS, TS>, TransitionModel<TS, TT, TD>>();
+        protected Dictionary<Tuple<TS, TS>, TransitionModel<TS, TT>> transitionModels =
+            new Dictionary<Tuple<TS, TS>, TransitionModel<TS, TT>>();
 
-        protected Dictionary<Tuple<TS>, TransitionModel<TS, TT, TD>> globalTransitionModels =
-            new Dictionary<Tuple<TS>, TransitionModel<TS, TT, TD>>();
+        protected Dictionary<Tuple<TS>, TransitionModel<TS, TT>> globalTransitionModels =
+            new Dictionary<Tuple<TS>, TransitionModel<TS, TT>>();
 
         public FluentImplementation(TS startState)
         {
@@ -63,8 +63,7 @@ namespace StateMachine.Fluent.Api
             }
 
             FsmModel.Current = FsmModel.States[startState];
-            Fsm<TS, TT, TD> fsm = new Fsm<TS, TT, TD>(FsmModel);
-            return fsm;
+            return new Fsm<TS, TT, TD>(FsmModel);
         }
         
         public StateFluent<TS, TT, TD> State(TS state)
@@ -101,8 +100,8 @@ namespace StateMachine.Fluent.Api
             currentGlobalTransition = Tuple.Create(state);
             if (!globalTransitionModels.ContainsKey(currentGlobalTransition))
             {
-                globalTransitionModels[currentGlobalTransition] =
-                    new TransitionModel<TS, TT, TD>(startState, state);
+                globalTransitionModels[currentGlobalTransition] = new TransitionModel<TS, TT>(startState, state);
+                    new TransitionModel<TS, TT>(startState, state);
                 FsmModel.GlobalTransitions[state] =
                     new Transition<TS, TT, TD>(globalTransitionModels[currentGlobalTransition]);
             }
@@ -127,7 +126,7 @@ namespace StateMachine.Fluent.Api
             currentTransition = Tuple.Create(currentState.Item1, state);
             if (!transitionModels.ContainsKey(currentTransition))
             {
-                transitionModels[currentTransition] = new TransitionModel<TS, TT, TD>(currentState.Item1,
+                transitionModels[currentTransition] = new TransitionModel<TS, TT>(currentState.Item1,
                     state);
                 stateModels[currentState].Transitions[state] =
                     new Transition<TS, TT, TD>(transitionModels[currentTransition]);
