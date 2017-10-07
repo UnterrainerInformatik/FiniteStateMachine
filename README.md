@@ -1,9 +1,10 @@
 [![license](https://img.shields.io/github/license/unterrainerinformatik/FiniteStateMachine.svg?maxAge=2592000)](http://unlicense.org)  [![Twitter Follow](https://img.shields.io/twitter/follow/throbax.svg?style=social&label=Follow&maxAge=2592000)](https://twitter.com/throbax)
 
-| Project              |                 Package                  |
-| -------------------- | :--------------------------------------: |
-| StateMachine         | [![NuGet](https://img.shields.io/nuget/v/StateMachine.svg?maxAge=2592000)](https://www.nuget.org/packages/StateMachine/) |
-| MonoGameStateMachine | [![NuGet](https://img.shields.io/nuget/v/MonoGameStateMachine.svg)](https://www.nuget.org/packages/MonoGameStateMachine/) |
+| Project                        |                 Package                  |
+| ------------------------------ | :--------------------------------------: |
+| StateMachine                   | [![NuGet](https://img.shields.io/nuget/v/StateMachine.svg?maxAge=2592000)](https://www.nuget.org/packages/StateMachine/) |
+| MonoGameStateMachine           | [![NuGet](https://img.shields.io/nuget/v/MonoGameStateMachine.svg)](https://www.nuget.org/packages/MonoGameStateMachine/) |
+| Java-Version: JavaStateMachine | [Olards Java Version on GitHub](https://github.com/Olard/JavaStateMachine) |
 
 # Finite-State-Machine
 
@@ -12,6 +13,8 @@ This project implements a Finite-State-Machine (FSM) designed to be used in game
 Furthermore it implements even a Stack-Based-FSM (SBFSM). So you may tell it to 'continue with the last state before the active one'.
 
 You describe your FSM using a nice and well documented DSL (Domain Specific Language).
+
+If you're looking for a Java version of this project, check out [Olards Java Version on GitHub](https://github.com/Olard/JavaStateMachine).
 
 #### ![Icon](https://github.com/UnterrainerInformatik/FiniteStateMachine/raw/master/StateMachine/icon.png)StateMachine
 
