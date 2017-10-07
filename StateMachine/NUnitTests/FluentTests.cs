@@ -129,7 +129,7 @@ namespace StateMachine.NUnitTests
             Assert.That(button.OldState, Is.EqualTo(State.REFRESHING));
 
             // Update was triggered twice over all states.
-            Assert.That(button.UpdateCounter, Is.EqualTo(2F));
+            Assert.That(button.UpdateCounter, Is.EqualTo(2));
         }
     }
 }
