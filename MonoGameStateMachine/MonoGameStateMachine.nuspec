@@ -10,15 +10,17 @@
 	<iconUrl>https://github.com/UnterrainerInformatik/FiniteStateMachine/raw/master/MonoGameStateMachine/icon.png</iconUrl>
     <projectUrl>https://github.com/UnterrainerInformatik/FiniteStateMachine</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Build complex machines holding the state of your game components using an intuitive fluent DSL.</description>
-    <summary>
-      This project implements a Finite-State-Machine (FSM) designed to be used in games.
+    <description>This project implements a Finite-State-Machine (FSM) designed to be used in games.
 	  Furthermore it implements even a Stack-Based-FSM (SBFSM). So you may tell it to 'continue with the last state before the active one'.
 	  You describe your FSM using a nice and well documented DSL (Domain Specific Language).
 
 	  This machine also adds the function '.After(time)' to transitions so you can set timed transitions that don't necessarily have to have a trigger at all.
 	  
       This replaces the code we usually had for keyboard-input (run-left-right-duck-jump), clicked buttons on the GUI (idle-over-down-refreshing), tower-states (idle-aiming-firing-reloading) or for the connection procedure when setting up peer2peer connections in our games....
+	  This is a PCL (portable code library) so you should be able to use it in any of your MG projects.</description>
+    <summary>
+      This project implements a Finite-State-Machine (FSM) designed to be used in games.
+	  Furthermore it implements even a Stack-Based-FSM (SBFSM). So you may tell it to 'continue with the last state before the active one'.
     </summary>
     <releaseNotes></releaseNotes>
     <copyright>Copyright 2017</copyright>
