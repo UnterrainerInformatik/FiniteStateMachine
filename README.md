@@ -16,6 +16,11 @@ You describe your FSM using a nice and well documented DSL (Domain Specific Lang
 
 If you're looking for a Java version of this project, check out [Olards Java Version on GitHub](https://github.com/Olard/JavaStateMachine).
 
+> **If you like this repo, please don't forget to star it.**
+> **Thank you.**
+
+
+
 #### ![Icon](https://github.com/UnterrainerInformatik/FiniteStateMachine/raw/master/StateMachine/icon.png)StateMachine
 
 Is the generic implementation.
