@@ -8,7 +8,7 @@
 
 # Finite-State-Machine
 
-This project implements a Finite-State-Machine (FSM) designed to be used in games.
+This project provides a Finite-State-Machine (FSM) designed to be used in games.
 
 Furthermore it implements even a Stack-Based-FSM (SBFSM). So you may tell it to 'continue with the last state before the active one'.
 
@@ -25,7 +25,9 @@ Nice if you want to use it outside of MonoGame.
 
 #### ![Icon](https://github.com/UnterrainerInformatik/FiniteStateMachine/raw/master/MonoGameStateMachine/icon.png)MonoGameStateMachine
 
-Includes a reference to MonoGame so that it can use MonoGame's `GameTime` structure.It is a mandatory parameter when calling `Update` in this implementation and so it can add the `After()` feature to transitions like so:
+This is a PCL (portable code library) so you should be able to use it in any MG project.
+
+Includes a reference to MonoGame so that it can use MonoGame's `GameTime` structure. It is a mandatory parameter when calling `Update` in this implementation and so it can add the `After()` feature to transitions like so:
 
 ````c#
 Fsm<State, Trigger>.Builder(State.STANDING)
