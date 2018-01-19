@@ -8,7 +8,7 @@
 
 # Finite-State-Machine
 
-This project provides a Finite-State-Machine (FSM) designed to be used in games.
+This project provides a Finite-State-Machine (FSM) as a portable class library (PCL) designed to be used in games.
 
 Furthermore it implements even a Stack-Based-FSM (SBFSM). So you may tell it to 'continue with the last state before the active one'.
 
