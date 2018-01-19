@@ -26,9 +26,10 @@
 // ***************************************************************************
 
 using System.Collections.Generic;
+using StateMachine;
 using StateMachine.Fluent.Api;
 
-namespace StateMachine.NUnitTests
+namespace NUnitTests
 {
     class Spell
     {

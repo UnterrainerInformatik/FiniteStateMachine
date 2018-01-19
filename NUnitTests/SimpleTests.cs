@@ -27,8 +27,9 @@
 
 using System.Linq;
 using NUnit.Framework;
+using StateMachine;
 
-namespace StateMachine.NUnitTests
+namespace NUnitTests
 {
     [TestFixture]
     [Category("StateMachine.Simple")]

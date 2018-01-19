@@ -27,9 +27,10 @@
 
 using System;
 using Microsoft.Xna.Framework;
+using MonoGameStateMachine;
 using NUnit.Framework;
 
-namespace MonoGameStateMachine.NUnitTests
+namespace NUnitTests.MonoGame
 {
     public class FluentTests
     {
