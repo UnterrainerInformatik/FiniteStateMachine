@@ -26,13 +26,10 @@
 // ***************************************************************************
 
 using System.Collections.ObjectModel;
-using System.Linq;
-using JetBrains.Annotations;
 using StateMachine.Events;
 
 namespace StateMachine
 {
-    [PublicAPI]
     public class Transition<TS, TT, TD>
     {
         private TransitionModel<TS, TT> Model { get; set; }
@@ -43,9 +40,9 @@ namespace StateMachine
 
         public TS Source
         {
-            get { return Model.Source; }
-            set { Model.Source = value; }
-        }
+            get => Model.Source;
+			set => Model.Source = value;
+		}
 
         public Transition(TransitionModel<TS, TT> model)
         {
@@ -61,30 +58,33 @@ namespace StateMachine
             Model.Triggers.UnionWith(triggers);
         }
 
-        /// <summary>
-        ///     Generates a new Transition that will pop from the stack and therefore doesn't need a target.<br />
-        ///     The target will vary depending on the items on the stack.
-        /// </summary>
-        /// <param name="triggers">The triggers.</param>
-        /// <param name="source">The source.</param>
+        /// <inheritdoc />
+		/// <summary>
+		///     Generates a new Transition that will pop from the stack and therefore doesn't need a target.<br />
+		///     The target will vary depending on the items on the stack.
+		/// </summary>
+		/// <param name="triggers">The triggers.</param>
+		/// <param name="source">The source.</param>
         public Transition(Collection<TT> triggers, TS source)
             : this(triggers, source, default(TS))
         {
             Model.Pop = true;
         }
 
-        /// <exception cref="FsmBuilderException">When target is null</exception>
+        /// <inheritdoc />
+		/// <exception cref="T:StateMachine.FsmBuilderException">When target is null</exception>
         public Transition(TT trigger, TS source, TS target)
             : this(new Collection<TT> {trigger}, source, target)
         {
         }
 
-        /// <summary>
-        ///     Generates a new Transition that will pop from the stack and therefore doesn't need a target.<br />
-        ///     The target will vary depending on the items on the stack.
-        /// </summary>
-        /// <param name="trigger">The trigger.</param>
-        /// <param name="source">The source.</param>
+        /// <inheritdoc />
+		/// <summary>
+		///     Generates a new Transition that will pop from the stack and therefore doesn't need a target.<br />
+		///     The target will vary depending on the items on the stack.
+		/// </summary>
+		/// <param name="trigger">The trigger.</param>
+		/// <param name="source">The source.</param>
         public Transition(TT trigger, TS source)
             : this(new Collection<TT> {trigger}, source)
         {

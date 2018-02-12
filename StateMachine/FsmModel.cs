@@ -27,12 +27,10 @@
 
 using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using StateMachine.Events;
 
 namespace StateMachine
 {
-    [PublicAPI]
     public class FsmModel<TS, TT, TD>
     {
         public event EventHandler<StateChangeArgs<TS, TT, TD>> StateChanged;

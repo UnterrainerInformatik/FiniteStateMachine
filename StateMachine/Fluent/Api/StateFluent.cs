@@ -26,12 +26,10 @@
 // ***************************************************************************
 
 using System;
-using JetBrains.Annotations;
 using StateMachine.Events;
 
 namespace StateMachine.Fluent.Api
 {
-    [PublicAPI]
     public interface StateFluent<TS, TT, TD> : BuilderFluent<TS, TT, TD>
     {
         /// <summary>

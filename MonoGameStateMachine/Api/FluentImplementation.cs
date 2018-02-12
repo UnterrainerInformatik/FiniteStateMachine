@@ -53,9 +53,8 @@ namespace MonoGameStateMachine.Api
 
         public TransitionStateFluent<TS, TT, GameTime> After(float amount, TimeUnit timeUnit)
         {
-            List<Timer<TS>> l;
-            var key = currentTransition;
-            if (!AfterEntries.TryGetValue(key, out l))
+			var key = currentTransition;
+            if (!AfterEntries.TryGetValue(key, out var l))
             {
                 l = new List<Timer<TS>>();
                 AfterEntries.Add(key, l);

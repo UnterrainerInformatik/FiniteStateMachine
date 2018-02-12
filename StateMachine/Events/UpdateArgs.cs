@@ -25,11 +25,8 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using JetBrains.Annotations;
-
 namespace StateMachine.Events
 {
-    [PublicAPI]
     public struct UpdateArgs<TState, TTrigger, TData>
     {
         public Fsm<TState, TTrigger, TData> Machine { get; }

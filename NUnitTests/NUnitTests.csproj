@@ -30,9 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MonoGame.Framework.Portable.3.6.0.1625\lib\portable-net45+win8+wpa81\MonoGame.Framework.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework, Version=3.9.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
@@ -59,10 +56,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MonoGameStateMachine\MonoGameStateMachine.csproj">
-      <Project>{a1ad3096-ccdb-4b43-9104-295b7f59f3d3}</Project>
-      <Name>MonoGameStateMachine</Name>
-    </ProjectReference>
     <ProjectReference Include="..\StateMachine\StateMachine.csproj">
       <Project>{baeab06b-25d7-4d2a-b21d-4435c0db794c}</Project>
       <Name>StateMachine</Name>

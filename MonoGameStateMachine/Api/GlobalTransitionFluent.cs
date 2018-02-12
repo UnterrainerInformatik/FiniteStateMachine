@@ -26,12 +26,10 @@
 // ***************************************************************************
 
 using System;
-using JetBrains.Annotations;
 using StateMachine.Events;
 
 namespace MonoGameStateMachine.Api
 {
-    [PublicAPI]
     public interface GlobalTransitionFluent<TS, TT, TD>
     {
         /// <summary>

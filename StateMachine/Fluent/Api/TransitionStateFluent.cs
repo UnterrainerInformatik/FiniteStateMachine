@@ -25,11 +25,8 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using JetBrains.Annotations;
-
 namespace StateMachine.Fluent.Api
 {
-    [PublicAPI]
     public interface TransitionStateFluent<TS, TT, TD> : TransitionFluent<TS, TT, TD>,
         StateFluent<TS, TT, TD>
     {

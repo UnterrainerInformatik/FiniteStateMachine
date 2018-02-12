@@ -25,11 +25,8 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using JetBrains.Annotations;
-
 namespace StateMachine.Events
 {
-    [PublicAPI]
     public struct IfArgs<TState>
     {
         public TState Source { get; }

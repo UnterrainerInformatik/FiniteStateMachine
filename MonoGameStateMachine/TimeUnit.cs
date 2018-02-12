@@ -25,11 +25,8 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using JetBrains.Annotations;
-
 namespace MonoGameStateMachine
 {
-    [PublicAPI]
     public enum TimeUnit : long
     {
         MILLISECONDS = 1,

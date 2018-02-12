@@ -53,15 +53,15 @@ namespace NUnitTests
         [Category("StateMachine.Simple")]
         public void WhenBuiltManuallyStackMachineShouldWork()
         {
-            State<State, Trigger, float> opened = new State<State, Trigger, float>(State.OPENED);
-            State<State, Trigger, float> closed = new State<State, Trigger, float>(State.CLOSED)
+            var opened = new State<State, Trigger, float>(State.OPENED);
+            var closed = new State<State, Trigger, float>(State.CLOSED)
             {
                 ClearStack = true
             };
             opened.AddTransisionOn(Trigger.CLOSE, State.CLOSED).AddTransisionOn(Trigger.OPEN, State.OPENED);
             closed.AddTransisionOn(Trigger.OPEN, State.OPENED).AddTransisionOn(Trigger.CLOSE, State.CLOSED);
 
-            Fsm<State, Trigger, float> m =
+            var m =
                 new Fsm<State, Trigger, float>(opened, true)
                     .AddStateChangeHandler(TestTools.ConsoleOut)
                     .Add(opened)
@@ -142,12 +142,12 @@ namespace NUnitTests
         [Category("StateMachine.Simple")]
         public void WhenCallingPopOnStackMachineBuiltManuallyShouldBehaveCorrectly()
         {
-            State<State, Trigger, float> opened = new State<State, Trigger, float>(State.OPENED);
-            State<State, Trigger, float> closed = new State<State, Trigger, float>(State.CLOSED)
+            var opened = new State<State, Trigger, float>(State.OPENED);
+            var closed = new State<State, Trigger, float>(State.CLOSED)
             {
                 ClearStack = true
             };
-            State<State, Trigger, float> pop = new State<State, Trigger, float>(State.POP);
+            var pop = new State<State, Trigger, float>(State.POP);
             opened.AddTransisionOn(Trigger.CLOSE, State.CLOSED)
                 .AddTransisionOn(Trigger.OPEN, State.OPENED)
                 .AddTransisionOn(Trigger.PUSH_POP, State.POP);
@@ -155,7 +155,7 @@ namespace NUnitTests
             closed.AddTransisionOn(Trigger.OPEN, State.OPENED)
                 .AddTransisionOn(Trigger.CLOSE, State.CLOSED);
 
-            Fsm<State, Trigger, float> m =
+            var m =
                 new Fsm<State, Trigger, float>(opened, true)
                     .AddStateChangeHandler(TestTools.ConsoleOut)
                     .Add(opened)

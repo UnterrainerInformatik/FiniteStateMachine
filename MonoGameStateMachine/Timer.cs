@@ -25,11 +25,8 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using JetBrains.Annotations;
-
 namespace MonoGameStateMachine
 {
-    [PublicAPI]
     public struct Timer<TS>
     {
         public double Value { get; set; }
@@ -62,7 +59,7 @@ namespace MonoGameStateMachine
             Time -= timeInMillis;
             if (Time <= 0D)
             {
-                double d = Time * -1D;
+                var d = Time * -1D;
                 Reset();
                 return d;
             }

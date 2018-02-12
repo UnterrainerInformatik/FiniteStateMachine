@@ -27,12 +27,10 @@
 
 using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using StateMachine.Events;
 
 namespace StateMachine
 {
-    [PublicAPI]
     public class StateModel<TS, TT, TD>
     {
         public event Action<StateChangeArgs<TS, TT, TD>> Entered;
@@ -54,8 +52,7 @@ namespace StateMachine
         /// <exception cref="FsmBuilderException">When the handler is null</exception>
         public void AddEnteredHandler(Action<StateChangeArgs<TS, TT, TD>> e)
         {
-            if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
-            Entered += e;
+			Entered += e ?? throw FsmBuilderException.HandlerCannotBeNull();
         }
 
         public void RaiseEntered(StateChangeArgs<TS, TT, TD> e) => Entered?.Invoke(e);
@@ -63,8 +60,7 @@ namespace StateMachine
         /// <exception cref="FsmBuilderException">When the handler is null</exception>
         public void AddExitedHandler(Action<StateChangeArgs<TS, TT, TD>> e)
         {
-            if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
-            Exited += e;
+			Exited += e ?? throw FsmBuilderException.HandlerCannotBeNull();
         }
 
         public void RaiseExited(StateChangeArgs<TS, TT, TD> e) => Exited?.Invoke(e);
@@ -72,8 +68,7 @@ namespace StateMachine
         /// <exception cref="FsmBuilderException">When the handler is null</exception>
         public void AddUpdatedHandler(Action<UpdateArgs<TS, TT, TD>> e)
         {
-            if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
-            Updated += e;
+			Updated += e ?? throw FsmBuilderException.HandlerCannotBeNull();
         }
 
         public void RaiseUpdated(UpdateArgs<TS, TT, TD> data) => Updated?.Invoke(data);

@@ -27,16 +27,14 @@
 
 using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using StateMachine.Events;
 using StateMachine.Fluent.Api;
 
 namespace StateMachine
 {
-    [PublicAPI]
     public class Fsm<TS, TT> : Fsm<TS, TT, float>
     {
-        public Fsm(FsmModel<TS, TT, float> model) : base(model)
+		public Fsm(FsmModel<TS, TT, float> model) : base(model)
         {
         }
 
@@ -47,7 +45,6 @@ namespace StateMachine
         public void Update() => Model.Current.RaiseUpdated(new UpdateArgs<TS, TT, float>(this, Current, 0f));
     }
 
-    [PublicAPI]
     public class Fsm<TS, TT, TD>
     {
         protected FsmModel<TS, TT, TD> Model { get; set; } = new FsmModel<TS, TT, TD>();
@@ -55,12 +52,15 @@ namespace StateMachine
         public State<TS, TT, TD> Current => Model.Current;
         public Stack<State<TS, TT, TD>> Stack => Model.Stack;
 
-        /// <exception cref="FsmBuilderException">When the model is null</exception>
-        public Fsm(FsmModel<TS, TT, TD> model)
-        {
-            if (model == null) throw FsmBuilderException.ModelCannotBeNull();
+		public Dictionary<Tuple<TS, TS>, List<Timer<TS>>> AfterEntries { get; set; } =
+			new Dictionary<Tuple<TS, TS>, List<Timer<TS>>>();
 
-            Model = model;
+		public List<Timer<TS>> GlobalAfterEntries { get; set; } = new List<Timer<TS>>();
+
+		/// <exception cref="FsmBuilderException">When the model is null</exception>
+		public Fsm(FsmModel<TS, TT, TD> model)
+        {
+			Model = model ?? throw FsmBuilderException.ModelCannotBeNull();
             if (Model.StackEnabled && !model.Current.ClearStack)
             {
                 Model.Stack.Push(model.Current);
@@ -71,9 +71,7 @@ namespace StateMachine
         public Fsm(State<TS, TT, TD> current, bool stackEnabled = false)
         {
             Model.StackEnabled = stackEnabled;
-            if (current == null) throw FsmBuilderException.StateCannotBeNull();
-
-            Model.Current = current;
+			Model.Current = current ?? throw FsmBuilderException.StateCannotBeNull();
             if (Model.StackEnabled && !current.ClearStack)
             {
                 Model.Stack.Push(current);
@@ -131,7 +129,7 @@ namespace StateMachine
         {
             if (state == null || input == null) return;
 
-            State<TS, TT, TD> old = Model.Current;
+            var old = Model.Current;
             if (Model.StackEnabled && isPop)
             {
                 Model.Stack.Pop();
@@ -149,15 +147,14 @@ namespace StateMachine
                 Model.Stack.Clear();
             }
 
-            if (!Model.Current.Equals(old))
-            {
-                StateChangeArgs<TS, TT, TD> args =
-                    new StateChangeArgs<TS, TT, TD>(this, old, Model.Current, input);
-                Exited(old, args);
-                Entered(args);
-                StateChanged(args);
-            }
-        }
+			if (Model.Current.Equals(old)) return;
+
+			var args =
+				new StateChangeArgs<TS, TT, TD>(this, old, Model.Current, input);
+			Exited(old, args);
+			Entered(args);
+			StateChanged(args);
+		}
 
         protected virtual void Entered(StateChangeArgs<TS, TT, TD> args)
         {
@@ -180,20 +177,60 @@ namespace StateMachine
 
             foreach (var g in Model.GlobalTransitions.Values)
             {
-                if (g.Process(Model.Current, input))
-                {
-                    DoTransition(g.Target, input, g.Pop);
-                    return;
-                }
-            }
+				if (!g.Process(Model.Current, input)) continue;
 
-            Transition<TS, TT, TD> t = Model.Current.Process(input);
+				DoTransition(g.Target, input, g.Pop);
+				return;
+			}
+
+            var t = Model.Current.Process(input);
             if (t != null)
             {
                 DoTransition(t.Target, input, t.Pop);
             }
         }
 
-        public void Update(TD data) => Model.Current.RaiseUpdated(new UpdateArgs<TS, TT, TD>(this, Current, data));
-    }
+        public new void Update(TimeSpan elapsedTime)
+		{
+			// After-entries on transitions.
+			foreach (var k in Current.Model.Transitions.Keys)
+			{
+				if (!AfterEntries.TryGetValue(new Tuple<TS, TS>(Current.Identifier, k), out var currentAfterEntries)) continue;
+				if (CheckAfterEntries(currentAfterEntries, Current.Model.Transitions, elapsedTime))
+					return;
+			}
+
+			// Global after-entries.
+			if (CheckAfterEntries(GlobalAfterEntries, Model.GlobalTransitions, elapsedTime))
+			{
+				return;
+			}
+
+			Model.Current.RaiseUpdated(new UpdateArgs<TS, TT, TimeSpan>(this, Current, elapsedTime));
+		}
+
+		private bool CheckAfterEntries(List<Timer<TS>> afterEntries,
+			Dictionary<TS, Transition<TS, TT, TD>> transitions, TimeSpan ts)
+		{
+			for (var i = 0; i < afterEntries.Count; i++)
+			{
+				var e = afterEntries[i];
+				if (!transitions.TryGetValue(e.Target, out var t)) continue;
+				if (!t.ConditionsMet(Current.Identifier)) continue;
+
+				var timerMax = e.Time;
+				var r = e.Tick(ts.TotalMilliseconds);
+				afterEntries[i] = e;
+
+				if (!r.HasValue) continue;
+
+				// It triggered.
+				DoTransition(e.Target, default(TT), t.Pop);
+				Update(ts.Subtract(TimeSpan.FromMilliseconds(timerMax)));
+				return true;
+			}
+
+			return false;
+		}
+	}
 }

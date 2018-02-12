@@ -26,12 +26,10 @@
 // ***************************************************************************
 
 using System;
-using JetBrains.Annotations;
 using StateMachine.Events;
 
 namespace StateMachine.Fluent.Api
 {
-    [PublicAPI]
     public interface TransitionFluent<TS, TT, TD>
     {
         /// <summary>

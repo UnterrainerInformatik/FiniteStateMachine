@@ -104,7 +104,7 @@ namespace NUnitTests
 
         private void Main()
         {
-            Hero hero = new Hero();
+            var hero = new Hero();
             CreateMachineFor(Fsm<State, Trigger>.Builder(State.IDLE), new Button(), hero);
             CreateMachineFor(Fsm<State, Trigger>.Builder(State.IDLE), new Button(), hero);
         }

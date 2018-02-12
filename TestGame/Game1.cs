@@ -25,6 +25,7 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -195,7 +196,7 @@ namespace TestGame
             {
                 heroStateMachine.Trigger(key);
             }
-            heroStateMachine.Update(gameTime);
+            heroStateMachine.Update(TimeSpan.FromMilliseconds(gameTime.ElapsedGameTime.TotalMilliseconds));
         }
 
         protected void UpdateOld(GameTime gameTime) {

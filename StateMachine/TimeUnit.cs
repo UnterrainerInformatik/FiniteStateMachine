@@ -25,32 +25,15 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using StateMachine.Events;
-
-namespace MonoGameStateMachine.Api
+namespace StateMachine
 {
-    public interface TransitionFluent<TS, TT, TD>
+    public enum TimeUnit : long
     {
-        /// <summary>
-        ///     Automatically walks the transition you're currently describing, if the specified amount of time has passed.
-        /// </summary>
-        /// <param name="amount">The amount.</param>
-        /// <param name="timeUnit">The time unit.</param>
-        /// <returns></returns>
-        TransitionStateFluent<TS, TT, TD> After(float amount, TimeUnit timeUnit);
-
-        /// <summary>
-        ///     Specifies the trigger, that has to be served as input in order to walk the transition you're currently describing.
-        /// </summary>
-        /// <param name="trigger">The trigger.</param>
-        TransitionStateFluent<TS, TT, TD> On(TT trigger);
-
-        /// <summary>
-        ///     Specifies the condition, that has to be met, in addition to the trigger, to walk the transition you're currently
-        ///     describing.
-        /// </summary>
-        /// <param name="condition">The condition.</param>
-        TransitionStateFluent<TS, TT, TD> If(Func<IfArgs<TS>, bool> condition);
+        MILLISECONDS = 1,
+        SECONDS = 1000,
+        MINUTES = SECONDS * 60,
+        HOURS = MINUTES * 60,
+        DAYS = HOURS * 24,
+        WEEKS = DAYS * 7
     }
 }

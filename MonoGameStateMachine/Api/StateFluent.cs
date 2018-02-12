@@ -26,12 +26,10 @@
 // ***************************************************************************
 
 using System;
-using JetBrains.Annotations;
 using StateMachine.Events;
 
 namespace MonoGameStateMachine.Api
 {
-    [PublicAPI]
     public interface StateFluent<TS, TT, TD> : BuilderFluent<TS, TT, TD>
     {
         /// <summary>

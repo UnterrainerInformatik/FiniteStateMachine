@@ -26,8 +26,7 @@
 // ***************************************************************************
 
 using System;
-using Microsoft.Xna.Framework;
-using MonoGameStateMachine;
+using StateMachine;
 using NUnit.Framework;
 
 namespace NUnitTests.MonoGame
@@ -156,8 +155,8 @@ namespace NUnitTests.MonoGame
         [Category("MonoGameStateMachine.FluentTests")]
         public void WhenMultipleAfterConditionsFireOnASingleUpdateOnEnterAndOnExitShoudFire()
         {
-            int enterCount = 0;
-            int exitCount = 0;
+            var enterCount = 0;
+            var exitCount = 0;
             var m = Fsm<State, Trigger>.Builder(State.IDLE)
                 .State(State.IDLE)
                     .OnEnter(t => enterCount++)

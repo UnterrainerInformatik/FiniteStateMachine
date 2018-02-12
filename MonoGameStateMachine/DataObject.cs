@@ -25,12 +25,10 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
 
 namespace MonoGameStateMachine
 {
-    [PublicAPI]
     public struct DataObject<T>
     {
         public T Data { get; set; }

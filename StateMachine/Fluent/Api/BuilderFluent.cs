@@ -25,11 +25,8 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using JetBrains.Annotations;
-
 namespace StateMachine.Fluent.Api
 {
-    [PublicAPI]
     public interface BuilderFluent<TS, TT, TD>
     {
         /// <summary>

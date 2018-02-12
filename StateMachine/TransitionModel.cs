@@ -27,12 +27,10 @@
 
 using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using StateMachine.Events;
 
 namespace StateMachine
 {
-    [PublicAPI]
     public class TransitionModel<TS, TT>
     {
         public ISet<TT> Triggers { get; set; } = new HashSet<TT>();

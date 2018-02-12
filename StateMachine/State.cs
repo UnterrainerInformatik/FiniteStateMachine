@@ -25,12 +25,10 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using JetBrains.Annotations;
 using StateMachine.Events;
 
 namespace StateMachine
 {
-    [PublicAPI]
     public class State<TS, TT, TD>
     {
         public StateModel<TS, TT, TD> Model { get; set; }
@@ -39,9 +37,9 @@ namespace StateMachine
 
         public bool ClearStack
         {
-            get { return Model.ClearStack; }
-            set { Model.ClearStack = value; }
-        }
+            get => Model.ClearStack;
+			set => Model.ClearStack = value;
+		}
 
         public void RaiseUpdated(UpdateArgs<TS, TT, TD> args) => Model.RaiseUpdated(args);
         public void RaiseEntered(StateChangeArgs<TS, TT, TD> args) => Model.RaiseEntered(args);

@@ -25,32 +25,43 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
-using System;
-using StateMachine.Events;
-
-namespace MonoGameStateMachine.Api
+namespace StateMachine
 {
-    public interface TransitionFluent<TS, TT, TD>
+    public struct Timer<TS>
     {
-        /// <summary>
-        ///     Automatically walks the transition you're currently describing, if the specified amount of time has passed.
-        /// </summary>
-        /// <param name="amount">The amount.</param>
-        /// <param name="timeUnit">The time unit.</param>
-        /// <returns></returns>
-        TransitionStateFluent<TS, TT, TD> After(float amount, TimeUnit timeUnit);
+        public double Value { get; set; }
+        public TimeUnit Unit { get; set; }
+        public double Time { get; set; }
+        public TS Target { get; set; }
+
+        public Timer(TS target, double value, TimeUnit unit)
+        {
+            Target = target;
+            Value = value;
+            Unit = unit;
+            Time = 0;
+            Reset();
+        }
+
+        public void Reset()
+        {
+            Time = Value * (long) Unit;
+        }
 
         /// <summary>
-        ///     Specifies the trigger, that has to be served as input in order to walk the transition you're currently describing.
+        ///     Lets the specified time tick away and subtracts it from the Timer.<br />
+        ///     If the timer triggered the time that was left after the Timer triggered is returned.
         /// </summary>
-        /// <param name="trigger">The trigger.</param>
-        TransitionStateFluent<TS, TT, TD> On(TT trigger);
+        /// <param name="timeInMillis">The time to tick away.</param>
+        /// <returns>Null if the timer didn't trigger, a positive value otherwise.</returns>
+        public double? Tick(double timeInMillis)
+        {
+            Time -= timeInMillis;
+			if (!(Time <= 0D)) return null;
 
-        /// <summary>
-        ///     Specifies the condition, that has to be met, in addition to the trigger, to walk the transition you're currently
-        ///     describing.
-        /// </summary>
-        /// <param name="condition">The condition.</param>
-        TransitionStateFluent<TS, TT, TD> If(Func<IfArgs<TS>, bool> condition);
+			var d = Time * -1D;
+			Reset();
+			return d;
+		}
     }
 }
