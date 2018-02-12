@@ -206,7 +206,7 @@ namespace StateMachine
 				return;
 			}
 
-			Model.Current.RaiseUpdated(new UpdateArgs<TS, TT, TimeSpan>(this, Current, elapsedTime));
+			Model.Current.RaiseUpdated(new UpdateArgs<TS, TT, TD>(this, Current, elapsedTime));
 		}
 
 		private bool CheckAfterEntries(List<Timer<TS>> afterEntries,

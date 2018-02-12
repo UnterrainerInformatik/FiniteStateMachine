@@ -87,7 +87,7 @@ namespace NUnitTests.MonoGame
                 .GlobalTransitionTo(State.IDLE).AfterGlobal(10, TimeUnit.SECONDS)
                 .Build();
 
-            m.Update(new GameTime(TimeSpan.FromDays(1), TimeSpan.FromMilliseconds(16))); // Should do nothing.
+            m.Update(TimeSpan.FromMilliseconds(16)); // Should do nothing.
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
             m.Trigger(Trigger.MOUSE_CLICKED);
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
@@ -96,8 +96,8 @@ namespace NUnitTests.MonoGame
             m.Trigger(Trigger.MOUSE_RELEASED);
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
             m.Trigger(Trigger.MOUSE_OVER);
-            m.Update(new GameTime(TimeSpan.FromDays(1), TimeSpan.FromMilliseconds(16)));
-            m.Update(new GameTime(TimeSpan.FromDays(1), TimeSpan.FromMilliseconds(16)));
+            m.Update(TimeSpan.FromMilliseconds(16));
+            m.Update(TimeSpan.FromMilliseconds(16));
             Assert.That(m.Current.Identifier, Is.EqualTo(State.OVER));
             Assert.That(button.BtnState, Is.EqualTo(State.OVER));
             Assert.That(button.OldState, Is.EqualTo(State.IDLE));
@@ -114,15 +114,15 @@ namespace NUnitTests.MonoGame
             Assert.That(m.Current.Identifier, Is.EqualTo(State.REFRESHING));
             Assert.That(button.BtnState, Is.EqualTo(State.REFRESHING));
             Assert.That(button.OldState, Is.EqualTo(State.PRESSED));
-            m.Update(new GameTime(TimeSpan.FromDays(1), TimeSpan.FromMilliseconds(500))); // No transition yet...
+            m.Update(TimeSpan.FromMilliseconds(500)); // No transition yet...
             Assert.That(m.Current.Identifier, Is.EqualTo(State.REFRESHING));
             Assert.That(button.BtnState, Is.EqualTo(State.REFRESHING));
             Assert.That(button.OldState, Is.EqualTo(State.PRESSED));
-            m.Update(new GameTime(TimeSpan.FromDays(1), TimeSpan.FromMilliseconds(600))); // But now.
+            m.Update(TimeSpan.FromMilliseconds(600)); // But now.
             Assert.That(m.Current.Identifier, Is.EqualTo(State.OVER));
             Assert.That(button.BtnState, Is.EqualTo(State.OVER));
             Assert.That(button.OldState, Is.EqualTo(State.REFRESHING));
-            m.Update(new GameTime(TimeSpan.FromDays(1), TimeSpan.FromMilliseconds(10000)));
+            m.Update(TimeSpan.FromMilliseconds(10000));
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
             Assert.That(button.BtnState, Is.EqualTo(State.IDLE));
             Assert.That(button.OldState, Is.EqualTo(State.OVER));
@@ -147,7 +147,7 @@ namespace NUnitTests.MonoGame
                 .Build();
 
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
-            m.Update(new GameTime(TimeSpan.FromDays(1), TimeSpan.FromMilliseconds(40)));
+            m.Update(TimeSpan.FromMilliseconds(40));
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
         }
 
@@ -177,7 +177,7 @@ namespace NUnitTests.MonoGame
                 .Build();
 
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
-            m.Update(new GameTime(TimeSpan.FromDays(1), TimeSpan.FromMilliseconds(40)));
+            m.Update(TimeSpan.FromMilliseconds(40));
             Assert.That(enterCount, Is.EqualTo(4));
             Assert.That(exitCount, Is.EqualTo(4));
         }
@@ -195,13 +195,13 @@ namespace NUnitTests.MonoGame
                 .Build();
 
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
-            m.Update(new GameTime(TimeSpan.FromDays(1), TimeSpan.FromMilliseconds(5)));
+            m.Update(TimeSpan.FromMilliseconds(5));
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
             m.Trigger(Trigger.MOUSE_CLICKED);
             Assert.That(m.Current.Identifier, Is.EqualTo(State.OVER));
             m.Trigger(Trigger.MOUSE_CLICKED);
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
-            m.Update(new GameTime(TimeSpan.FromDays(1), TimeSpan.FromMilliseconds(5)));
+            m.Update(TimeSpan.FromMilliseconds(5));
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
         }
     }

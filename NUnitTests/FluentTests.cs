@@ -25,6 +25,7 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System;
 using NUnit.Framework;
 using StateMachine;
 
@@ -95,7 +96,7 @@ namespace NUnitTests
                     })
                 .Build();
 
-            m.Update(2F); // Should do nothing.
+            m.Update(TimeSpan.FromMilliseconds(2f)); // Should do nothing.
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
             m.Trigger(Trigger.MOUSE_CLICKED);
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
@@ -120,11 +121,11 @@ namespace NUnitTests
             Assert.That(m.Current.Identifier, Is.EqualTo(State.REFRESHING));
             Assert.That(button.BtnState, Is.EqualTo(State.REFRESHING));
             Assert.That(button.OldState, Is.EqualTo(State.PRESSED));
-            m.Update(.5F); // No transition yet...
+            m.Update(TimeSpan.FromMilliseconds(0.5f)); // No transition yet...
             Assert.That(m.Current.Identifier, Is.EqualTo(State.REFRESHING));
             Assert.That(button.BtnState, Is.EqualTo(State.REFRESHING));
             Assert.That(button.OldState, Is.EqualTo(State.PRESSED));
-            m.Update(.5F); // But now.
+            m.Update(TimeSpan.FromMilliseconds(0.5f)); // But now.
             Assert.That(m.Current.Identifier, Is.EqualTo(State.OVER));
             Assert.That(button.BtnState, Is.EqualTo(State.OVER));
             Assert.That(button.OldState, Is.EqualTo(State.REFRESHING));
