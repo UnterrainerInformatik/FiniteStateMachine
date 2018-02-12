@@ -32,11 +32,18 @@ namespace StateMachine.Fluent.Api
 {
     public interface TransitionFluent<TS, TT, TD>
     {
-        /// <summary>
-        ///     Specifies the trigger, that has to be served as input in order to walk the transition you're currently describing.
-        /// </summary>
-        /// <param name="trigger">The trigger.</param>
-        TransitionStateFluent<TS, TT, TD> On(TT trigger);
+		/// <summary>
+		///     Automatically walks the transition you're currently describing, if the specified amount of time has passed.
+		/// </summary>
+		/// <param name="amount">The amount.</param>
+		/// <param name="timeUnit">The time unit.</param>
+		/// <returns></returns>
+		TransitionStateFluent<TS, TT, TD> After(float amount, TimeUnit timeUnit);
+		/// <summary>
+		///     Specifies the trigger, that has to be served as input in order to walk the transition you're currently describing.
+		/// </summary>
+		/// <param name="trigger">The trigger.</param>
+		TransitionStateFluent<TS, TT, TD> On(TT trigger);
 
         /// <summary>
         ///     Specifies the condition, that has to be met, in addition to the trigger, to walk the transition you're currently

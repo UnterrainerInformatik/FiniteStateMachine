@@ -25,6 +25,7 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System;
 using StateMachine.Events;
 
 namespace StateMachine

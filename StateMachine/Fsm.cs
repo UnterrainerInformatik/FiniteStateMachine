@@ -190,7 +190,7 @@ namespace StateMachine
             }
         }
 
-        public new void Update(TimeSpan elapsedTime)
+        public void Update(TimeSpan elapsedTime)
 		{
 			// After-entries on transitions.
 			foreach (var k in Current.Model.Transitions.Keys)

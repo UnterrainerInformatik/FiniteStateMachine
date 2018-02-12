@@ -34,7 +34,10 @@ namespace StateMachine.Fluent.Api
     public class FluentImplementation<TS, TT, TD> : GlobalTransitionBuilderFluent<TS, TT, TD>,
         TransitionStateFluent<TS, TT, TD>
     {
-        protected FsmModel<TS, TT, TD> FsmModel { get; set; } = new FsmModel<TS, TT, TD>();
+		public Dictionary<Tuple<TS, TS>, List<Timer<TS>>> AfterEntries { get; set; } = new Dictionary<Tuple<TS, TS>, List<Timer<TS>>>();
+		public List<Timer<TS>> GlobalAfterEntries { get; set; } = new List<Timer<TS>>();
+
+		protected FsmModel<TS, TT, TD> FsmModel { get; set; } = new FsmModel<TS, TT, TD>();
         protected TS startState;
 
         protected Tuple<TS> currentState;
@@ -65,8 +68,27 @@ namespace StateMachine.Fluent.Api
             FsmModel.Current = FsmModel.States[startState];
             return new Fsm<TS, TT, TD>(FsmModel);
         }
-        
-        public StateFluent<TS, TT, TD> State(TS state)
+
+		public TransitionStateFluent<TS, TT, TD> After(float amount, TimeUnit timeUnit)
+		{
+			var key = currentTransition;
+			if (!AfterEntries.TryGetValue(key, out var l))
+			{
+				l = new List<Timer<TS>>();
+				AfterEntries.Add(key, l);
+			}
+			l.Add(new Timer<TS>(key.Item2, amount, timeUnit));
+			return this;
+		}
+
+		public TransitionStateFluent<TS, TT, TD> AfterGlobal(float amount, TimeUnit timeUnit)
+		{
+			var key = currentGlobalTransition;
+			GlobalAfterEntries.Add(new Timer<TS>(key.Item1, amount, timeUnit));
+			return this;
+		}
+
+		public StateFluent<TS, TT, TD> State(TS state)
         {
             currentState = Tuple.Create(state);
             if (!FsmModel.States.ContainsKey(state))
@@ -98,14 +120,12 @@ namespace StateMachine.Fluent.Api
         public GlobalTransitionFluent<TS, TT, TD> GlobalTransitionTo(TS state)
         {
             currentGlobalTransition = Tuple.Create(state);
-            if (!globalTransitionModels.ContainsKey(currentGlobalTransition))
-            {
-                globalTransitionModels[currentGlobalTransition] = new TransitionModel<TS, TT>(startState, state);
-                    new TransitionModel<TS, TT>(startState, state);
-                FsmModel.GlobalTransitions[state] =
-                    new Transition<TS, TT, TD>(globalTransitionModels[currentGlobalTransition]);
-            }
-            return this;
+			if (globalTransitionModels.ContainsKey(currentGlobalTransition)) return this;
+
+			globalTransitionModels[currentGlobalTransition] = new TransitionModel<TS, TT>(startState, state);
+			FsmModel.GlobalTransitions[state] =
+				new Transition<TS, TT, TD>(globalTransitionModels[currentGlobalTransition]);
+			return this;
         }
 
         public GlobalTransitionBuilderFluent<TS, TT, TD> OnGlobal(TT trigger)

@@ -45,5 +45,13 @@ namespace StateMachine.Fluent.Api
         /// </summary>
         /// <param name="condition">The condition.</param>
         GlobalTransitionBuilderFluent<TS, TT, TD> IfGlobal(Func<IfArgs<TS>, bool> condition);
-    }
+
+		/// <summary>
+		///     Automatically walks the transition you're currently describing, if the specified amount of time has passed.
+		/// </summary>
+		/// <param name="amount">The amount.</param>
+		/// <param name="timeUnit">The time unit.</param>
+		/// <returns></returns>
+		TransitionStateFluent<TS, TT, TD> AfterGlobal(float amount, TimeUnit timeUnit);
+	}
 }
