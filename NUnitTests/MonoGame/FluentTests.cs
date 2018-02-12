@@ -83,8 +83,8 @@ namespace NUnitTests.MonoGame
                 .State(State.REFRESHING)
                     .OnEnter(t => button.BtnState = State.REFRESHING)
                     .OnExit(t => button.OldState = button.BtnState)
-                    .TransitionTo(State.OVER).After(1, TimeUnit.SECONDS)
-                .GlobalTransitionTo(State.IDLE).AfterGlobal(10, TimeUnit.SECONDS)
+                    .TransitionTo(State.OVER).After(TimeSpan.FromSeconds(1))
+                .GlobalTransitionTo(State.IDLE).AfterGlobal(TimeSpan.FromSeconds(10))
                 .Build();
 
             m.Update(TimeSpan.FromMilliseconds(16)); // Should do nothing.
@@ -137,13 +137,13 @@ namespace NUnitTests.MonoGame
         {
             var m = Fsm<State, Trigger>.Builder(State.IDLE)
                 .State(State.IDLE)
-                    .TransitionTo(State.OVER).After(10, TimeUnit.MILLISECONDS)
+                    .TransitionTo(State.OVER).After(TimeSpan.FromMilliseconds(10))
                 .State(State.OVER)
-                    .TransitionTo(State.PRESSED).After(10, TimeUnit.MILLISECONDS)
+                    .TransitionTo(State.PRESSED).After(TimeSpan.FromMilliseconds(10))
                 .State(State.PRESSED)
-                    .TransitionTo(State.REFRESHING).After(10, TimeUnit.MILLISECONDS)
+                    .TransitionTo(State.REFRESHING).After(TimeSpan.FromMilliseconds(10))
                 .State(State.REFRESHING)
-                    .TransitionTo(State.IDLE).After(10, TimeUnit.MILLISECONDS)
+                    .TransitionTo(State.IDLE).After(TimeSpan.FromMilliseconds(10))
                 .Build();
 
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
@@ -161,19 +161,19 @@ namespace NUnitTests.MonoGame
                 .State(State.IDLE)
                     .OnEnter(t => enterCount++)
                     .OnExit(t => exitCount++)
-                    .TransitionTo(State.OVER).After(10, TimeUnit.MILLISECONDS)
+                    .TransitionTo(State.OVER).After(TimeSpan.FromMilliseconds(10))
                 .State(State.OVER)
                     .OnEnter(t => enterCount++)
                     .OnExit(t => exitCount++)
-                    .TransitionTo(State.PRESSED).After(10, TimeUnit.MILLISECONDS)
+                    .TransitionTo(State.PRESSED).After(TimeSpan.FromMilliseconds(10))
                 .State(State.PRESSED)
                     .OnEnter(t => enterCount++)
                     .OnExit(t => exitCount++)
-                    .TransitionTo(State.REFRESHING).After(10, TimeUnit.MILLISECONDS)
+                    .TransitionTo(State.REFRESHING).After(TimeSpan.FromMilliseconds(10))
                 .State(State.REFRESHING)
                     .OnEnter(t => enterCount++)
                     .OnExit(t => exitCount++)
-                    .TransitionTo(State.IDLE).After(10, TimeUnit.MILLISECONDS)
+                    .TransitionTo(State.IDLE).After(TimeSpan.FromMilliseconds(10))
                 .Build();
 
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
@@ -188,7 +188,7 @@ namespace NUnitTests.MonoGame
         {
             var m = Fsm<State, Trigger>.Builder(State.IDLE)
                 .State(State.IDLE)
-                    .TransitionTo(State.OVER).After(10, TimeUnit.MILLISECONDS)
+                    .TransitionTo(State.OVER).After(TimeSpan.FromMilliseconds(10))
                     .TransitionTo(State.OVER).On(Trigger.MOUSE_CLICKED)
                 .State(State.OVER)
                     .TransitionTo(State.IDLE).On(Trigger.MOUSE_CLICKED)

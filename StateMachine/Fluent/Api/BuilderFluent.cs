@@ -27,14 +27,14 @@
 
 namespace StateMachine.Fluent.Api
 {
-    public interface BuilderFluent<TS, TT, TD>
+    public interface BuilderFluent<TS, TT>
     {
         /// <summary>
         ///     Enables the stack and turns this Finite-State-Machine (FSM) into a Stack-Based-FSM (SBFSM).<br />
         ///     Beware that you will have to specify "ClearsStack()" on some of the states, as otherwise the stack will grow and
         ///     never be cleared.
         /// </summary>
-        BuilderFluent<TS, TT, TD> EnableStack();
+        BuilderFluent<TS, TT> EnableStack();
 
         /// <summary>
         ///     Sets a global transition to a state.<br />
@@ -44,7 +44,7 @@ namespace StateMachine.Fluent.Api
         ///     Usually you would use such global transitions to reset a graph when ESC is pressed or something like that.
         /// </summary>
         /// <param name="state">The state the global transition should lead to.</param>
-        GlobalTransitionFluent<TS, TT, TD> GlobalTransitionTo(TS state);
+        GlobalTransitionFluent<TS, TT> GlobalTransitionTo(TS state);
 
         /// <summary>
         ///     Generates a new state.<br />
@@ -53,11 +53,11 @@ namespace StateMachine.Fluent.Api
         ///     will be checked for transitions that may be triggered by an input, which, in turn, would activate the next state.
         /// </summary>
         /// <param name="state">The state.</param>
-        StateFluent<TS, TT, TD> State(TS state);
+        StateFluent<TS, TT> State(TS state);
 
         /// <summary>
         ///     Builds this instance of an FSM (or SBFSM).
         /// </summary>
-        Fsm<TS, TT, TD> Build();
+        Fsm<TS, TT> Build();
     }
 }

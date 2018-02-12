@@ -27,8 +27,8 @@
 
 namespace StateMachine.Fluent.Api
 {
-    public interface TransitionStateFluent<TS, TT, TD> : TransitionFluent<TS, TT, TD>,
-        StateFluent<TS, TT, TD>
+    public interface TransitionStateFluent<TS, TT> : TransitionFluent<TS, TT>,
+        StateFluent<TS, TT>
     {
     }
 }

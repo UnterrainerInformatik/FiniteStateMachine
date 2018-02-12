@@ -32,7 +32,7 @@ namespace NUnitTests
 {
     public static class TestTools
     {
-        public static void ConsoleOut<TS, TT, TD>(object sender, StateChangeArgs<TS, TT, TD> e)
+        public static void ConsoleOut<TS, TT>(object sender, StateChangeArgs<TS, TT> e)
         {
             Console.Out.WriteLine($"From [{e.From}] with [{e.Input}] to [{e.To}]");
         }

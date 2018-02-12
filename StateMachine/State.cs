@@ -30,9 +30,9 @@ using StateMachine.Events;
 
 namespace StateMachine
 {
-    public class State<TS, TT, TD>
+    public class State<TS, TT>
     {
-        public StateModel<TS, TT, TD> Model { get; set; }
+        public StateModel<TS, TT> Model { get; set; }
 
         public TS Identifier => Model.Identifier;
 
@@ -42,21 +42,21 @@ namespace StateMachine
 			set => Model.ClearStack = value;
 		}
 
-        public void RaiseUpdated(UpdateArgs<TS, TT, TD> args) => Model.RaiseUpdated(args);
-        public void RaiseEntered(StateChangeArgs<TS, TT, TD> args) => Model.RaiseEntered(args);
-        public void RaiseExited(StateChangeArgs<TS, TT, TD> args) => Model.RaiseExited(args);
+        public void RaiseUpdated(UpdateArgs<TS, TT> args) => Model.RaiseUpdated(args);
+        public void RaiseEntered(StateChangeArgs<TS, TT> args) => Model.RaiseEntered(args);
+        public void RaiseExited(StateChangeArgs<TS, TT> args) => Model.RaiseExited(args);
 
-        public State(StateModel<TS, TT, TD> model)
+        public State(StateModel<TS, TT> model)
         {
             Model = model;
         }
 
-        public State(TS identifier) : this(new StateModel<TS, TT, TD>(identifier))
+        public State(TS identifier) : this(new StateModel<TS, TT>(identifier))
         {
         }
 
         /// <exception cref="FsmBuilderException"> When the transition is null</exception>
-        public State<TS, TT, TD> Add(Transition<TS, TT, TD> t)
+        public State<TS, TT> Add(Transition<TS, TT> t)
         {
             if (t == null) throw FsmBuilderException.TransitionCannotBeNull();
 
@@ -65,12 +65,12 @@ namespace StateMachine
             return this;
         }
 
-        public State<TS, TT, TD> AddTransisionOn(TT trigger, TS target)
-            => Add(new Transition<TS, TT, TD>(trigger, Identifier, target));
+        public State<TS, TT> AddTransisionOn(TT trigger, TS target)
+            => Add(new Transition<TS, TT>(trigger, Identifier, target));
 
-        public State<TS, TT, TD> AddPopTransisionOn(TT trigger) => Add(new Transition<TS, TT, TD>(trigger, Identifier));
+        public State<TS, TT> AddPopTransisionOn(TT trigger) => Add(new Transition<TS, TT>(trigger, Identifier));
 
-        public Transition<TS, TT, TD> Process(TT input)
+        public Transition<TS, TT> Process(TT input)
         {
             foreach (var t in Model.Transitions.Values)
             {

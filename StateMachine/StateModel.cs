@@ -31,18 +31,18 @@ using StateMachine.Events;
 
 namespace StateMachine
 {
-    public class StateModel<TS, TT, TD>
+    public class StateModel<TS, TT>
     {
-        public event Action<StateChangeArgs<TS, TT, TD>> Entered;
-        public event Action<StateChangeArgs<TS, TT, TD>> Exited;
-        public event Action<UpdateArgs<TS, TT, TD>> Updated;
+        public event Action<StateChangeArgs<TS, TT>> Entered;
+        public event Action<StateChangeArgs<TS, TT>> Exited;
+        public event Action<UpdateArgs<TS, TT>> Updated;
 
         public TS Identifier { get; private set; }
         public bool EndState { get; set; }
         public bool ClearStack { get; set; }
 
-        public Dictionary<TS, Transition<TS, TT, TD>> Transitions { get; } =
-            new Dictionary<TS, Transition<TS, TT, TD>>();
+        public Dictionary<TS, Transition<TS, TT>> Transitions { get; } =
+            new Dictionary<TS, Transition<TS, TT>>();
 
         public StateModel(TS identifier)
         {
@@ -50,27 +50,27 @@ namespace StateMachine
         }
 
         /// <exception cref="FsmBuilderException">When the handler is null</exception>
-        public void AddEnteredHandler(Action<StateChangeArgs<TS, TT, TD>> e)
+        public void AddEnteredHandler(Action<StateChangeArgs<TS, TT>> e)
         {
 			Entered += e ?? throw FsmBuilderException.HandlerCannotBeNull();
         }
 
-        public void RaiseEntered(StateChangeArgs<TS, TT, TD> e) => Entered?.Invoke(e);
+        public void RaiseEntered(StateChangeArgs<TS, TT> e) => Entered?.Invoke(e);
 
         /// <exception cref="FsmBuilderException">When the handler is null</exception>
-        public void AddExitedHandler(Action<StateChangeArgs<TS, TT, TD>> e)
+        public void AddExitedHandler(Action<StateChangeArgs<TS, TT>> e)
         {
 			Exited += e ?? throw FsmBuilderException.HandlerCannotBeNull();
         }
 
-        public void RaiseExited(StateChangeArgs<TS, TT, TD> e) => Exited?.Invoke(e);
+        public void RaiseExited(StateChangeArgs<TS, TT> e) => Exited?.Invoke(e);
 
         /// <exception cref="FsmBuilderException">When the handler is null</exception>
-        public void AddUpdatedHandler(Action<UpdateArgs<TS, TT, TD>> e)
+        public void AddUpdatedHandler(Action<UpdateArgs<TS, TT>> e)
         {
 			Updated += e ?? throw FsmBuilderException.HandlerCannotBeNull();
         }
 
-        public void RaiseUpdated(UpdateArgs<TS, TT, TD> data) => Updated?.Invoke(data);
+        public void RaiseUpdated(UpdateArgs<TS, TT> data) => Updated?.Invoke(data);
     }
 }

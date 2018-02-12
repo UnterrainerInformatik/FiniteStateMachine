@@ -48,7 +48,7 @@ namespace TestGame
         private AnimatedSprite hero;
         private bool lastWasRight;
 
-        Fsm<string, Keys, GameTime> heroStateMachine;
+        Fsm<string, Keys> heroStateMachine;
 
         public Game1()
         {
@@ -86,7 +86,7 @@ namespace TestGame
 
             hero = new AnimatedSprite(factory);
             
-            heroStateMachine = Fsm<string, Keys, GameTime>.Builder("idle_left")
+            heroStateMachine = Fsm<string, Keys>.Builder("idle_left")
                 .State("idle_left")
                     .Update(args => hero.Play(args.State.Identifier))
                     .TransitionTo("walk_left").On(Keys.Left)

@@ -32,25 +32,12 @@ using StateMachine.Fluent.Api;
 
 namespace StateMachine
 {
-    public class Fsm<TS, TT> : Fsm<TS, TT, float>
+    public class Fsm<TS, TT>
     {
-		public Fsm(FsmModel<TS, TT, float> model) : base(model)
-        {
-        }
+        protected FsmModel<TS, TT> Model { get; set; } = new FsmModel<TS, TT>();
 
-        public Fsm(State<TS, TT, float> current, bool stackEnabled = false) : base(current, stackEnabled)
-        {
-        }
-
-        public void Update() => Model.Current.RaiseUpdated(new UpdateArgs<TS, TT, float>(this, Current, 0f));
-    }
-
-    public class Fsm<TS, TT, TD>
-    {
-        protected FsmModel<TS, TT, TD> Model { get; set; } = new FsmModel<TS, TT, TD>();
-
-        public State<TS, TT, TD> Current => Model.Current;
-        public Stack<State<TS, TT, TD>> Stack => Model.Stack;
+        public State<TS, TT> Current => Model.Current;
+        public Stack<State<TS, TT>> Stack => Model.Stack;
 
 		public Dictionary<Tuple<TS, TS>, List<Timer<TS>>> AfterEntries { get; set; } =
 			new Dictionary<Tuple<TS, TS>, List<Timer<TS>>>();
@@ -58,7 +45,7 @@ namespace StateMachine
 		public List<Timer<TS>> GlobalAfterEntries { get; set; } = new List<Timer<TS>>();
 
 		/// <exception cref="FsmBuilderException">When the model is null</exception>
-		public Fsm(FsmModel<TS, TT, TD> model)
+		public Fsm(FsmModel<TS, TT> model)
         {
 			Model = model ?? throw FsmBuilderException.ModelCannotBeNull();
             if (Model.StackEnabled && !model.Current.ClearStack)
@@ -68,7 +55,7 @@ namespace StateMachine
         }
 
         /// <exception cref="FsmBuilderException">When the initial state is null</exception>
-        public Fsm(State<TS, TT, TD> current, bool stackEnabled = false)
+        public Fsm(State<TS, TT> current, bool stackEnabled = false)
         {
             Model.StackEnabled = stackEnabled;
 			Model.Current = current ?? throw FsmBuilderException.StateCannotBeNull();
@@ -83,12 +70,12 @@ namespace StateMachine
         /// </summary>
         /// <param name="startState">The start state's key.</param>
         /// <returns></returns>
-        public static BuilderFluent<TS, TT, TD> Builder(TS startState)
-            => new FluentImplementation<TS, TT, TD>(startState);
+        public static BuilderFluent<TS, TT> Builder(TS startState)
+            => new FluentImplementation<TS, TT>(startState);
 
         /// <exception cref="FsmBuilderException">When the handler is null</exception>
-        public Fsm<TS, TT, TD> AddStateChangeHandler(
-            EventHandler<StateChangeArgs<TS, TT, TD>> e)
+        public Fsm<TS, TT> AddStateChangeHandler(
+            EventHandler<StateChangeArgs<TS, TT>> e)
         {
             if (e == null) throw FsmBuilderException.HandlerCannotBeNull();
             Model.StateChanged += e;
@@ -96,7 +83,7 @@ namespace StateMachine
         }
 
         /// <exception cref="FsmBuilderException">When the state is null or the state has already been added before</exception>
-        public Fsm<TS, TT, TD> Add(State<TS, TT, TD> state)
+        public Fsm<TS, TT> Add(State<TS, TT> state)
         {
             if (state == null) throw FsmBuilderException.StateCannotBeNull();
             if (Model.States.ContainsKey(state.Identifier)) throw FsmBuilderException.StateCanOnlyBeAddedOnce(state);
@@ -109,7 +96,7 @@ namespace StateMachine
         ///     When the transition is null or another transition already leads to the same
         ///     target state
         /// </exception>
-        public Fsm<TS, TT, TD> Add(Transition<TS, TT, TD> t)
+        public Fsm<TS, TT> Add(Transition<TS, TT> t)
         {
             if (t == null) throw FsmBuilderException.TransitionCannotBeNull();
             Model.GlobalTransitions.Add(t.Target, t);
@@ -118,7 +105,7 @@ namespace StateMachine
 
         public void JumpTo(TS state, bool isPop = false)
         {
-            State<TS, TT, TD> s;
+            State<TS, TT> s;
             if (Model.States.TryGetValue(state, out s))
             {
                 DoTransition(state, default(TT), isPop);
@@ -150,23 +137,24 @@ namespace StateMachine
 			if (Model.Current.Equals(old)) return;
 
 			var args =
-				new StateChangeArgs<TS, TT, TD>(this, old, Model.Current, input);
+				new StateChangeArgs<TS, TT>(this, old, Model.Current, input);
 			Exited(old, args);
 			Entered(args);
 			StateChanged(args);
 		}
 
-        protected virtual void Entered(StateChangeArgs<TS, TT, TD> args)
+        protected virtual void Entered(StateChangeArgs<TS, TT> args)
         {
-            Model.Current.RaiseEntered(args);
+			ResetCurrentAfterEntries(); 
+			Model.Current.RaiseEntered(args);
         }
 
-        protected virtual void Exited(State<TS, TT, TD> old, StateChangeArgs<TS, TT, TD> args)
+        protected virtual void Exited(State<TS, TT> old, StateChangeArgs<TS, TT> args)
         {
             old.RaiseExited(args);
         }
 
-        protected virtual void StateChanged(StateChangeArgs<TS, TT, TD> args)
+        protected virtual void StateChanged(StateChangeArgs<TS, TT> args)
         {
             Model.RaiseStateChanged(args);
         }
@@ -195,22 +183,21 @@ namespace StateMachine
 			// After-entries on transitions.
 			foreach (var k in Current.Model.Transitions.Keys)
 			{
-				if (!AfterEntries.TryGetValue(new Tuple<TS, TS>(Current.Identifier, k), out var currentAfterEntries)) continue;
+				if (!AfterEntries.TryGetValue(new Tuple<TS, TS>(Current.Identifier, k), out var currentAfterEntries))
+					continue;
 				if (CheckAfterEntries(currentAfterEntries, Current.Model.Transitions, elapsedTime))
 					return;
 			}
 
 			// Global after-entries.
 			if (CheckAfterEntries(GlobalAfterEntries, Model.GlobalTransitions, elapsedTime))
-			{
 				return;
-			}
-
-			Model.Current.RaiseUpdated(new UpdateArgs<TS, TT, TD>(this, Current, elapsedTime));
+			
+			Model.Current.RaiseUpdated(new UpdateArgs<TS, TT>(this, Current, elapsedTime));
 		}
 
 		private bool CheckAfterEntries(List<Timer<TS>> afterEntries,
-			Dictionary<TS, Transition<TS, TT, TD>> transitions, TimeSpan ts)
+			Dictionary<TS, Transition<TS, TT>> transitions, TimeSpan timeSpan)
 		{
 			for (var i = 0; i < afterEntries.Count; i++)
 			{
@@ -219,18 +206,32 @@ namespace StateMachine
 				if (!t.ConditionsMet(Current.Identifier)) continue;
 
 				var timerMax = e.Time;
-				var r = e.Tick(ts.TotalMilliseconds);
+				var r = e.Tick(timeSpan.TotalMilliseconds);
 				afterEntries[i] = e;
 
 				if (!r.HasValue) continue;
 
 				// It triggered.
 				DoTransition(e.Target, default(TT), t.Pop);
-				Update(ts.Subtract(TimeSpan.FromMilliseconds(timerMax)));
+				Update(timeSpan.Subtract(TimeSpan.FromMilliseconds(timerMax)));
 				return true;
 			}
 
 			return false;
+		}
+
+		private void ResetCurrentAfterEntries()
+		{
+			foreach (var k in Current.Model.Transitions.Keys)
+			{
+				if (!AfterEntries.TryGetValue(new Tuple<TS, TS>(Current.Identifier, k), out var currentAfterEntries)) continue;
+				for (var i = 0; i < currentAfterEntries.Count; i++)
+				{
+					var e = currentAfterEntries[i];
+					e.Reset();
+					currentAfterEntries[i] = e;
+				}
+			}
 		}
 	}
 }

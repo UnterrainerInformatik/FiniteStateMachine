@@ -25,19 +25,21 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System;
+
 namespace StateMachine.Events
 {
-    public struct UpdateArgs<TState, TTrigger, TData>
+    public struct UpdateArgs<TState, TTrigger>
     {
-        public Fsm<TState, TTrigger, TData> Machine { get; }
-        public State<TState, TTrigger, TData> State { get; }
-        public TData Data { get; }
+        public Fsm<TState, TTrigger> Machine { get; }
+        public State<TState, TTrigger> State { get; }
+        public TimeSpan ElapsedTimeSpan { get; }
 
-        public UpdateArgs(Fsm<TState, TTrigger, TData> machine, State<TState, TTrigger, TData> state, TData data)
+        public UpdateArgs(Fsm<TState, TTrigger> machine, State<TState, TTrigger> state, TimeSpan elapsedTimeSpan)
         {
             Machine = machine;
             State = state;
-            Data = data;
+            ElapsedTimeSpan = elapsedTimeSpan;
         }
     }
 }

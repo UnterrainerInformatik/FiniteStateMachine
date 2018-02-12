@@ -31,7 +31,7 @@ using StateMachine;
 namespace NUnitTests
 {
     [TestFixture]
-    [Category("StateMachine.GamingProgrammingPatterns")]
+    [Category("GamingProgrammingPatterns")]
     public class GameProgrammingPatterns1
     {
         private enum State
@@ -49,7 +49,7 @@ namespace NUnitTests
         }
 
         [Test]
-        [Category("StateMachine.GamingProgrammingPatterns.1")]
+        [Category("GamingProgrammingPatterns.1")]
         public void StateChangesStandingDuckingJumpingDiving()
         {
             var m = Fsm<State, Trigger>.Builder(State.STANDING)
@@ -93,7 +93,7 @@ namespace NUnitTests
         }
 
         [Test]
-        [Category("StateMachine.GamingProgrammingPatterns.2")]
+        [Category("GamingProgrammingPatterns.2")]
         public void StateChangesGunRotation()
         {
             // Now for the weapons-machine with basic forward- and backward-rotation.

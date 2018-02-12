@@ -27,15 +27,15 @@
 
 namespace StateMachine.Events
 {
-    public struct StateChangeArgs<TState, TTrigger, TData>
+    public struct StateChangeArgs<TState, TTrigger>
     {
-        public Fsm<TState, TTrigger, TData> Fsm;
-        public State<TState, TTrigger, TData> From { get; }
-        public State<TState, TTrigger, TData> To { get; }
+        public Fsm<TState, TTrigger> Fsm;
+        public State<TState, TTrigger> From { get; }
+        public State<TState, TTrigger> To { get; }
         public TTrigger Input { get; }
 
-        public StateChangeArgs(Fsm<TState, TTrigger, TData> fsm, State<TState, TTrigger, TData> from,
-            State<TState, TTrigger, TData> to, TTrigger input)
+        public StateChangeArgs(Fsm<TState, TTrigger> fsm, State<TState, TTrigger> from,
+            State<TState, TTrigger> to, TTrigger input)
         {
             Fsm = fsm;
             From = from;

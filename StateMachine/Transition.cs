@@ -30,7 +30,7 @@ using StateMachine.Events;
 
 namespace StateMachine
 {
-    public class Transition<TS, TT, TD>
+    public class Transition<TS, TT>
     {
         private TransitionModel<TS, TT> Model { get; set; }
 
@@ -97,7 +97,7 @@ namespace StateMachine
             Model.Triggers.Add(trigger);
         }
 
-        public bool Process(State<TS, TT, TD> from, TT input)
+        public bool Process(State<TS, TT> from, TT input)
             => Model.Triggers.Contains(input) && ConditionsMet(from.Identifier);
 
         public bool ConditionsMet(TS state)

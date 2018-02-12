@@ -32,7 +32,7 @@ using StateMachine;
 namespace NUnitTests
 {
     [TestFixture]
-    [Category("StateMachine.Simple")]
+    [Category("Simple")]
     public class SimpleTests
     {
         private enum State
@@ -50,11 +50,10 @@ namespace NUnitTests
         }
 
         [Test]
-        [Category("StateMachine.Simple")]
         public void WhenBuiltManuallyStackMachineShouldWork()
         {
-            var opened = new State<State, Trigger, float>(State.OPENED);
-            var closed = new State<State, Trigger, float>(State.CLOSED)
+            var opened = new State<State, Trigger>(State.OPENED);
+            var closed = new State<State, Trigger>(State.CLOSED)
             {
                 ClearStack = true
             };
@@ -62,7 +61,7 @@ namespace NUnitTests
             closed.AddTransisionOn(Trigger.OPEN, State.OPENED).AddTransisionOn(Trigger.CLOSE, State.CLOSED);
 
             var m =
-                new Fsm<State, Trigger, float>(opened, true)
+                new Fsm<State, Trigger>(opened, true)
                     .AddStateChangeHandler(TestTools.ConsoleOut)
                     .Add(opened)
                     .Add(closed);
@@ -71,7 +70,6 @@ namespace NUnitTests
         }
 
         [Test]
-        [Category("StateMachine.Simple")]
         public void WhenBuiltWithBuilderStackMachineShouldWork()
         {
             var m = Fsm<State, Trigger>.Builder(State.OPENED)
@@ -87,7 +85,7 @@ namespace NUnitTests
             AssertSimpleTest(m);
         }
         
-        private void AssertSimpleTest(Fsm<State, Trigger, float> m)
+        private void AssertSimpleTest(Fsm<State, Trigger> m)
         {
             Assert.That(m.Current.Identifier, Is.EqualTo(State.OPENED));
             m.Trigger(Trigger.OPEN);
@@ -96,11 +94,11 @@ namespace NUnitTests
 
             m.Trigger(Trigger.CLOSE);
             Assert.That(m.Current.Identifier, Is.EqualTo(State.CLOSED));
-            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<State, Trigger, float>[] {}));
+            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<State, Trigger>[] {}));
 
             m.Trigger(Trigger.CLOSE);
             Assert.That(m.Current.Identifier, Is.EqualTo(State.CLOSED));
-            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<State, Trigger, float>[] {}));
+            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<State, Trigger>[] {}));
 
             m.Trigger(Trigger.OPEN);
             Assert.That(m.Current.Identifier, Is.EqualTo(State.OPENED));
@@ -108,7 +106,6 @@ namespace NUnitTests
         }
 
         [Test]
-        [Category("StateMachine.Simple")]
         public void WhenBuiltWithBuilderAndStringsStackMachineShouldWork()
         {
             var m = Fsm<string, string>.Builder("OPENED")
@@ -127,11 +124,11 @@ namespace NUnitTests
 
             m.Trigger("CLOSE");
             Assert.That(m.Current.Identifier, Is.EqualTo("CLOSED"));
-            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<State, Trigger, float>[] { }));
+            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<State, Trigger>[] { }));
 
             m.Trigger("CLOSE");
             Assert.That(m.Current.Identifier, Is.EqualTo("CLOSED"));
-            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<State, Trigger, float>[] { }));
+            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<State, Trigger>[] { }));
 
             m.Trigger("OPEN");
             Assert.That(m.Current.Identifier, Is.EqualTo("OPENED"));
@@ -139,15 +136,14 @@ namespace NUnitTests
         }
 
         [Test]
-        [Category("StateMachine.Simple")]
         public void WhenCallingPopOnStackMachineBuiltManuallyShouldBehaveCorrectly()
         {
-            var opened = new State<State, Trigger, float>(State.OPENED);
-            var closed = new State<State, Trigger, float>(State.CLOSED)
+            var opened = new State<State, Trigger>(State.OPENED);
+            var closed = new State<State, Trigger>(State.CLOSED)
             {
                 ClearStack = true
             };
-            var pop = new State<State, Trigger, float>(State.POP);
+            var pop = new State<State, Trigger>(State.POP);
             opened.AddTransisionOn(Trigger.CLOSE, State.CLOSED)
                 .AddTransisionOn(Trigger.OPEN, State.OPENED)
                 .AddTransisionOn(Trigger.PUSH_POP, State.POP);
@@ -156,7 +152,7 @@ namespace NUnitTests
                 .AddTransisionOn(Trigger.CLOSE, State.CLOSED);
 
             var m =
-                new Fsm<State, Trigger, float>(opened, true)
+                new Fsm<State, Trigger>(opened, true)
                     .AddStateChangeHandler(TestTools.ConsoleOut)
                     .Add(opened)
                     .Add(closed)
@@ -166,7 +162,6 @@ namespace NUnitTests
         }
 
         [Test]
-        [Category("StateMachine.Simple")]
         public void WhenCallingPopOnStackMachineBuiltWithBuilderShouldBehaveCorrectly()
         {
             var m = Fsm<State, Trigger>.Builder(State.OPENED)
@@ -185,7 +180,7 @@ namespace NUnitTests
             AssertTestWithPop(m);
         }
 
-        private void AssertTestWithPop(Fsm<State, Trigger, float> m)
+        private void AssertTestWithPop(Fsm<State, Trigger> m)
         {
             Assert.That(m.Current.Identifier, Is.EqualTo(State.OPENED));
             m.Trigger(Trigger.OPEN);
@@ -202,11 +197,11 @@ namespace NUnitTests
 
             m.Trigger(Trigger.CLOSE);
             Assert.That(m.Current.Identifier, Is.EqualTo(State.CLOSED));
-            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<State, Trigger, float>[] { }));
+            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<State, Trigger>[] { }));
 
             m.Trigger(Trigger.CLOSE);
             Assert.That(m.Current.Identifier, Is.EqualTo(State.CLOSED));
-            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<State, Trigger, float>[] { }));
+            Assert.That(m.Stack.ToArray(), Is.EquivalentTo(new State<State, Trigger>[] { }));
 
             m.Trigger(Trigger.OPEN);
             Assert.That(m.Current.Identifier, Is.EqualTo(State.OPENED));

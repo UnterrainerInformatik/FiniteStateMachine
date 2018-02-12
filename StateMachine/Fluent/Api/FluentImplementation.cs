@@ -31,21 +31,21 @@ using StateMachine.Events;
 
 namespace StateMachine.Fluent.Api
 {
-    public class FluentImplementation<TS, TT, TD> : GlobalTransitionBuilderFluent<TS, TT, TD>,
-        TransitionStateFluent<TS, TT, TD>
+    public class FluentImplementation<TS, TT> : GlobalTransitionBuilderFluent<TS, TT>,
+        TransitionStateFluent<TS, TT>
     {
 		public Dictionary<Tuple<TS, TS>, List<Timer<TS>>> AfterEntries { get; set; } = new Dictionary<Tuple<TS, TS>, List<Timer<TS>>>();
 		public List<Timer<TS>> GlobalAfterEntries { get; set; } = new List<Timer<TS>>();
 
-		protected FsmModel<TS, TT, TD> FsmModel { get; set; } = new FsmModel<TS, TT, TD>();
+		protected FsmModel<TS, TT> FsmModel { get; set; } = new FsmModel<TS, TT>();
         protected TS startState;
 
         protected Tuple<TS> currentState;
         protected Tuple<TS, TS> currentTransition;
         protected Tuple<TS> currentGlobalTransition;
 
-        protected Dictionary<Tuple<TS>, StateModel<TS, TT, TD>> stateModels =
-            new Dictionary<Tuple<TS>, StateModel<TS, TT, TD>>();
+        protected Dictionary<Tuple<TS>, StateModel<TS, TT>> stateModels =
+            new Dictionary<Tuple<TS>, StateModel<TS, TT>>();
 
         protected Dictionary<Tuple<TS, TS>, TransitionModel<TS, TT>> transitionModels =
             new Dictionary<Tuple<TS, TS>, TransitionModel<TS, TT>>();
@@ -58,7 +58,7 @@ namespace StateMachine.Fluent.Api
             this.startState = startState;
         }
 
-        public Fsm<TS, TT, TD> Build()
+        public Fsm<TS, TT> Build()
         {
             if (FsmModel.States[startState] == null)
             {
@@ -66,10 +66,13 @@ namespace StateMachine.Fluent.Api
             }
 
             FsmModel.Current = FsmModel.States[startState];
-            return new Fsm<TS, TT, TD>(FsmModel);
-        }
+			var m = new Fsm<TS, TT>(FsmModel);
+			m.AfterEntries = AfterEntries;
+			m.GlobalAfterEntries = GlobalAfterEntries;
+			return m;
+		}
 
-		public TransitionStateFluent<TS, TT, TD> After(float amount, TimeUnit timeUnit)
+		public TransitionStateFluent<TS, TT> After(TimeSpan timeSpan)
 		{
 			var key = currentTransition;
 			if (!AfterEntries.TryGetValue(key, out var l))
@@ -77,71 +80,71 @@ namespace StateMachine.Fluent.Api
 				l = new List<Timer<TS>>();
 				AfterEntries.Add(key, l);
 			}
-			l.Add(new Timer<TS>(key.Item2, amount, timeUnit));
+			l.Add(new Timer<TS>(key.Item2, timeSpan.TotalMilliseconds, TimeUnit.MILLISECONDS));
 			return this;
 		}
 
-		public TransitionStateFluent<TS, TT, TD> AfterGlobal(float amount, TimeUnit timeUnit)
+		public TransitionStateFluent<TS, TT> AfterGlobal(TimeSpan timeSpan)
 		{
 			var key = currentGlobalTransition;
-			GlobalAfterEntries.Add(new Timer<TS>(key.Item1, amount, timeUnit));
+			GlobalAfterEntries.Add(new Timer<TS>(key.Item1, timeSpan.TotalMilliseconds, TimeUnit.MILLISECONDS));
 			return this;
 		}
 
-		public StateFluent<TS, TT, TD> State(TS state)
+		public StateFluent<TS, TT> State(TS state)
         {
             currentState = Tuple.Create(state);
             if (!FsmModel.States.ContainsKey(state))
             {
-                stateModels[currentState] = new StateModel<TS, TT, TD>(state);
-                FsmModel.States[state] = new State<TS, TT, TD>(stateModels[currentState]);
+                stateModels[currentState] = new StateModel<TS, TT>(state);
+                FsmModel.States[state] = new State<TS, TT>(stateModels[currentState]);
             }
             return this;
         }
 
-        public StateFluent<TS, TT, TD> OnEnter(Action<StateChangeArgs<TS, TT, TD>> enter)
+        public StateFluent<TS, TT> OnEnter(Action<StateChangeArgs<TS, TT>> enter)
         {
             stateModels[currentState].AddEnteredHandler(enter);
             return this;
         }
 
-        public StateFluent<TS, TT, TD> OnExit(Action<StateChangeArgs<TS, TT, TD>> exit)
+        public StateFluent<TS, TT> OnExit(Action<StateChangeArgs<TS, TT>> exit)
         {
             stateModels[currentState].AddExitedHandler(exit);
             return this;
         }
 
-        public StateFluent<TS, TT, TD> Update(Action<UpdateArgs<TS, TT, TD>> update)
+        public StateFluent<TS, TT> Update(Action<UpdateArgs<TS, TT>> update)
         {
             stateModels[currentState].AddUpdatedHandler(update);
             return this;
         }
 
-        public GlobalTransitionFluent<TS, TT, TD> GlobalTransitionTo(TS state)
+        public GlobalTransitionFluent<TS, TT> GlobalTransitionTo(TS state)
         {
             currentGlobalTransition = Tuple.Create(state);
 			if (globalTransitionModels.ContainsKey(currentGlobalTransition)) return this;
 
 			globalTransitionModels[currentGlobalTransition] = new TransitionModel<TS, TT>(startState, state);
 			FsmModel.GlobalTransitions[state] =
-				new Transition<TS, TT, TD>(globalTransitionModels[currentGlobalTransition]);
+				new Transition<TS, TT>(globalTransitionModels[currentGlobalTransition]);
 			return this;
         }
 
-        public GlobalTransitionBuilderFluent<TS, TT, TD> OnGlobal(TT trigger)
+        public GlobalTransitionBuilderFluent<TS, TT> OnGlobal(TT trigger)
         {
             globalTransitionModels[currentGlobalTransition].Triggers.Add(trigger);
             return this;
         }
 
-        public GlobalTransitionBuilderFluent<TS, TT, TD> IfGlobal(
+        public GlobalTransitionBuilderFluent<TS, TT> IfGlobal(
             Func<IfArgs<TS>, bool> condition)
         {
             globalTransitionModels[currentGlobalTransition].Conditions.Add(condition);
             return this;
         }
 
-        public TransitionFluent<TS, TT, TD> TransitionTo(TS state)
+        public TransitionFluent<TS, TT> TransitionTo(TS state)
         {
             currentTransition = Tuple.Create(currentState.Item1, state);
             if (!transitionModels.ContainsKey(currentTransition))
@@ -149,36 +152,36 @@ namespace StateMachine.Fluent.Api
                 transitionModels[currentTransition] = new TransitionModel<TS, TT>(currentState.Item1,
                     state);
                 stateModels[currentState].Transitions[state] =
-                    new Transition<TS, TT, TD>(transitionModels[currentTransition]);
+                    new Transition<TS, TT>(transitionModels[currentTransition]);
             }
             return this;
         }
 
-        public TransitionStateFluent<TS, TT, TD> On(TT trigger)
+        public TransitionStateFluent<TS, TT> On(TT trigger)
         {
             transitionModels[currentTransition].Triggers.Add(trigger);
             return this;
         }
 
-        public TransitionStateFluent<TS, TT, TD> If(Func<IfArgs<TS>, bool> condition)
+        public TransitionStateFluent<TS, TT> If(Func<IfArgs<TS>, bool> condition)
         {
             transitionModels[currentTransition].Conditions.Add(condition);
             return this;
         }
 
-        public StateFluent<TS, TT, TD> ClearsStack()
+        public StateFluent<TS, TT> ClearsStack()
         {
             FsmModel.States[currentState.Item1].ClearStack = true;
             return this;
         }
 
-        public BuilderFluent<TS, TT, TD> EnableStack()
+        public BuilderFluent<TS, TT> EnableStack()
         {
             FsmModel.StackEnabled = true;
             return this;
         }
 
-        public TransitionFluent<TS, TT, TD> PopTransition()
+        public TransitionFluent<TS, TT> PopTransition()
         {
             TransitionTo(default(TS));
             transitionModels[currentTransition].Pop = true;

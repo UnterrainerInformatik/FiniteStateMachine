@@ -54,13 +54,13 @@ namespace NUnitTests
             public bool IsActivated { get; set; }
             public State BtnState { get; set; }
             public State OldState { get; set; } = State.IDLE;
-            public float RefreshTimer { get; set; } = 1F;
+            public float RefreshTimer { get; set; } = 2F;
 
             public int UpdateCounter { get; set; }
         }
 
         [Test]
-        [Category("StateMachine.FluentTests.OnMethods")]
+        [Category("FluentTests.OnMethods")]
         public void WhenStateChangesOnEnterAndOnExitHooksShouldTrigger()
         {
             var button = new Button();
@@ -86,7 +86,7 @@ namespace NUnitTests
                     .OnExit(t => button.OldState = button.BtnState)
                     .Update(a =>
                     {
-                        button.RefreshTimer -= a.Data;
+                        button.RefreshTimer -= (float)a.ElapsedTimeSpan.TotalMilliseconds;
                         if (button.RefreshTimer <= 0F)
                         {
                             button.RefreshTimer = 0F;
@@ -96,7 +96,7 @@ namespace NUnitTests
                     })
                 .Build();
 
-            m.Update(TimeSpan.FromMilliseconds(2f)); // Should do nothing.
+            m.Update(TimeSpan.FromMilliseconds(2)); // Should do nothing.
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
             m.Trigger(Trigger.MOUSE_CLICKED);
             Assert.That(m.Current.Identifier, Is.EqualTo(State.IDLE));
@@ -109,7 +109,7 @@ namespace NUnitTests
             Assert.That(button.BtnState, Is.EqualTo(State.OVER));
             Assert.That(button.OldState, Is.EqualTo(State.IDLE));
             m.Trigger(Trigger.MOUSE_CLICKED);
-            Assert.That(m.Current.Identifier, Is.EqualTo(State.PRESSED));
+            Assert.That(m.Current.Identifier, Is.EqualTo(State.PRESSED)); 
             Assert.That(button.BtnState, Is.EqualTo(State.PRESSED));
             Assert.That(button.OldState, Is.EqualTo(State.OVER));
             m.Trigger(Trigger.MOUSE_RELEASED); // Button is deactivated.
@@ -121,11 +121,11 @@ namespace NUnitTests
             Assert.That(m.Current.Identifier, Is.EqualTo(State.REFRESHING));
             Assert.That(button.BtnState, Is.EqualTo(State.REFRESHING));
             Assert.That(button.OldState, Is.EqualTo(State.PRESSED));
-            m.Update(TimeSpan.FromMilliseconds(0.5f)); // No transition yet...
+            m.Update(TimeSpan.FromMilliseconds(1)); // No transition yet...
             Assert.That(m.Current.Identifier, Is.EqualTo(State.REFRESHING));
             Assert.That(button.BtnState, Is.EqualTo(State.REFRESHING));
             Assert.That(button.OldState, Is.EqualTo(State.PRESSED));
-            m.Update(TimeSpan.FromMilliseconds(0.5f)); // But now.
+            m.Update(TimeSpan.FromMilliseconds(1)); // But now.
             Assert.That(m.Current.Identifier, Is.EqualTo(State.OVER));
             Assert.That(button.BtnState, Is.EqualTo(State.OVER));
             Assert.That(button.OldState, Is.EqualTo(State.REFRESHING));

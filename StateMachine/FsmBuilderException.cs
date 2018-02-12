@@ -35,8 +35,8 @@ namespace StateMachine
         {
         }
 
-        public static FsmBuilderException StateCanOnlyBeAddedOnce<TS, TT, TD>(
-            State<TS, TT, TD> state)
+        public static FsmBuilderException StateCanOnlyBeAddedOnce<TS, TT>(
+            State<TS, TT> state)
             => new FsmBuilderException($"A state [{state.Identifier}] has already been added. You can only one add" +
                                        " a state with a unique identifier once.");
 

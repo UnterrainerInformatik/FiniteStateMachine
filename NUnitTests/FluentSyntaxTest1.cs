@@ -99,8 +99,8 @@ namespace NUnitTests
             MOUSE_LEAVE
         }
 
-        private readonly Dictionary<Button, Fsm<State, Trigger, float>> buttonMachines =
-            new Dictionary<Button, Fsm<State, Trigger, float>>();
+        private readonly Dictionary<Button, Fsm<State, Trigger>> buttonMachines =
+            new Dictionary<Button, Fsm<State, Trigger>>();
 
         private void Main()
         {
@@ -109,7 +109,7 @@ namespace NUnitTests
             CreateMachineFor(Fsm<State, Trigger>.Builder(State.IDLE), new Button(), hero);
         }
 
-        private void CreateMachineFor(BuilderFluent<State, Trigger, float> builder, Button button, Hero hero)
+        private void CreateMachineFor(BuilderFluent<State, Trigger> builder, Button button, Hero hero)
         {
             buttonMachines.Add(button, builder
                 .State(State.IDLE)

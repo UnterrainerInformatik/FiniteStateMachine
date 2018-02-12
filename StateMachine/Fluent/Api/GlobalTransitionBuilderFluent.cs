@@ -27,9 +27,9 @@
 
 namespace StateMachine.Fluent.Api
 {
-    public interface GlobalTransitionBuilderFluent<TS, TT, TD> :
-        GlobalTransitionFluent<TS, TT, TD>,
-        BuilderFluent<TS, TT, TD>
+    public interface GlobalTransitionBuilderFluent<TS, TT> :
+        GlobalTransitionFluent<TS, TT>,
+        BuilderFluent<TS, TT>
     {
     }
 }
