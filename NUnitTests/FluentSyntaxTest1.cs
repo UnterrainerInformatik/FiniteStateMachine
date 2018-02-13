@@ -104,6 +104,7 @@ namespace NUnitTests
             new Dictionary<Button, Fsm<State, Trigger>>();
 
 		[Test]
+		[Ignore("Is output to PlantUML only.")]
         public void Main()
         {
             var hero = new Hero();
