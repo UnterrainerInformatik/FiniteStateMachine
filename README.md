@@ -1,10 +1,20 @@
 [![license](https://img.shields.io/github/license/unterrainerinformatik/FiniteStateMachine.svg?maxAge=2592000)](http://unlicense.org)  [![Twitter Follow](https://img.shields.io/twitter/follow/throbax.svg?style=social&label=Follow&maxAge=2592000)](https://twitter.com/throbax)
 
-| Project                        |                 Package                  |
-| ------------------------------ | :--------------------------------------: |
-| StateMachine                   | [![NuGet](https://img.shields.io/nuget/v/StateMachine.svg?maxAge=2592000)](https://www.nuget.org/packages/StateMachine/) [![NuGet](https://img.shields.io/nuget/dt/StateMachine.svg?maxAge=2592000)](https://www.nuget.org/packages/StateMachine/) |
-| MonoGameStateMachine           | [![NuGet](https://img.shields.io/nuget/v/MonoGameStateMachine.svg)](https://www.nuget.org/packages/MonoGameStateMachine/) [![NuGet](https://img.shields.io/nuget/dt/MonoGameStateMachine.svg)](https://www.nuget.org/packages/MonoGameStateMachine/) |
-| Java-Version: JavaStateMachine | [Olards Java Version on GitHub](https://github.com/Olard/JavaStateMachine) |
+| Project                                                      |                           Package                            |
+| ------------------------------------------------------------ | :----------------------------------------------------------: |
+| StateMachine                                                 | [![NuGet](https://img.shields.io/nuget/v/StateMachine.svg?maxAge=2592000)](https://www.nuget.org/packages/StateMachine/) [![NuGet](https://img.shields.io/nuget/dt/StateMachine.svg?maxAge=2592000)](https://www.nuget.org/packages/StateMachine/) |
+| MonoGameStateMachine **(deprecated)**<br />**Please use the normal StateMachine instead** | [![NuGet](https://img.shields.io/nuget/v/MonoGameStateMachine.svg)](https://www.nuget.org/packages/MonoGameStateMachine/) [![NuGet](https://img.shields.io/nuget/dt/MonoGameStateMachine.svg)](https://www.nuget.org/packages/MonoGameStateMachine/)<br />Use the normal StateMachine and pass a TimeSpan on Update. |
+| Java-Version: JavaStateMachine                               | [Olards Java Version on GitHub](https://github.com/Olard/JavaStateMachine) |
+
+# Deprecation of MonoGameStateMachine
+
+We simply didn't want to maintain two libraries of this size and the non-MG users wanted the functionality of the MonoGame version as well. So we compromised and ported the MG version back to the core-version replacing the `GameTime` reference, which really was the only thing we used from MG, which felt like a waste, with a `TimeSpan` everyone may use. Use it like this:
+
+```c#
+machine.Update(TimeSpan.FromMilliseconds(gameTime.ElapsedGameTime.TotalMilliseconds));
+```
+
+
 
 # Finite-State-Machine
 
@@ -23,28 +33,10 @@ If you're looking for a Java version of this project, check out [Olards Java Ver
 
 #### ![Icon](https://github.com/UnterrainerInformatik/FiniteStateMachine/raw/master/StateMachine/icon.png)StateMachine
 
-Is the generic implementation.
+Is the generic implementation in the form of a PCL (portable code library).
 It references no other library (no dependencies).
 
 Nice if you want to use it outside of MonoGame.
-
-#### ![Icon](https://github.com/UnterrainerInformatik/FiniteStateMachine/raw/master/MonoGameStateMachine/icon.png)MonoGameStateMachine
-
-This is a PCL (portable code library) so you should be able to use it in any MG project.
-
-Includes a reference to MonoGame so that it can use MonoGame's `GameTime` structure. It is a mandatory parameter when calling `Update` in this implementation and so it can add the `After()` feature to transitions like so:
-
-````c#
-Fsm<State, Trigger>.Builder(State.STANDING)
-  .State(State.DUCKING)
-    .TransitionTo(State.STANDING).After(500, TimeUnit.MILLISECONDS)
-  ...
-````
-
-This **only** works in the MonoGame-version.
-This functionality is achieved by updating the `After` conditions **before** evaluating the `Update` function - Be advised that this happens directly before the `Update` call with the `GameTime` you've specified in the call to `Update`. If the `After` function triggers, the call to `Update` will be omitted.
-
-> The nuget-badges above lead to the appropriate targets on nuget.org.
 
 ## Description
 
@@ -58,7 +50,9 @@ We place those machines in a single class where they could 'talk with each other
 
 ### Example
 
-```c#
+![State-Machine-Image jumping-diving](https://github.com/UnterrainerInformatik/FiniteStateMachine/raw/master/StateMachine/docs/jumping_diving.png)
+
+```C#
 Fsm<State, Trigger>.Builder(State.STANDING)
   .State(State.DUCKING)
     .TransitionTo(State.STANDING).On(Trigger.DOWN)
@@ -125,7 +119,7 @@ private Keys[] lastKeysPressed;
 private Hero hero;
 
 public void main() {
-  horizontalMachine = Fsm.Builder<HState, HTrigger, GameTime>(STANDING)
+  horizontalMachine = Fsm.Builder<HState, HTrigger>(STANDING)
     .State(STANDING)
       .TransitionTo(WALKING_LEFT).On(LEFT_PRESSED)
       .TransitionTo(WALKING_RIGHT).On(RIGHT_PRESSED)
@@ -155,7 +149,7 @@ public void main() {
         hero.delayTimer.Start();
       })
       .Update(a => {
-        hero.delayTimer.Update(a.GameTime);
+        hero.delayTimer.Update(a.ElapsedTimeSpan);
         if(hero.delayTimer) {
           horizontalMachine.JumpTo(STANDING);
         }
@@ -167,7 +161,7 @@ public void main() {
         hero.delayTimer.Start();
       })
       .Update(a => {
-        hero.delayTimer.Update(a.GameTime);
+        hero.delayTimer.Update(a.ElapsedTimeSpan);
         if(hero.delayTimer) {
           horizontalMachine.JumpTo(STANDING);
         }
@@ -189,7 +183,7 @@ public void main() {
     .GlobalTransitionTo(STANDING).On(SPACE_PRESSED)
     .Build();
   
-  verticalMachine = Fsm.Builder<VState, VTrigger, GameTime>(STANDING)
+  verticalMachine = Fsm.Builder<VState, VTrigger>(STANDING)
     .State(STANDING)
       .TransitionTo(DUCKING).On(DOWN_PRESSED)
       .TransitionTo(JUMPING).On(UP_PRESSED)
@@ -213,7 +207,7 @@ public void main() {
       })
       .OnExit(ConsoleOut)
       .Update(a => {
-        hero.height += a.GameTime.ElapsedGameTime.TotalSeconds * 100F;
+        hero.height += a.ElapsedTimeSpan.TotalSeconds * 100F;
         if(hero.height >= 200F)
           verticalMachine.TransitionTo(DESCENDING);
       })
@@ -225,7 +219,7 @@ public void main() {
       })
       .OnExit(ConsoleOut)
       .Update(a => {
-        hero.height -= a.GameTime.ElapsedGameTime.TotalSeconds * 100F;
+        hero.height -= a.ElapsedTimeSpan.TotalSeconds * 100F;
         if(hero.height <= 0F) {
           hero.height = 0F;
           verticalMachine.TransitionTo(STANDING);
@@ -239,7 +233,7 @@ public void main() {
       })
       .OnExit(ConsoleOut)
       .Update(a => {
-        hero.height -= a.GameTime.ElapsedGameTime.TotalSeconds * 150F;
+        hero.height -= a.ElapsedTimeSpan.TotalSeconds * 150F;
         if(hero.height <= 0F) {
           hero.height = 0F;
           verticalMachine.TransitionTo(STANDING);
@@ -274,8 +268,10 @@ protected override void Update(GameTime gameTime) {
   lastKeysPressed = s.GetPressedKeys();
   
   // Update the machines themselves.
-  verticalMachine.Update(gameTime);
-  horizontalMachine.Update(gameTime);
+  verticalMachine.Update(TimeSpan.FromMilliseconds(
+	gameTime.ElapsedGameTime.TotalMilliseconds));
+  horizontalMachine.Update(TimeSpan.FromMilliseconds(
+	gameTime.ElapsedGameTime.TotalMilliseconds));
 }
 
 private void ConsoleOut(TransitioningValueArgs<string> e) {
@@ -291,11 +287,11 @@ Another example with a spell-button that has a refresh-time:
 private enum State { IDLE, OVER, PRESSED, REFRESHING };
 private enum Trigger { MOUSE_CLICKED, MOUSE_RELEASED, MOUSE_OVER, MOUSE_LEAVE };
 
-private Dictionary<Button, Fsm<State, Trigger, GameTime>> buttonMachines = new
-  Dictionary<Button, Fsm<State, Trigger, GameTime>>();
+private Dictionary<Button, Fsm<State, Trigger>> buttonMachines = new
+  Dictionary<Button, Fsm<State, Trigger>>();
 
 private void CreateMachineFor(Button button)
-  buttonMachines.Add(button, Fsm.Builder<State, Trigger, GameTime>(IDLE)
+  buttonMachines.Add(button, Fsm.Builder<State, Trigger>(IDLE)
     .State(IDLE)
       .TransitionTo(OVER).On(MOUSE_OVER)
       .OnEnter(e => {
@@ -337,6 +333,17 @@ public void main() {
   ...
 }
 ```
+
+There also is the `After` feature ported from the MG version. Use it like that:
+
+```c#
+Fsm<State, Trigger>.Builder(State.STANDING)
+  .State(State.DUCKING)
+    .TransitionTo(State.STANDING).After(TimeSpan.fromMilliseconds(500))
+...
+```
+
+This functionality is achieved by updating the `After` conditions **before** evaluating the `Update` function - Be advised that this happens directly before the `Update` call with the `TimeSpan` you've specified in the call to `Update`. If the `After` function triggers, the call to `Update` will be omitted.
 
 ## Inspired by:
 

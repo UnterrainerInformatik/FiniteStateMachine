@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MonoGameStateMachine</RootNamespace>
-    <AssemblyName>MonoGameStateMachine</AssemblyName>
+    <AssemblyName>[DEPRECATED] MonoGameStateMachine</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -35,18 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Api\BuilderFluent.cs" />
-    <Compile Include="Api\FluentImplementation.cs" />
-    <Compile Include="Api\GlobalTransitionBuilderFluent.cs" />
-    <Compile Include="Api\GlobalTransitionFluent.cs" />
-    <Compile Include="Api\StateFluent.cs" />
-    <Compile Include="Api\TransitionStateFluent.cs" />
-    <Compile Include="DataObject.cs" />
     <Compile Include="Timer.cs" />
-    <Compile Include="Fsm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TimeUnit.cs" />
-    <Compile Include="Api\TransitionFluent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
@@ -56,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="MonoGameStateMachine.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

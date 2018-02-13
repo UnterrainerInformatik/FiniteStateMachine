@@ -36,8 +36,9 @@ namespace StateMachine
         public event EventHandler<StateChangeArgs<TS, TT>> StateChanged;
 
         public State<TS, TT> Current { get; set; }
+		public State<TS, TT> StartState { get; set; }
 
-        public Stack<State<TS, TT>> Stack { get; } = new Stack<State<TS, TT>>();
+		public Stack<State<TS, TT>> Stack { get; } = new Stack<State<TS, TT>>();
         public bool StackEnabled { get; set; }
 
         public Dictionary<TS, State<TS, TT>> States { get; } = new Dictionary<TS, State<TS, TT>>();

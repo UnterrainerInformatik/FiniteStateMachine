@@ -76,7 +76,9 @@ namespace NUnitTests
             Assert.That(m.Current.Identifier, Is.EqualTo(State.JUMPING));
             m.Trigger(Trigger.DOWN);
             Assert.That(m.Current.Identifier, Is.EqualTo(State.DIVING));
-        }
+
+			var s = m.GetPlantUml();
+		}
 
         private enum WState
         {

@@ -25,6 +25,7 @@
 // For more information, please refer to <http://unlicense.org>
 // ***************************************************************************
 
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using StateMachine.Events;
 
@@ -35,6 +36,7 @@ namespace StateMachine
         private TransitionModel<TS, TT> Model { get; set; }
 
         public TS Target => Model.Target;
+		public ISet<TT> Triggers => Model.Triggers;
 
         public bool Pop => Model.Pop;
 

@@ -26,6 +26,7 @@
 // ***************************************************************************
 
 using System;
+using System.Collections.Generic;
 using StateMachine.Events;
 
 namespace StateMachine
@@ -35,6 +36,8 @@ namespace StateMachine
         public StateModel<TS, TT> Model { get; set; }
 
         public TS Identifier => Model.Identifier;
+		public Dictionary<TS, Transition<TS, TT>> Transitions => Model.Transitions;
+		public bool EndState => Model.EndState;
 
         public bool ClearStack
         {

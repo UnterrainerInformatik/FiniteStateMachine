@@ -66,6 +66,7 @@ namespace StateMachine.Fluent.Api
             }
 
             FsmModel.Current = FsmModel.States[startState];
+			FsmModel.StartState = FsmModel.Current;
 			var m = new Fsm<TS, TT>(FsmModel);
 			m.AfterEntries = AfterEntries;
 			m.GlobalAfterEntries = GlobalAfterEntries;

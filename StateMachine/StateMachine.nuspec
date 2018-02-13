@@ -10,7 +10,7 @@
 	<iconUrl>https://github.com/UnterrainerInformatik/FiniteStateMachine/raw/master/StateMachine/icon.png</iconUrl>
     <projectUrl>https://github.com/UnterrainerInformatik/FiniteStateMachine</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>This project implements a Finite-State-Machine (FSM) designed to be used in games.
+    <description>This project implements a Finite-State-Machine (FSM) as a PCL (portable class library) designed to be used in games.
 	  Furthermore it implements even a Stack-Based-FSM (SBFSM). So you may tell it to 'continue with the last state before the active one'.
 	  You describe your FSM using a nice and well documented DSL (Domain Specific Language).
 
@@ -19,6 +19,6 @@
     <releaseNotes></releaseNotes>
     <copyright>Copyright 2017</copyright>
     <language>en-US</language>
-    <tags>state finite machine gamestate transition fluent</tags>
+    <tags>state finite machine gamestate transition fluent after update timespan</tags>
   </metadata>
 </package>

@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("MonoGameStateMachine")]
 [assembly: AssemblyProduct("MonoGameStateMachine")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("[DEPRECATED] This library is deprecated. Please use the normal StateMachine instead which is fully tested and being actively maintained. https://www.nuget.org/packages/StateMachine/")]
 [assembly: AssemblyCompany("Unterrainer Informatik OG")]
 [assembly: AssemblyCopyright("Copyright Unterrainer Informatik ©  2017")]
 [assembly: AssemblyTrademark("")]
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.1.3.1")]
-[assembly: AssemblyFileVersion("1.1.3.1")]
+[assembly: AssemblyVersion("1.1.3.2")]
+[assembly: AssemblyFileVersion("1.1.3.2")]
