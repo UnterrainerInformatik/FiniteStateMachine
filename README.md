@@ -50,7 +50,7 @@ We place those machines in a single class where they could 'talk with each other
 
 ### Example
 
-![State-Machine-Image jumping-diving](https://github.com/UnterrainerInformatik/FiniteStateMachine/raw/master/StateMachine/docs/jumping_diving.png)
+![State-Machine-Image jumping-diving](https://github.com/UnterrainerInformatik/FiniteStateMachine/raw/master/docs/jumping_diving.png)
 
 ```C#
 Fsm<State, Trigger>.Builder(State.STANDING)
@@ -104,22 +104,26 @@ So the file ```GameProgrammingPatterns1.cs``` in the test-folder contains that m
 
 This is a short paragraph that is about an example what configuring a state machine actually looks like.
 
+![State-Machine-Image walking_running](https://github.com/UnterrainerInformatik/FiniteStateMachine/raw/master/docs/walking_running.png)
+
+![State-Machine-Image standing_ducking](https://github.com/UnterrainerInformatik/FiniteStateMachine/raw/master/docs/standing_ducking.png)
+
 ```c#
 private enum VState { DUCKING, STANDING, JUMPING, DESCENDING, DIVING };
 private enum VTrigger { DOWN_RELEASED, DOWN_PRESSED, UP_PRESSED, SPACE_PRESSED };
 
 private enum HState { STANDING, RUNNING_LEFT, RUNNING_RIGHT, WALKING_LEFT,
                      WALKING_RIGHT, WALKING_DELAY_LEFT, WALKING_DELAY_RIGHT};
-private enum HTrigger { LEFT_PRESSED, LEFT_RELEASED, RIGHT_PRESSED, RIGHT_RELEASED };
+private enum HTrigger { LEFT_PRESSED, LEFT_RELEASED, RIGHT_PRESSED, RIGHT_RELEASED, SPACE_PRESSED };
 
-private Fsm<State, Trigger> verticalMachine;
-private Fsm<State, Trigger> horizontalMachine;
+private Fsm<HState, VTrigger> verticalMachine;
+private Fsm<VState, HTrigger> horizontalMachine;
 
 private Keys[] lastKeysPressed;
 private Hero hero;
 
 public void main() {
-  horizontalMachine = Fsm.Builder<HState, HTrigger>(STANDING)
+  horizontalMachine = Fsm<HState, HTrigger>.Builder(STANDING)
     .State(STANDING)
       .TransitionTo(WALKING_LEFT).On(LEFT_PRESSED)
       .TransitionTo(WALKING_RIGHT).On(RIGHT_PRESSED)
@@ -183,7 +187,7 @@ public void main() {
     .GlobalTransitionTo(STANDING).On(SPACE_PRESSED)
     .Build();
   
-  verticalMachine = Fsm.Builder<VState, VTrigger>(STANDING)
+  verticalMachine = Fsm<VState, VTrigger>.Builder(STANDING)
     .State(STANDING)
       .TransitionTo(DUCKING).On(DOWN_PRESSED)
       .TransitionTo(JUMPING).On(UP_PRESSED)
@@ -279,9 +283,9 @@ private void ConsoleOut(TransitioningValueArgs<string> e) {
 }
 ```
 
-
-
 Another example with a spell-button that has a refresh-time:
+
+![State-Machine-Image button](https://github.com/UnterrainerInformatik/FiniteStateMachine/raw/master/docs/button.png)
 
 ```c#
 private enum State { IDLE, OVER, PRESSED, REFRESHING };
@@ -349,3 +353,4 @@ This functionality is achieved by updating the `After` conditions **before** eva
 
 * [Fluent-State-Machine](https://github.com/Real-Serious-Games/Fluent-State-Machine) - by RoryDungan (MIT License)
 * [Nate](https://github.com/mmonteleone/nate) - by mmonteleone (MIT License)
+* [PlantUML - PlantText](https://www.planttext.com/) - PlantUML website. You can layout your PlantUML text and generate images out of them there.

@@ -26,12 +26,13 @@
 // ***************************************************************************
 
 using System;
-using StateMachine;
 using NUnit.Framework;
+using StateMachine;
 
-namespace NUnitTests.MonoGame
+namespace NUnitTests
 {
-    public class FluentTests
+	[Category("FluentAfterTests")]
+	public class FluentAfterTests
     {
         private enum State
         {
@@ -59,7 +60,6 @@ namespace NUnitTests.MonoGame
         }
 
         [Test]
-        [Category("MonoGameStateMachine.FluentTests")]
         public void WhenAfterConditionFiresOnEnterAndOnExitHooksShouldTrigger()
         {
             var button = new Button();
@@ -132,7 +132,6 @@ namespace NUnitTests.MonoGame
         }
 
         [Test]
-        [Category("MonoGameStateMachine.FluentTests")]
         public void WhenMultipleAfterConditionsFireOnASingleUpdateAdvanceStateCorrectly()
         {
             var m = Fsm<State, Trigger>.Builder(State.IDLE)
@@ -152,7 +151,6 @@ namespace NUnitTests.MonoGame
         }
 
         [Test]
-        [Category("MonoGameStateMachine.FluentTests")]
         public void WhenMultipleAfterConditionsFireOnASingleUpdateOnEnterAndOnExitShoudFire()
         {
             var enterCount = 0;
@@ -183,7 +181,6 @@ namespace NUnitTests.MonoGame
         }
 
         [Test]
-        [Category("MonoGameStateMachine.FluentTests")]
         public void WhenAnAfterConditionDoesNotFiresAndATransitionHappensTheTimerIsResetOnReentry()
         {
             var m = Fsm<State, Trigger>.Builder(State.IDLE)

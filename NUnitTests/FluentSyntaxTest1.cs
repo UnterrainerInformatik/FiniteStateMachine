@@ -26,6 +26,7 @@
 // ***************************************************************************
 
 using System.Collections.Generic;
+using NUnit.Framework;
 using StateMachine;
 using StateMachine.Fluent.Api;
 
@@ -102,7 +103,8 @@ namespace NUnitTests
         private readonly Dictionary<Button, Fsm<State, Trigger>> buttonMachines =
             new Dictionary<Button, Fsm<State, Trigger>>();
 
-        private void Main()
+		[Test]
+        public void Main()
         {
             var hero = new Hero();
             CreateMachineFor(Fsm<State, Trigger>.Builder(State.IDLE), new Button(), hero);
@@ -141,6 +143,8 @@ namespace NUnitTests
                     }
                 })
                 .Build());
-        }
+
+			string s = buttonMachines[button].GetPlantUml();
+		}
     }
 }

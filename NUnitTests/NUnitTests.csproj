@@ -43,10 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Examples.cs" />
     <Compile Include="FluentSyntaxTest1.cs" />
     <Compile Include="FluentTests.cs" />
     <Compile Include="GameProgrammingPatterns1.cs" />
-    <Compile Include="MonoGame\FluentTests.cs" />
+    <Compile Include="FluentAfterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SimpleTests.cs" />
     <Compile Include="TestTools.cs" />
