@@ -75,7 +75,7 @@ namespace NUnitTests
                     .TransitionTo(State.PRESSED).On(Trigger.MOUSE_CLICKED)
                     .OnEnter(t => button.BtnState = State.OVER)
                     .OnExit(t => button.OldState = button.BtnState)
-                    .Update(a => button.UpdateCounter = button.UpdateCounter + 1)
+                    .Update(a => button.UpdateCounter += 1)
                 .State(State.PRESSED)
                     .TransitionTo(State.IDLE).On(Trigger.MOUSE_LEAVE)
                     .TransitionTo(State.REFRESHING).On(Trigger.MOUSE_RELEASED).If(a => button.IsActivated)
