@@ -36,8 +36,8 @@
 
 language: csharp
 solution: $SOLUTION_NAME.sln
-mono: none
-dotnet: latest
+mono: latest
+dotnet: none
 git:
   depth: false
 install:
