@@ -55,7 +55,6 @@ We place those machines in a single class where they could 'talk with each other
 ```C#
 Fsm<State, Trigger>.Builder(State.STANDING)
   .State(State.DUCKING)
-    .TransitionTo(State.STANDING).On(Trigger.DOWN)
     .TransitionTo(State.STANDING).On(Trigger.UP)
   .State(State.STANDING)
     .TransitionTo(State.DUCKING).On(Trigger.DOWN)
