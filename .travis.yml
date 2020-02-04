@@ -1,0 +1,68 @@
+########################
+### VARIABLES NEEDED ###
+########################
+# SOLUTION_NAME     The name without file-ending
+# DEPLOY_BUILD      Which build you want to pack and push to nuget('Debug' or 'Release')
+# MONOGAME          Set it if you like to build a MonoGame project
+#                   ('latest' or a specific version number of a release on their GitHub
+#                   page like 'v3.7.1'), else unset it (or set it to 'false')
+# NUGET             Whether or not to deploy the result as a nuget-package (true if set)
+#                   If you don't want to deploy, unset it (or set it to 'false')
+#
+### Deploy 
+# NUGET_API_KEY           Your key from nuget.org
+# NUGET_PROJECT_FILENAME  The name without file-ending
+# NUGET_PROJECT_PATH      The path to your project (starting at git-repo-root; which is /)
+#
+# GITHUB_API_KEY          Your key from your GitHub repository (to push the release-zip).
+#                         Has to be a personal API-key (Your GitHub-user-image -> Settings ->
+#                         Developer settings -> Personal access tokens). Has to have the 'repo'
+#                         permission (top level).
+# BUILD_TARGET            The directory your build is saved in (to get it zipped for a
+#                         GitHub release)
+# TEST_NUNIT_FILE         Set to path and filename of artifact containing the tests if you want
+#                         to run NUNIT tests. Unset or set to 'false' to not run tests
+# TEST_XUNIT_FILE         Set to path and filename of artifact containing the tests if you want
+#                         to run XUNIT tests. Unset or set to 'false' to not run tests
+#
+####################
+### GENERAL INFO ###
+####################
+# - git/depth: false is needed for minver
+# - The 'deploy' step in Travis isn't the same process as the rest. So you have to re-source
+#   the functions into that process. More than that it isn't a full sh process like with the
+#   script-phase. So you cannot even source from there directly. That's why the source
+#   command is IN the deploy.sh script.
+
+language: csharp
+solution: $SOLUTION_NAME.sln
+mono: none
+dotnet: latest
+git:
+  depth: false
+install:
+  - git clone https://github.com/UnterrainerInformatik/Travis-Scripts.git travis
+  - source travis/functions.sh
+  - tr_setProjectSubdir .NET
+  - source $TRAVIS/install.sh
+before_script:
+  - source $TRAVIS/before_script.sh
+script:
+  - source $TRAVIS/script.sh
+
+before_deploy: ./$TRAVIS/before_deploy.sh
+deploy:
+  - provider: script
+    skip_cleanup: true
+    script: ./$TRAVIS/deploy.sh
+    on:
+      branch: master
+  - provider: releases
+    skip_cleanup: true
+    overwrite: true
+    api_key:
+        secure: $GITHUB_API_KEY
+    file: $DEPLOY_BUILD.$VERSION.zip
+    on:
+      tags: true
+      branch: master
