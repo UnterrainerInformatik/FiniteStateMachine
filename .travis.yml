@@ -60,8 +60,7 @@ deploy:
   - provider: releases
     skip_cleanup: true
     overwrite: true
-    api_key:
-        secure: $GITHUB_API_KEY
+    api_key: $GITHUB_API_KEY
     file: $DEPLOY_BUILD.$VERSION.zip
     on:
       tags: true
